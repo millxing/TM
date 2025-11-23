@@ -3,323 +3,301 @@
 
 <head>
     <meta charset="UTF-8">
+    <title>Town Meeting Voting Viewer</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Brookline Town Meeting Voting Analysis</title>
+    <!-- SheetJS for reading Excel files directly in browser -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <style>
-        * {
-            box-sizing: border-box;
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
             margin: 0;
             padding: 0;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background-color: #f5f5f5;
-            padding: 20px;
+            background-color: #f4f6f8;
             color: #333;
         }
 
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            background-color: white;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            padding: 30px;
-        }
-
-        h1 {
-            color: #2c3e50;
-            margin-bottom: 10px;
-            font-size: 28px;
-        }
-
-        .subtitle {
-            color: #7f8c8d;
-            margin-bottom: 30px;
-            font-size: 16px;
-        }
-
-        .tabs {
+        header {
+            background-color: #004080;
+            color: #fff;
+            padding: 12px 16px;
             display: flex;
-            border-bottom: 2px solid #e0e0e0;
-            margin-bottom: 30px;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 12px;
         }
 
-        .tab {
-            padding: 12px 24px;
+        header h1 {
+            margin: 0;
+            font-size: 20px;
+            flex: 1 1 auto;
+        }
+
+        .spreadsheet-selector {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .spreadsheet-selector label {
+            font-size: 14px;
+        }
+
+        .spreadsheet-selector select {
+            font-size: 14px;
+            padding: 4px 6px;
+        }
+
+        main {
+            padding: 12px 16px 40px 16px;
+        }
+
+        h2 {
+            margin-top: 0;
+        }
+
+        .view-toggle {
+            margin-bottom: 12px;
+        }
+
+        .view-toggle button {
+            padding: 8px 12px;
+            margin-right: 4px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            background-color: #eee;
             cursor: pointer;
-            border: none;
-            background: none;
-            font-size: 16px;
-            color: #666;
-            transition: all 0.3s ease;
-            border-bottom: 3px solid transparent;
-            margin-bottom: -2px;
+            font-size: 14px;
         }
 
-        .tab:hover {
-            color: #333;
-        }
-
-        .tab.active {
-            color: #2c3e50;
-            border-bottom-color: #3498db;
-            font-weight: 600;
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
+        .view-toggle button.active {
+            background-color: #004080;
+            color: #fff;
+            border-color: #004080;
         }
 
         .controls {
-            margin-bottom: 25px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 12px;
         }
 
         .control-group {
             display: flex;
-            gap: 20px;
-            align-items: center;
-            flex-wrap: wrap;
+            flex-direction: column;
+            gap: 4px;
+            min-width: 180px;
         }
 
         label {
+            font-size: 13px;
             font-weight: 600;
-            color: #555;
+        }
+
+        select,
+        input[type="text"] {
+            padding: 6px 8px;
+            font-size: 14px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
+        .summary {
+            margin-bottom: 12px;
             font-size: 14px;
         }
 
-        select {
-            padding: 10px 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 15px;
-            background-color: white;
-            cursor: pointer;
-            transition: border-color 0.3s ease;
-            min-width: 300px;
-        }
-
-        select:hover {
-            border-color: #3498db;
-        }
-
-        select:focus {
-            outline: none;
-            border-color: #3498db;
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
-        }
-
-        .checkbox-group {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            cursor: pointer;
-        }
-
-        .results {
-            display: grid;
-            grid-template-columns: repeat(4, minmax(300px, 1fr));
-            gap: 20px;
-        }
-
-        .vote-results-container {
+        table {
             width: 100%;
+            border-collapse: collapse;
+            background-color: #fff;
+            font-size: 13px;
         }
 
-        .vote-column {
-            background-color: #f8f9fa;
-            border-radius: 10px;
-            padding: 20px;
-            border: 1px solid #e9ecef;
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 6px 8px;
+            text-align: left;
         }
 
-        .vote-column h3 {
-            font-size: 18px;
-            margin-bottom: 15px;
-            padding: 10px;
-            border-radius: 6px;
+        th {
+            background-color: #f0f0f0;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background-color: #fafafa;
+        }
+
+        .vote-cell {
             text-align: center;
             font-weight: 600;
+            width: 80px;
         }
 
-        .article-description {
-            background-color: #e8f4f8;
-            border: 1px solid #b8e0e8;
-            padding: 12px 16px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-size: 14px;
-            line-height: 1.4;
+        .Yes {
+            color: #10893e;
         }
 
-        .article-description h4 {
-            margin-bottom: 6px;
-            color: #2c3e50;
-            font-size: 14px;
-            font-weight: 600;
+        .No {
+            color: #d13438;
         }
 
-        .article-item-with-desc {
-            margin-bottom: 12px;
+        .Abstain {
+            color: #ca5010;
         }
 
-        .article-title {
-            padding: 8px 12px;
-            background-color: white;
-            border-radius: 6px;
-            font-size: 14px;
-            border: 1px solid #e9ecef;
-            font-weight: 600;
-            color: #2c3e50;
-        }
-
-        .article-desc {
-            padding: 6px 12px;
-            margin-top: 4px;
-            margin-left: 12px;
-            background-color: #f8f9fa;
-            border-radius: 4px;
-            font-size: 13px;
+        .NoVote {
             color: #666;
-            font-style: italic;
-            border-left: 3px solid #dee2e6;
+            font-weight: normal;
         }
 
-        .vote-column.yes h3 {
-            background-color: #d4edda;
-            color: #155724;
+        .hidden {
+            display: none !important;
         }
 
-        .vote-column.no h3 {
-            background-color: #f8d7da;
-            color: #721c24;
-        }
-
-        .vote-column.abstain h3 {
-            background-color: #fff3cd;
-            color: #856404;
-        }
-
-        .vote-column.novote h3 {
-            background-color: #e2e3e5;
-            color: #383d41;
-        }
-
-        .member-list,
-        .article-list {
-            max-height: 500px;
-            overflow-y: auto;
-            padding-right: 5px;
-        }
-
-        .member-item,
-        .article-item {
-            padding: 8px 12px;
-            margin-bottom: 4px;
-            background-color: white;
-            border-radius: 6px;
+        .loading,
+        .error {
+            margin-bottom: 8px;
             font-size: 14px;
-            line-height: 1.4;
-            border: 1px solid #e9ecef;
-            transition: all 0.2s ease;
-        }
-
-        .member-item:hover,
-        .article-item:hover {
-            background-color: #f1f3f5;
-            transform: translateX(2px);
-        }
-
-        .precinct-label {
-            font-weight: 600;
-            color: #666;
         }
 
         .loading {
-            text-align: center;
-            padding: 40px;
-            color: #666;
+            color: #004080;
+        }
+
+        .error {
+            color: #d13438;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 18px;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            .control-group {
+                min-width: 100%;
+            }
+
+            table {
+                font-size: 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            header {
+                padding: 10px;
+            }
+
+            main {
+                padding: 10px;
+            }
+
+            .view-toggle button {
+                font-size: 13px;
+                padding: 6px 10px;
+            }
         }
     </style>
 </head>
 
 <body>
-    <div class="container">
-        <h1>Brookline Town Meeting Voting Analysis</h1>
-        <p class="subtitle">Use the dropdown below to select a Town Meeting session.</p>
+    <header>
+        <h1>Brookline Town Meeting Voting Viewer</h1>
+        <div class="spreadsheet-selector">
+            <label for="spreadsheetSelect">Select Meeting:</label>
+            <select id="spreadsheetSelect">
+                <option value="November 2025 Votes.xlsx" selected>November 2025</option>
+                <option value="May 2025 Votes.xlsx">May 2025</option>
+                <option value="November 2024 Votes.xlsx">November 2024</option>
+                <option value="May 2024 Votes.xlsx">May 2024</option>
+                <option value="November 2023 Votes.xlsx">November 2023</option>
+                <option value="May 2023 Votes.xlsx">May 2023</option>
+                <option value="November 2022 Votes.xlsx">November 2022</option>
+                <option value="May 2022 Votes.xlsx">May 2022</option>
+            </select>
+        </div>
+    </header>
 
-        <div class="loading" id="loading">
-            Loading voting data...
+    <main>
+        <div id="loadingMessage" class="loading"></div>
+        <div id="errorMessage" class="error hidden"></div>
+
+        <div class="view-toggle">
+            <button id="viewByVoteBtn" class="active" type="button">View By Vote</button>
+            <button id="viewByMemberBtn" type="button">View By Member</button>
         </div>
 
-        <div id="main-content" style="display: none;">
-
-            <!-- Spreadsheet selector -->
-            <div class="controls" style="margin-bottom: 20px;">
+        <section id="viewByVoteSection">
+            <div class="controls">
                 <div class="control-group">
-                    <label for="spreadsheet-select">Select Spreadsheet:</label>
-                    <select id="spreadsheet-select">
-                        <option value="May%202022%20Votes.xlsx">May 2022 Votes (57 votes)</option>
-                        <option value="November%202022%20Votes.xlsx" selected>November 2022 Votes (68 votes)</option>
-                        <option value="May%202023%20Votes.xlsx">May 2023 Votes (44 votes)</option>
-                        <option value="November%202023%20Votes.xlsx" selected>November 2023 Votes (24 votes)</option>
-                        <option value="May%202024%20Votes.xlsx">May 2024 Votes (34 votes)</option>
-                        <option value="November%202024%20Votes.xlsx" selected>November 2024 Votes (28 votes)</option>
-                        <option value="May%202025%20Votes.xlsx">May 2025 Votes (45 votes)</option>
-                        <option value="November%202025%20Votes.xlsx" selected>November 2025 Votes (19 votes)</option>
+                    <label for="voteSelect">Select Vote:</label>
+                    <select id="voteSelect"></select>
+                </div>
+                <div class="control-group">
+                    <label for="precinctFilter">Filter by Precinct:</label>
+                    <select id="precinctFilter">
+                        <option value="">All Precincts</option>
                     </select>
                 </div>
-            </div>
-
-            <div class="tabs">
-                <button class="tab active" onclick="switchTab('by-vote')">View by Vote</button>
-                <button class="tab" onclick="switchTab('by-member')">View by Member</button>
-            </div>
-
-            <div id="by-vote" class="tab-content active">
-                <div class="controls">
-                    <div class="control-group">
-                        <label for="vote-select">Select Vote:</label>
-                        <select id="vote-select"></select>
-                        <div class="checkbox-group">
-                            <input type="checkbox" id="sort-by-name-vote" onchange="updateVoteResults()">
-                            <label for="sort-by-name-vote">Sort by last name only</label>
-                        </div>
-                    </div>
+                <div class="control-group">
+                    <label for="nameSearch">Search by Name:</label>
+                    <input type="text" id="nameSearch" placeholder="Type a name...">
                 </div>
-                <div id="vote-results" class="vote-results-container"></div>
             </div>
 
-            <div id="by-member" class="tab-content">
-                <div class="controls">
-                    <div class="control-group">
-                        <label for="member-select">Select Member:</label>
-                        <select id="member-select"></select>
-                        <div class="checkbox-group">
-                            <input type="checkbox" id="sort-by-precinct-member" onchange="populateMemberDropdown()">
-                            <label for="sort-by-precinct-member">Sort by precinct, then name</label>
-                        </div>
-                    </div>
+            <div class="summary" id="voteSummary"></div>
+
+            <table id="voteTable">
+                <thead>
+                    <tr>
+                        <th>Precinct</th>
+                        <th>Name</th>
+                        <th>Vote</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </section>
+
+        <section id="viewByMemberSection" class="hidden">
+            <div class="controls">
+                <div class="control-group">
+                    <label for="memberPrecinctFilter">Filter by Precinct:</label>
+                    <select id="memberPrecinctFilter">
+                        <option value="">All Precincts</option>
+                    </select>
                 </div>
-                <div id="member-results" class="results"></div>
+                <div class="control-group">
+                    <label for="memberNameSearch">Search by Name:</label>
+                    <input type="text" id="memberNameSearch" placeholder="Type a name...">
+                </div>
             </div>
-        </div>
-    </div>
 
+            <div class="summary" id="memberSummary"></div>
+
+            <table id="memberTable">
+                <thead>
+                    <tr>
+                        <th>Precinct</th>
+                        <th>Name</th>
+                        <th>Votes</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </section>
+    </main>
 
     <script>
-        // Configuration for spreadsheet layout
+        // Row/column layout constants
         const TITLE_ROW_INDEX = 2;       // zero-based: Excel row 3
         const DESCRIPTION_ROW_INDEX = 3; // zero-based: Excel row 4
         const HEADER_ROW_INDEX = 4;      // zero-based: Excel row 5
@@ -329,21 +307,82 @@
         const NAME_COL_INDEX = 1;        // column B
         const FIRST_VOTE_COL_INDEX = 2;  // column C
 
-        // Generous upper bound; will be reset and clamped per sheet
-        let LAST_VOTE_COL_INDEX = 100;
+        // Generous upper bound; will be reset per sheet
+        let LAST_VOTE_COL_INDEX = 80;
 
         // Global variables
         let votingData = null;
         let votes = [];
         let members = [];
+        let precincts = [];
 
-        const loadingEl = document.getElementById('loading');
-        const mainContentEl = document.getElementById('main-content');
+        // DOM elements
+        const loadingEl = document.getElementById('loadingMessage');
+        const errorEl = document.getElementById('errorMessage');
 
-        // Build the URL for the currently selected spreadsheet
+        const viewByVoteSection = document.getElementById('viewByVoteSection');
+        const viewByMemberSection = document.getElementById('viewByMemberSection');
+        const viewByVoteBtn = document.getElementById('viewByVoteBtn');
+        const viewByMemberBtn = document.getElementById('viewByMemberBtn');
+
+        const voteSelect = document.getElementById('voteSelect');
+        const precinctFilter = document.getElementById('precinctFilter');
+        const nameSearch = document.getElementById('nameSearch');
+        const voteTableBody = document.querySelector('#voteTable tbody');
+        const voteSummary = document.getElementById('voteSummary');
+
+        const memberPrecinctFilter = document.getElementById('memberPrecinctFilter');
+        const memberNameSearch = document.getElementById('memberNameSearch');
+        const memberTableBody = document.querySelector('#memberTable tbody');
+        const memberSummary = document.getElementById('memberSummary');
+
+        const spreadsheetSelect = document.getElementById('spreadsheetSelect');
+
+        function showLoading(message) {
+            if (loadingEl) {
+                loadingEl.textContent = message;
+                loadingEl.classList.remove('hidden');
+            }
+        }
+
+        function hideLoading() {
+            if (loadingEl) {
+                loadingEl.textContent = '';
+                loadingEl.classList.add('hidden');
+            }
+        }
+
+        function showError(message) {
+            if (errorEl) {
+                errorEl.textContent = message;
+                errorEl.classList.remove('hidden');
+            }
+        }
+
+        function hideError() {
+            if (errorEl) {
+                errorEl.textContent = '';
+                errorEl.classList.add('hidden');
+            }
+        }
+
+        function setViewByVote() {
+            viewByVoteSection.classList.remove('hidden');
+            viewByMemberSection.classList.add('hidden');
+            viewByVoteBtn.classList.add('active');
+            viewByMemberBtn.classList.remove('active');
+        }
+
+        function setViewByMember() {
+            viewByVoteSection.classList.add('hidden');
+            viewByMemberSection.classList.remove('hidden');
+            viewByVoteBtn.classList.remove('active');
+            viewByMemberBtn.classList.add('active');
+        }
+
         function getSelectedSpreadsheetURL() {
-            const select = document.getElementById('spreadsheet-select');
-            const file = select ? select.value : 'November%202025%20Votes.xlsx';
+            const file = spreadsheetSelect.value;
+            // Raw GitHub URL to the spreadsheet
             return `https://raw.githubusercontent.com/millxing/TM/main/${file}`;
         }
 
@@ -358,17 +397,22 @@
         function normalizeVote(raw) {
             let v = (raw == null ? '' : String(raw)).trim().toUpperCase();
             if (!v) return 'NoVote';
-            if (v === 'Y') return 'YES';
-            if (v === 'N') return 'NO';
-            if (v === 'A') return 'ABSTAIN';
-            if (v === 'YES' || v === 'NO' || v === 'ABSTAIN') return v;
+
+            if (v === 'Y' || v === 'YES') return 'Yes';
+            if (v === 'N' || v === 'NO') return 'No';
+            if (v === 'A' || v === 'ABSTAIN') return 'Abstain';
+
+            // Some spreadsheets may have "NO VOTE", etc.
+            if (v.includes('NO VOTE') || v === 'NV') return 'NoVote';
+
+            // Fallback: treat unknown text as NoVote, but you can adjust if desired
             return 'NoVote';
         }
 
         async function loadVotingDataFromExcel() {
             try {
                 // Reset the upper bound each time we load a new sheet
-                LAST_VOTE_COL_INDEX = 100;
+                LAST_VOTE_COL_INDEX = 60;
 
                 if (loadingEl) loadingEl.textContent = 'Loading voting data from spreadsheet...';
 
@@ -385,7 +429,7 @@
                 // Get raw rows as array-of-arrays
                 const rows = XLSX.utils.sheet_to_json(sheet, {
                     header: 1,
-                    blankrows: false,
+                    blankrows: true,
                     defval: ''
                 });
 
@@ -397,11 +441,22 @@
                 const descRow = rows[DESCRIPTION_ROW_INDEX] || [];
                 const headerRow = rows[HEADER_ROW_INDEX] || [];
 
-                // Clamp LAST_VOTE_COL_INDEX to this sheet's header width
-                const maxCol = headerRow.length - 1;
-                if (maxCol > FIRST_VOTE_COL_INDEX && LAST_VOTE_COL_INDEX > maxCol) {
-                    LAST_VOTE_COL_INDEX = maxCol;
+                // Dynamically detect the last vote column based on where titles actually exist
+                let detectedLastCol = FIRST_VOTE_COL_INDEX;
+                const maxPossibleCol = Math.max(
+                    titleRow.length,
+                    headerRow.length,
+                    ...(rows.length > FIRST_DATA_ROW_INDEX ? [rows[FIRST_DATA_ROW_INDEX].length] : [])
+                ) - 1;
+
+                for (let col = FIRST_VOTE_COL_INDEX; col <= maxPossibleCol; col++) {
+                    const t = String(titleRow[col] || headerRow[col] || '').trim();
+                    if (t) {
+                        detectedLastCol = col;
+                    }
                 }
+
+                LAST_VOTE_COL_INDEX = detectedLastCol;
 
                 // Build votes list
                 votes = [];
@@ -427,21 +482,7 @@
 
                     const name = String(nameRaw || '').trim();
                     const precinct = String(precinctRaw || '').trim();
-                    const upperName = name.toUpperCase();
-                    const upperPrecinct = precinct.toUpperCase();
-
-                    // Skip blank rows
-                    if (!name && !precinct) continue;
-
-                    // Filter out summary rows like YES/NO/ABSTAIN/NO VOTE, TOTAL, etc.
-                    const disallowedNames = ['YES', 'NO', 'ABSTAIN', 'NO VOTE', 'TOTAL', 'ARTICLE', 'MOTION'];
-                    if (!name || disallowedNames.includes(upperName)) continue;
-
-                    // Require a valid precinct: numeric or 'AL'
-                    const precinctNum = parseInt(precinct, 10);
-                    const isNumericPrecinct = !isNaN(precinctNum);
-                    const isAL = upperPrecinct === 'AL';
-                    if (!isNumericPrecinct && !isAL) continue;
+                    if (!name && !precinct) continue; // skip totally empty rows
 
                     const memberKey = `${name} (Precinct ${precinct})`;
 
@@ -457,371 +498,245 @@
                         voteMap[v.title] = normalizeVote(rawCell);
                     });
 
-                    votingData[memberKey] = {
-                        precinct,
-                        votes: voteMap
-                    };
+                    votingData[memberKey] = voteMap;
                 }
 
-                initializeApp();
+                // Derive precinct list
+                const precinctSet = new Set(
+                    members
+                        .map(m => m.precinct)
+                        .filter(p => p && p.trim().length > 0)
+                );
+                precincts = Array.from(precinctSet);
+                // Sort numeric precincts 1-16, then AL / others
+                precincts.sort((a, b) => {
+                    return precinctSortValue(a) - precinctSortValue(b);
+                });
+
+                populateUIControls();
+                updateVoteView();
+                updateMemberView();
+
+                hideError();
             } catch (err) {
                 console.error(err);
-                if (loadingEl) loadingEl.textContent = 'Error loading spreadsheet: ' + err.message;
+                showError(`Failed to load voting data: ${err.message}`);
+            } finally {
+                hideLoading();
             }
         }
 
-        function initializeApp() {
-            // Sort members by precinct then name
-            members.sort((a, b) => {
+        function populateUIControls() {
+            // Populate voteSelect
+            voteSelect.innerHTML = '';
+            votes.forEach((v, index) => {
+                const opt = document.createElement('option');
+                opt.value = v.title;
+                opt.textContent = v.title;
+                voteSelect.appendChild(opt);
+            });
+
+            // Populate precinct filters
+            const precinctOptions = [''].concat(precincts); // '' means All
+
+            function fillPrecinctSelect(sel) {
+                sel.innerHTML = '';
+                precinctOptions.forEach(p => {
+                    const opt = document.createElement('option');
+                    opt.value = p;
+                    opt.textContent = p ? `Precinct ${p}` : 'All Precincts';
+                    sel.appendChild(opt);
+                });
+            }
+
+            fillPrecinctSelect(precinctFilter);
+            fillPrecinctSelect(memberPrecinctFilter);
+        }
+
+        function updateVoteView() {
+            const selectedVoteTitle = voteSelect.value;
+            const precinctVal = precinctFilter.value;
+            const nameQuery = nameSearch.value.trim().toLowerCase();
+
+            if (!selectedVoteTitle) {
+                voteTableBody.innerHTML = '';
+                voteSummary.textContent = 'No vote selected.';
+                return;
+            }
+
+            const rows = [];
+
+            members.forEach(m => {
+                const memberKey = m.key;
+                const voteMap = votingData[memberKey] || {};
+                const v = voteMap[selectedVoteTitle] || 'NoVote';
+
+                // Precinct filter
+                if (precinctVal && m.precinct !== precinctVal) {
+                    return;
+                }
+
+                // Name search
+                if (nameQuery && !m.name.toLowerCase().includes(nameQuery)) {
+                    return;
+                }
+
+                rows.push({
+                    precinct: m.precinct,
+                    name: m.name,
+                    vote: v
+                });
+            });
+
+            // Sort rows by precinct sort, then name
+            rows.sort((a, b) => {
                 const pa = precinctSortValue(a.precinct);
                 const pb = precinctSortValue(b.precinct);
                 if (pa !== pb) return pa - pb;
                 return a.name.localeCompare(b.name);
             });
 
-            populateDropdowns();
+            // Build table body
+            voteTableBody.innerHTML = '';
+            let yesCount = 0;
+            let noCount = 0;
+            let abstainCount = 0;
+            let noVoteCount = 0;
 
-            if (loadingEl) loadingEl.style.display = 'none';
-            if (mainContentEl) mainContentEl.style.display = 'block';
+            rows.forEach(row => {
+                const tr = document.createElement('tr');
 
-            if (votes.length > 0) {
-                const voteSelect = document.getElementById('vote-select');
-                if (voteSelect) {
-                    voteSelect.value = votes[0].title;
-                }
-                updateVoteResults();
-            }
+                const precinctTd = document.createElement('td');
+                precinctTd.textContent = row.precinct;
+                tr.appendChild(precinctTd);
 
-            const memberSelect = document.getElementById('member-select');
-            if (memberSelect && memberSelect.value && votingData[memberSelect.value]) {
-                updateMemberResults();
-            }
+                const nameTd = document.createElement('td');
+                nameTd.textContent = row.name;
+                tr.appendChild(nameTd);
+
+                const voteTd = document.createElement('td');
+                voteTd.classList.add('vote-cell', row.vote);
+                voteTd.textContent =
+                    row.vote === 'Yes' ? 'YES' :
+                        row.vote === 'No' ? 'NO' :
+                            row.vote === 'Abstain' ? 'ABSTAIN' :
+                                'NO VOTE';
+                tr.appendChild(voteTd);
+
+                voteTableBody.appendChild(tr);
+
+                // Tally
+                if (row.vote === 'Yes') yesCount++;
+                else if (row.vote === 'No') noCount++;
+                else if (row.vote === 'Abstain') abstainCount++;
+                else noVoteCount++;
+            });
+
+            const total = yesCount + noCount + abstainCount + noVoteCount;
+            voteSummary.textContent =
+                `Vote: ${selectedVoteTitle} | YES: ${yesCount}, NO: ${noCount}, ABSTAIN: ${abstainCount}, NO VOTE: ${noVoteCount}, TOTAL: ${total}`;
         }
 
-        function populateMemberDropdown() {
-            const memberSelect = document.getElementById('member-select');
-            if (!memberSelect) return;
+        function updateMemberView() {
+            const precinctVal = memberPrecinctFilter.value;
+            const nameQuery = memberNameSearch.value.trim().toLowerCase();
 
-            const sortByPrecinct = document.getElementById('sort-by-precinct-member') ?
-                document.getElementById('sort-by-precinct-member').checked : false;
-            const currentValue = memberSelect.value;
+            const filteredMembers = members.filter(m => {
+                // Precinct filter
+                if (precinctVal && m.precinct !== precinctVal) return false;
+                // Name search
+                if (nameQuery && !m.name.toLowerCase().includes(nameQuery)) return false;
+                return true;
+            });
 
-            let sortedMembers = [...members];
-
-            sortedMembers.sort((a, b) => {
-                if (sortByPrecinct) {
-                    const pa = precinctSortValue(a.precinct);
-                    const pb = precinctSortValue(b.precinct);
-                    if (pa !== pb) return pa - pb;
-                }
+            // Sort by precinct, then name
+            filteredMembers.sort((a, b) => {
+                const pa = precinctSortValue(a.precinct);
+                const pb = precinctSortValue(b.precinct);
+                if (pa !== pb) return pa - pb;
                 return a.name.localeCompare(b.name);
             });
 
-            memberSelect.innerHTML = '';
-            sortedMembers.forEach(member => {
-                const option = document.createElement('option');
-                option.value = member.key;
-                option.textContent = member.key;
-                memberSelect.appendChild(option);
-            });
+            memberTableBody.innerHTML = '';
 
-            if (currentValue && Array.from(memberSelect.options).some(opt => opt.value === currentValue)) {
-                memberSelect.value = currentValue;
-            } else if (memberSelect.options.length > 0) {
-                memberSelect.value = memberSelect.options[0].value;
-            }
-        }
+            filteredMembers.forEach(m => {
+                const memberKey = m.key;
+                const voteMap = votingData[memberKey] || {};
 
-        function populateDropdowns() {
-            const voteSelect = document.getElementById('vote-select');
-            if (!voteSelect) return;
+                const tr = document.createElement('tr');
 
-            voteSelect.innerHTML = '';
-            votes.forEach(vote => {
-                const option = document.createElement('option');
-                option.value = vote.title;
-                option.textContent = vote.title;
-                voteSelect.appendChild(option);
-            });
+                const precinctTd = document.createElement('td');
+                precinctTd.textContent = m.precinct;
+                tr.appendChild(precinctTd);
 
-            populateMemberDropdown();
+                const nameTd = document.createElement('td');
+                nameTd.textContent = m.name;
+                tr.appendChild(nameTd);
 
-            // Attach listeners (if reattached, it's still safe)
-            voteSelect.addEventListener('change', updateVoteResults);
-            const memberSelect = document.getElementById('member-select');
-            if (memberSelect) {
-                memberSelect.addEventListener('change', updateMemberResults);
-            }
-        }
+                const votesTd = document.createElement('td');
+                const ul = document.createElement('ul');
+                ul.style.listStyleType = 'none';
+                ul.style.paddingLeft = '0';
+                ul.style.margin = '0';
 
-        function updateVoteResults() {
-            const selectedVote = document.getElementById('vote-select').value;
-            const sortByNameOnly = document.getElementById('sort-by-name-vote').checked;
-            const resultsDiv = document.getElementById('vote-results');
+                votes.forEach(v => {
+                    const li = document.createElement('li');
+                    const voteValue = voteMap[v.title] || 'NoVote';
 
-            const selectedVoteDetails = votes.find(v => v.title === selectedVote);
-            const description = selectedVoteDetails ? selectedVoteDetails.description : '';
+                    let voteLabel =
+                        voteValue === 'Yes' ? 'YES' :
+                            voteValue === 'No' ? 'NO' :
+                                voteValue === 'Abstain' ? 'ABSTAIN' :
+                                    'NO VOTE';
 
-            const voteGroups = {
-                YES: [],
-                NO: [],
-                ABSTAIN: [],
-                NoVote: []
-            };
+                    li.textContent = `${v.title}: ${voteLabel}`;
+                    li.style.marginBottom = '2px';
 
-            members.forEach(member => {
-                const voteVal = votingData[member.key].votes[selectedVote];
-                const normalizedVote = voteVal ? voteVal.toUpperCase() : 'NOVOTE';
+                    if (voteValue === 'Yes') li.style.color = '#10893e';
+                    else if (voteValue === 'No') li.style.color = '#d13438';
+                    else if (voteValue === 'Abstain') li.style.color = '#ca5010';
+                    else li.style.color = '#666';
 
-                if (normalizedVote === 'YES') {
-                    voteGroups.YES.push(member);
-                } else if (normalizedVote === 'NO') {
-                    voteGroups.NO.push(member);
-                } else if (normalizedVote === 'ABSTAIN') {
-                    voteGroups.ABSTAIN.push(member);
-                } else {
-                    voteGroups.NoVote.push(member);
-                }
-            });
-
-            Object.keys(voteGroups).forEach(voteType => {
-                voteGroups[voteType].sort((a, b) => {
-                    if (sortByNameOnly) {
-                        return a.name.localeCompare(b.name);
-                    } else {
-                        const pa = precinctSortValue(a.precinct);
-                        const pb = precinctSortValue(b.precinct);
-                        if (pa !== pb) return pa - pb;
-                        return a.name.localeCompare(b.name);
-                    }
+                    ul.appendChild(li);
                 });
+
+                votesTd.appendChild(ul);
+                tr.appendChild(votesTd);
+
+                memberTableBody.appendChild(tr);
             });
 
-            const totalVotes = voteGroups.YES.length + voteGroups.NO.length;
-            const percentages = {
-                YES: totalVotes > 0 ? ((voteGroups.YES.length / totalVotes) * 100).toFixed(1) : '0.0',
-                NO: totalVotes > 0 ? ((voteGroups.NO.length / totalVotes) * 100).toFixed(1) : '0.0'
-            };
-
-            let html = '';
-
-            if (description) {
-                html += `
-                    <div class="article-description">
-                        <h4>Article Description</h4>
-                        <div>${description}</div>
-                    </div>
-                `;
-            }
-
-            const formatPrecinctLabel = (p) => {
-                const up = String(p).toUpperCase();
-                if (up === 'AL') return 'AL';
-                return 'P' + p;
-            };
-
-            html += `
-                <div class="results">
-                    <div class="vote-column yes">
-                        <h3>Yes (${voteGroups.YES.length}, ${percentages.YES}%)</h3>
-                        <div class="member-list">
-                            ${voteGroups.YES.map(m => `
-                                <div class="member-item">
-                                    <span class="precinct-label">${formatPrecinctLabel(m.precinct)}:</span> ${m.name}
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                    <div class="vote-column no">
-                        <h3>No (${voteGroups.NO.length}, ${percentages.NO}%)</h3>
-                        <div class="member-list">
-                            ${voteGroups.NO.map(m => `
-                                <div class="member-item">
-                                    <span class="precinct-label">${formatPrecinctLabel(m.precinct)}:</span> ${m.name}
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                    <div class="vote-column abstain">
-                        <h3>Abstain (${voteGroups.ABSTAIN.length})</h3>
-                        <div class="member-list">
-                            ${voteGroups.ABSTAIN.map(m => `
-                                <div class="member-item">
-                                    <span class="precinct-label">${formatPrecinctLabel(m.precinct)}:</span> ${m.name}
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                    <div class="vote-column novote">
-                        <h3>No Vote (${voteGroups.NoVote.length})</h3>
-                        <div class="member-list">
-                            ${voteGroups.NoVote.map(m => `
-                                <div class="member-item">
-                                    <span class="precinct-label">${formatPrecinctLabel(m.precinct)}:</span> ${m.name}
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            resultsDiv.innerHTML = html;
+            memberSummary.textContent = `Total members shown: ${filteredMembers.length}`;
         }
 
-        function updateMemberResults() {
-            const selectedMember = document.getElementById('member-select').value;
-            const resultsDiv = document.getElementById('member-results');
+        // Event listeners
+        viewByVoteBtn.addEventListener('click', () => {
+            setViewByVote();
+        });
 
-            if (!selectedMember || !votingData[selectedMember]) return;
+        viewByMemberBtn.addEventListener('click', () => {
+            setViewByMember();
+        });
 
-            const memberVotes = votingData[selectedMember].votes;
+        voteSelect.addEventListener('change', updateVoteView);
+        precinctFilter.addEventListener('change', updateVoteView);
+        nameSearch.addEventListener('input', updateVoteView);
 
-            const voteGroups = {
-                YES: [],
-                NO: [],
-                ABSTAIN: [],
-                NoVote: []
-            };
+        memberPrecinctFilter.addEventListener('change', updateMemberView);
+        memberNameSearch.addEventListener('input', updateMemberView);
 
-            votes.forEach(vote => {
-                const voteValue = memberVotes[vote.title];
-                const normalizedVote = voteValue ? voteValue.toUpperCase() : 'NOVOTE';
+        spreadsheetSelect.addEventListener('change', () => {
+            hideError();
+            showLoading('Loading voting data from spreadsheet...');
+            loadVotingDataFromExcel();
+        });
 
-                const voteWithDesc = {
-                    title: vote.title,
-                    description: vote.description
-                };
-
-                if (normalizedVote === 'YES') {
-                    voteGroups.YES.push(voteWithDesc);
-                } else if (normalizedVote === 'NO') {
-                    voteGroups.NO.push(voteWithDesc);
-                } else if (normalizedVote === 'ABSTAIN') {
-                    voteGroups.ABSTAIN.push(voteWithDesc);
-                } else {
-                    voteGroups.NoVote.push(voteWithDesc);
-                }
-            });
-
-            const sortByArticle = (a, b) => {
-                const aIsTerminate = a.title.toLowerCase().includes('terminate debate');
-                const bIsTerminate = b.title.toLowerCase().includes('terminate debate');
-
-                if (aIsTerminate && !bIsTerminate) return 1;
-                if (!aIsTerminate && bIsTerminate) return -1;
-
-                const aMatch = a.title.match(/Article (\d+)/i);
-                const bMatch = b.title.match(/Article (\d+)/i);
-                if (aMatch && bMatch) {
-                    return parseInt(aMatch[1]) - parseInt(bMatch[1]);
-                }
-                return a.title.localeCompare(b.title);
-            };
-
-            Object.keys(voteGroups).forEach(voteType => {
-                voteGroups[voteType].sort(sortByArticle);
-            });
-
-            const total = votes.length;
-            const percentages = {
-                YES: total > 0 ? ((voteGroups.YES.length / total) * 100).toFixed(1) : '0.0',
-                NO: total > 0 ? ((voteGroups.NO.length / total) * 100).toFixed(1) : '0.0',
-                ABSTAIN: total > 0 ? ((voteGroups.ABSTAIN.length / total) * 100).toFixed(1) : '0.0',
-                NoVote: total > 0 ? ((voteGroups.NoVote.length / total) * 100).toFixed(1) : '0.0'
-            };
-
-            resultsDiv.innerHTML = `
-                <div class="vote-column yes">
-                    <h3>Yes (${voteGroups.YES.length}, ${percentages.YES}%)</h3>
-                    <div class="article-list">
-                        ${voteGroups.YES.map(v => `
-                            <div class="article-item-with-desc">
-                                <div class="article-title">${v.title}</div>
-                                ${v.description ? `<div class="article-desc">${v.description}</div>` : ''}
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-                <div class="vote-column no">
-                    <h3>No (${voteGroups.NO.length}, ${percentages.NO}%)</h3>
-                    <div class="article-list">
-                        ${voteGroups.NO.map(v => `
-                            <div class="article-item-with-desc">
-                                <div class="article-title">${v.title}</div>
-                                ${v.description ? `<div class="article-desc">${v.description}</div>` : ''}
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-                <div class="vote-column abstain">
-                    <h3>Abstain (${voteGroups.ABSTAIN.length}, ${percentages.ABSTAIN}%)</h3>
-                    <div class="article-list">
-                        ${voteGroups.ABSTAIN.map(v => `
-                            <div class="article-item-with-desc">
-                                <div class="article-title">${v.title}</div>
-                                ${v.description ? `<div class="article-desc">${v.description}</div>` : ''}
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-                <div class="vote-column novote">
-                    <h3>No Vote (${voteGroups.NoVote.length}, ${percentages.NoVote}%)</h3>
-                    <div class="article-list">
-                        ${voteGroups.NoVote.map(v => `
-                            <div class="article-item-with-desc">
-                                <div class="article-title">${v.title}</div>
-                                ${v.description ? `<div class="article-desc">${v.description}</div>` : ''}
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-            `;
-        }
-
-        function switchTab(tabName) {
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            if (event && event.target) {
-                event.target.classList.add('active');
-            }
-
-            document.querySelectorAll('.tab-content').forEach(content => {
-                content.classList.remove('active');
-            });
-            document.getElementById(tabName).classList.add('active');
-
-            if (tabName === 'by-member' && members.length > 0) {
-                updateMemberResults();
-            }
-        }
-
-        window.addEventListener('DOMContentLoaded', () => {
-            const spreadsheetSelect = document.getElementById('spreadsheet-select');
-            if (spreadsheetSelect) {
-                spreadsheetSelect.addEventListener('change', () => {
-                    if (loadingEl) {
-                        loadingEl.style.display = 'block';
-                        loadingEl.textContent = 'Loading voting data...';
-                    }
-                    if (mainContentEl) {
-                        mainContentEl.style.display = 'none';
-                    }
-
-                    // Clear previous data and reload
-                    votingData = null;
-                    votes = [];
-                    members = [];
-
-                    loadVotingDataFromExcel();
-                });
-            }
-
-            // Initial load (uses whichever spreadsheet is selected by default)
+        // Initial load
+        document.addEventListener('DOMContentLoaded', () => {
+            showLoading('Loading voting data from spreadsheet...');
             loadVotingDataFromExcel();
         });
     </script>
-
 </body>
 
 </html>
