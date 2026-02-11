@@ -4,7 +4,7 @@ This file provides repository-specific guidance for agents working on `/Users/ro
 
 ## Scope
 - Primary artifact: `/Users/robschoen/Dropbox/CC/TM/TMMvotes.html`
-- Supporting data: Excel files in `/Users/robschoen/Dropbox/CC/TM/*.xlsx`
+- Supporting data: Excel files in `/Users/robschoen/Dropbox/CC/TM/Votes/*.xlsx`
 - Runtime model: single static HTML page with inline CSS/JS, no build step
 
 ## Purpose Of The Page
@@ -47,7 +47,7 @@ If spreadsheet shape changes, update constants first and then revalidate both ta
 - Prefer `textContent` and DOM node creation over direct `innerHTML` interpolation.
 
 ## When Updating Spreadsheet Options
-- Keep each `<option value>` URL-encoded (spaces as `%20`).
+- Keep each `<option value>` URL-encoded (spaces as `%20`) and rooted at `Votes/`.
 - In single-select dropdowns, only one option should use `selected`.
 - Keep displayed vote counts in sync with source spreadsheets.
 

@@ -56,22 +56,63 @@ Members are identified by **name string** (Column B) combined with **precinct**.
 
 ### 3.1 Load all spreadsheets
 
+Define a single source of truth for sessions in **chronological order** (oldest to newest), e.g.:
+
+```js
+const SESSION_FILES = [
+  { id: "2022-05", label: "May 2022", file: "May%202022%20Votes.xlsx" },
+  { id: "2022-11", label: "November 2022", file: "November%202022%20Votes.xlsx" },
+  { id: "2023-05", label: "May 2023", file: "May%202023%20Votes.xlsx" },
+  { id: "2023-11", label: "November 2023", file: "November%202023%20Votes.xlsx" },
+  { id: "2024-05", label: "May 2024", file: "May%202024%20Votes.xlsx" },
+  { id: "2024-11", label: "November 2024", file: "November%202024%20Votes.xlsx" },
+  { id: "2025-05", label: "May 2025", file: "May%202025%20Votes.xlsx" },
+  { id: "2025-11", label: "November 2025", file: "November%202025%20Votes.xlsx" }
+];
+```
+
 Fetch and parse all 8 spreadsheets in parallel using `Promise.all`. For each spreadsheet, extract:
 - The list of vote columns (title + description + whether it's a "Terminate Debate" vote)
 - The list of members and their votes
+
+For progress updates, increment a shared `loadedCount` in each file's `finally` block and update a status label like `"Loading 3 of 8..."`.
+
+If any fetch/parse fails, surface which session failed and stop rendering the clustering view (do not silently skip files).
 
 Store as an array of session objects:
 ```js
 sessions = [
   {
+    id: "2022-05",
     label: "May 2022",
+    file: "May%202022%20Votes.xlsx",
     votes: [
-      { title: "Article 1 Main Motion", description: "...", isTerminateDebate: false },
-      { title: "Terminate Debate on Article 8", description: "...", isTerminateDebate: true },
+      {
+        id: "2022-05::2",
+        sessionId: "2022-05",
+        sessionLabel: "May 2022",
+        colIndex: 2,
+        title: "Article 1 Main Motion",
+        description: "...",
+        isTerminateDebate: false
+      },
+      {
+        id: "2022-05::3",
+        sessionId: "2022-05",
+        sessionLabel: "May 2022",
+        colIndex: 3,
+        title: "Terminate Debate on Article 8",
+        description: "...",
+        isTerminateDebate: true
+      },
       ...
     ],
     members: {
-      "abramowitz, neil|1": { "Article 1 Main Motion": "YES", "Terminate Debate on Article 8": "NO", ... },
+      "abramowitz, neil|1": {
+        "2022-05::2": "YES",
+        "2022-05::3": "NO",
+        ...
+      },
       ...
     }
   },
@@ -86,7 +127,7 @@ A vote is a "Terminate Debate" motion if its title (case-insensitive) contains t
 ### 3.3 Build the unified member list
 
 Collect all unique canonical member keys across all sessions. For each member, record:
-- Display name and precinct (use the most recent session's formatting)
+- Display name and precinct from the **most recent session they appear in**, using `SESSION_FILES` chronological order as the tie-breaker
 - Which sessions they appeared in
 - Their full vote vector across all sessions
 
@@ -111,8 +152,11 @@ Encoding:
 Members who didn't attend a session will have `NaN` for every vote in that session. Before running PCA:
 
 1. **Drop columns** where fewer than 20% of the included members have a non-NaN value (these votes provide no useful signal).
-2. **Drop rows (members)** who have fewer than some threshold of non-NaN votes (controlled by the "minimum sessions" filter, see §5).
+2. **Drop rows (members)** using the "minimum sessions attended" threshold only (see §5).  
 3. **Impute remaining NaN values** with 0 (i.e., treat isolated missing votes as neutral). This is the simplest defensible approach and avoids pulling absent members toward any pole.
+4. Keep both versions of the matrix:
+   - `matrixRawWithNaN` for similarity/agreement calculations
+   - `matrixImputed` for PCA only
 
 ---
 
@@ -163,7 +207,7 @@ Add a third tab button: **"Voter Clustering"** alongside the existing "View by V
 | Control | Type | Default | Purpose |
 |---------|------|---------|---------|
 | Sessions to include | Multi-select checkboxes (one per session) | All checked | Let user include/exclude specific sessions |
-| Minimum sessions | Dropdown: 1, 2, 3, 4, 5, 6 | 2 | Only include members who appeared in at least this many of the selected sessions |
+| Minimum sessions | Dropdown: 1..8 (cap at number of selected sessions) | 2 | Only include members who appeared in at least this many of the selected sessions |
 | Terminate Debate weight | Slider, 0.0–1.0, step 0.1 | 0.5 | How much influence Terminate Debate votes have (0 = ignore them, 1 = equal weight) |
 | Color by | Dropdown: "Precinct", "Number of sessions attended", "None" | Precinct | What determines dot color |
 
@@ -171,7 +215,7 @@ When any control changes, recompute the matrix, re-run PCA, and re-render the pl
 
 ### 5.3 The scatter plot
 
-Use **Plotly.js** (already available via CDN — `https://cdn.plot.ly/plotly-2.27.0.min.js`). Plotly gives us hover tooltips, zoom, pan, and lasso select for free.
+Use **Plotly.js** via CDN (`https://cdn.plot.ly/plotly-2.27.0.min.js`). Plotly gives us hover tooltips, zoom, pan, and lasso select for free.
 
 - **Each dot** = one Town Meeting member
 - **X axis** = PC1 (label: "Component 1 (X% variance)")
@@ -188,7 +232,9 @@ Use **Plotly.js** (already available via CDN — `https://cdn.plot.ly/plotly-2.2
 
 Below (or beside) the scatter plot, show a small panel:
 - When a member dot is clicked, list the **10 most similar members** (by Euclidean distance in the full vote space, NOT just the 2D projection) along with their agreement percentage.
+- Compute neighbor distance on **co-voted dimensions only** (exclude columns where either member has `NaN`; use weighted numeric values for non-missing votes).
 - Agreement % = (number of votes where both members voted and voted the same way) / (number of votes where both members voted). Exclude votes where either member has NaN.
+- If two members have zero overlapping voted columns, set agreement to `N/A` and rank them after all members with overlap.
 
 ### 5.5 Supplementary panel: "Axis interpretation"
 
@@ -219,6 +265,7 @@ For the slider (Terminate Debate weight), style it with CSS to match the blue ac
 ## 7. Performance considerations
 
 - **Parallel fetch:** Load all 8 spreadsheets with `Promise.all`. Show a progress counter ("Loading 3 of 8...").
+- Implement progress with a shared counter incremented in each task's `finally`, then update the clustering loading element after each completion.
 - **Cache parsed data:** Once the multi-session data is loaded, cache it in a global variable. Don't re-fetch when the user toggles sessions on/off — just recompute the matrix from cached data.
 - **Debounce control changes:** If the user drags the slider, debounce the recompute to avoid running PCA on every intermediate value. 200ms debounce is fine.
 - **Matrix size:** Worst case is ~250 members × ~320 votes. PCA on a 250×320 matrix is trivial in JS — no web worker needed.
@@ -260,6 +307,7 @@ Reuse the existing `loadVotingDataFromExcel()` parsing logic — factor it into 
 3. **Member attended only 1 session and "Minimum sessions" is set to 1** — They'll have NaN for most of the matrix. After imputation (NaN→0), they'll cluster near the center. This is correct behavior — we don't have enough data to place them confidently.
 4. **All votes in a column are the same (unanimous)** — After centering, this column becomes all zeros and contributes nothing to PCA. This is fine — it automatically gets ignored.
 5. **Terminate Debate weight set to 0** — These columns get multiplied by 0 and become all zeros after centering. Equivalent to dropping them. This is correct.
+6. **Two members share no co-voted columns** — Exclude from distance-based nearest-neighbor ranking unless needed as fallback; display agreement as `N/A`.
 
 ---
 
@@ -273,6 +321,7 @@ Reuse the existing `loadVotingDataFromExcel()` parsing logic — factor it into 
 - [ ] Unchecking a session checkbox and re-rendering works without errors
 - [ ] Hovering a dot shows the correct member name and precinct
 - [ ] Clicking a dot shows the nearest-neighbors list with plausible names
+- [ ] Members with no overlap display `N/A` agreement and are ranked below members with overlap
 - [ ] The "axis interpretation" panel shows real article titles, not undefined or blank
 - [ ] The plot looks reasonable: not all dots in a single clump, and not randomly scattered. There should be some visible structure (likely a spectrum or 2-3 clusters).
 - [ ] Precinct coloring shows a legend and uses distinguishable colors
@@ -288,7 +337,8 @@ Reuse the existing `loadVotingDataFromExcel()` parsing logic — factor it into 
 <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
 ```
 
-No other external libraries are required. PCA can be implemented from scratch, or use:
+Plotly is required for rendering. No additional libraries are required for PCA.  
+If preferred, PCA can still be implemented with an optional helper library:
 ```html
 <script src="https://cdn.jsdelivr.net/npm/ml-matrix@6.10.4/matrix.umd.min.js"></script>
 ```
