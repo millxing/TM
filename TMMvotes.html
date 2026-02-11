@@ -9,6 +9,8 @@
 
     <!-- XLSX library for reading Excel files directly in the browser -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <!-- Plotly for interactive scatter plots in voter clustering -->
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
 
     <style>
         /* Basic reset to make sizing and spacing predictable */
@@ -279,6 +281,244 @@
             padding: 40px;
             color: #666;
         }
+
+        .cluster-status {
+            margin-bottom: 16px;
+            padding: 12px 16px;
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .cluster-status.error {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+
+        .cluster-controls {
+            align-items: flex-start;
+        }
+
+        .cluster-control-block {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            min-width: 360px;
+        }
+
+        .cluster-control-inline {
+            display: flex;
+            gap: 14px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .cluster-inline-select {
+            min-width: 170px;
+        }
+
+        .cluster-search-input {
+            min-width: 260px;
+            padding: 10px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 15px;
+            background-color: white;
+            transition: border-color 0.3s ease;
+        }
+
+        .cluster-search-input:hover {
+            border-color: #3498db;
+        }
+
+        .cluster-search-input:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .cluster-action-btn {
+            padding: 10px 14px;
+            border: 2px solid #3498db;
+            border-radius: 8px;
+            background-color: #3498db;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .cluster-action-btn:hover {
+            background-color: #2d87c6;
+            border-color: #2d87c6;
+        }
+
+        .session-checkboxes {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .session-option {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 10px;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            background-color: #f8f9fa;
+            font-size: 13px;
+            color: #2c3e50;
+        }
+
+        .session-option input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+        }
+
+        .cluster-slider-group {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 8px 12px;
+        }
+
+        .cluster-slider-group input[type="range"] {
+            width: 180px;
+            accent-color: #3498db;
+        }
+
+        .cluster-slider-value {
+            min-width: 36px;
+            font-weight: 600;
+            color: #2c3e50;
+            text-align: right;
+        }
+
+        .cluster-plot {
+            width: 100%;
+            height: 600px;
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            background-color: #fff;
+        }
+
+        .cluster-panels {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(320px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .cluster-panel {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            padding: 16px;
+        }
+
+        .cluster-panel.member-detail {
+            grid-column: 1 / -1;
+        }
+
+        .cluster-panel h3 {
+            margin-bottom: 12px;
+            color: #2c3e50;
+            font-size: 17px;
+        }
+
+        .cluster-panel-body {
+            font-size: 14px;
+            color: #444;
+        }
+
+        .cluster-message {
+            color: #666;
+            font-style: italic;
+        }
+
+        .cluster-member-meta {
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .cluster-neighbor-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .cluster-neighbor-list li {
+            padding: 8px 10px;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            background-color: #fff;
+            margin-bottom: 6px;
+            line-height: 1.4;
+        }
+
+        .axis-component {
+            margin-bottom: 16px;
+            background-color: #fff;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 10px 12px;
+        }
+
+        .axis-component h4 {
+            margin-bottom: 8px;
+            color: #2c3e50;
+            font-size: 14px;
+        }
+
+        .axis-direction {
+            margin-bottom: 8px;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        .axis-direction strong {
+            color: #2c3e50;
+        }
+
+        @media (max-width: 900px) {
+            select {
+                min-width: 220px;
+            }
+
+            .cluster-control-block {
+                min-width: 280px;
+            }
+
+            .cluster-panels {
+                grid-template-columns: 1fr;
+            }
+
+            .results {
+                grid-template-columns: repeat(2, minmax(260px, 1fr));
+            }
+        }
+
+        @media (max-width: 640px) {
+            select {
+                min-width: 180px;
+            }
+
+            .results {
+                grid-template-columns: 1fr;
+            }
+
+            .cluster-plot {
+                height: 480px;
+            }
+        }
     </style>
 </head>
 
@@ -305,22 +545,25 @@
                         which is fetched via the GitHub raw URL.
                     -->
                     <select id="spreadsheet-select">
-                        <option value="May%202022%20Votes.xlsx">May 2022 Votes (57 votes)</option>
-                        <option value="November%202022%20Votes.xlsx" selected>November 2022 Votes (68 votes)</option>
-                        <option value="May%202023%20Votes.xlsx">May 2023 Votes (44 votes)</option>
-                        <option value="November%202023%20Votes.xlsx" selected>November 2023 Votes (24 votes)</option>
-                        <option value="May%202024%20Votes.xlsx">May 2024 Votes (34 votes)</option>
-                        <option value="November%202024%20Votes.xlsx" selected>November 2024 Votes (28 votes)</option>
-                        <option value="May%202025%20Votes.xlsx">May 2025 Votes (45 votes)</option>
-                        <option value="November%202025%20Votes.xlsx" selected>November 2025 Votes (19 votes)</option>
+                        <option value="Votes/May%202021%20Votes.xlsx">May 2021 Votes (68 votes)</option>
+                        <option value="Votes/October%202021%20Votes.xlsx">October 2021 Votes (10 votes)</option>
+                        <option value="Votes/November%202021%20Votes.xlsx">November 2021 Votes (48 votes)</option>
+                        <option value="Votes/May%202022%20Votes.xlsx">May 2022 Votes (57 votes)</option>
+                        <option value="Votes/November%202022%20Votes.xlsx">November 2022 Votes (68 votes)</option>
+                        <option value="Votes/May%202023%20Votes.xlsx">May 2023 Votes (44 votes)</option>
+                        <option value="Votes/November%202023%20Votes.xlsx">November 2023 Votes (24 votes)</option>
+                        <option value="Votes/May%202024%20Votes.xlsx">May 2024 Votes (34 votes)</option>
+                        <option value="Votes/November%202024%20Votes.xlsx">November 2024 Votes (28 votes)</option>
+                        <option value="Votes/May%202025%20Votes.xlsx">May 2025 Votes (45 votes)</option>
+                        <option value="Votes/November%202025%20Votes.xlsx" selected>November 2025 Votes (19 votes)</option>
                     </select>
                 </div>
             </div>
 
             <!-- Tab selector buttons: View by Vote vs View by Member -->
             <div class="tabs">
-                <button class="tab active" onclick="switchTab('by-vote')">View by Vote</button>
-                <button class="tab" onclick="switchTab('by-member')">View by Member</button>
+                <button class="tab active" onclick="switchTab(event, 'by-vote')">View by Vote</button>
+                <button class="tab" onclick="switchTab(event, 'by-member')">View by Member</button>
             </div>
 
             <!-- TAB: View by Vote -->
@@ -358,6 +601,70 @@
                 <!-- Grid of four columns: for this one member, show which articles they voted Yes/No/Abstain/No Vote -->
                 <div id="member-results" class="results"></div>
             </div>
+
+            <!-- TAB: Voter Clustering -->
+            <div id="voter-clustering" class="tab-content">
+                <div class="controls">
+                    <div class="control-group cluster-controls">
+                        <div class="cluster-control-block">
+                            <label>Sessions to include:</label>
+                            <div id="cluster-session-checkboxes" class="session-checkboxes"></div>
+                        </div>
+                        <div class="cluster-control-inline">
+                            <label for="cluster-min-sessions">Minimum sessions:</label>
+                            <select id="cluster-min-sessions" class="cluster-inline-select"></select>
+
+                            <div class="cluster-slider-group">
+                                <label for="cluster-terminate-weight">Terminate Debate weight:</label>
+                                <input type="range" id="cluster-terminate-weight" min="0" max="1" step="0.1" value="0.5">
+                                <span id="cluster-terminate-weight-value" class="cluster-slider-value">0.5</span>
+                            </div>
+
+                            <label for="cluster-color-by">Color by:</label>
+                            <select id="cluster-color-by" class="cluster-inline-select">
+                                <option value="precinct" selected>Precinct</option>
+                                <option value="sessions">Number of sessions attended</option>
+                                <option value="none">None</option>
+                            </select>
+
+                            <label for="cluster-member-search">Find member:</label>
+                            <input
+                                type="search"
+                                id="cluster-member-search"
+                                class="cluster-search-input"
+                                list="cluster-member-options"
+                                placeholder="Type member name..."
+                                autocomplete="off">
+                            <datalist id="cluster-member-options"></datalist>
+                            <button type="button" id="cluster-member-search-go" class="cluster-action-btn">Select</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="cluster-status" class="cluster-status">Open this tab to load all sessions.</div>
+                <div id="cluster-plot" class="cluster-plot"></div>
+
+                <div class="cluster-panels">
+                    <div class="cluster-panel member-detail">
+                        <h3>Selected Member</h3>
+                        <div id="cluster-member-detail" class="cluster-panel-body">
+                            <div class="cluster-message">Click a dot to view this member's aggregated voting summary.</div>
+                        </div>
+                    </div>
+                    <div class="cluster-panel">
+                        <h3>Nearest Neighbors</h3>
+                        <div id="cluster-neighbors" class="cluster-panel-body">
+                            <div class="cluster-message">Click a dot to view the 10 most similar members.</div>
+                        </div>
+                    </div>
+                    <div class="cluster-panel">
+                        <h3>Axis Interpretation</h3>
+                        <div id="cluster-axis-info" class="cluster-panel-body">
+                            <div class="cluster-message">Run clustering to inspect top positive and negative loadings for PC1 and PC2.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -365,281 +672,306 @@
     <script>
         /****************************************************
          * SPREADSHEET STRUCTURE CONFIGURATION
-         *
-         * These constants describe the expected layout
-         * of the Excel sheets. Everything below assumes
-         * the same row/column structure across all files.
          ****************************************************/
 
-        // Row indices are zero-based because of XLSX's array-of-arrays representation
-        const TITLE_ROW_INDEX = 2;       // Excel row 3: article title, e.g. "Article 32 Main Motion"
-        const DESCRIPTION_ROW_INDEX = 3; // Excel row 4: description / summary of the article
-        const HEADER_ROW_INDEX = 4;      // Excel row 5: usually column headers (Precinct, Name, etc.)
-        const FIRST_DATA_ROW_INDEX = 5;  // Excel row 6: first row of actual voting data
+        const TITLE_ROW_INDEX = 2;
+        const DESCRIPTION_ROW_INDEX = 3;
+        const HEADER_ROW_INDEX = 4;
+        const FIRST_DATA_ROW_INDEX = 5;
 
-        // Column indices (zero-based)
-        const PRECINCT_COL_INDEX = 0;    // column A: precinct
-        const NAME_COL_INDEX = 1;        // column B: member name
-        const FIRST_VOTE_COL_INDEX = 2;  // column C: first vote column
+        const PRECINCT_COL_INDEX = 0;
+        const NAME_COL_INDEX = 1;
+        const FIRST_VOTE_COL_INDEX = 2;
 
-        // An upper bound for how far we look for vote columns.
-        // This is reset per sheet to the actual last vote column.
-        let LAST_VOTE_COL_INDEX = 100;
+        const SPREADSHEET_BASE_URL = 'https://raw.githubusercontent.com/millxing/TM/main/';
+        const DISALLOWED_MEMBER_NAMES = new Set(['YES', 'NO', 'ABSTAIN', 'NO VOTE', 'TOTAL', 'ARTICLE', 'MOTION']);
+        const SESSION_FILES = [
+            { id: '2021-05', label: 'May 2021', file: 'Votes/May%202021%20Votes.xlsx' },
+            { id: '2021-10', label: 'October 2021', file: 'Votes/October%202021%20Votes.xlsx' },
+            { id: '2021-11', label: 'November 2021', file: 'Votes/November%202021%20Votes.xlsx' },
+            { id: '2022-05', label: 'May 2022', file: 'Votes/May%202022%20Votes.xlsx' },
+            { id: '2022-11', label: 'November 2022', file: 'Votes/November%202022%20Votes.xlsx' },
+            { id: '2023-05', label: 'May 2023', file: 'Votes/May%202023%20Votes.xlsx' },
+            { id: '2023-11', label: 'November 2023', file: 'Votes/November%202023%20Votes.xlsx' },
+            { id: '2024-05', label: 'May 2024', file: 'Votes/May%202024%20Votes.xlsx' },
+            { id: '2024-11', label: 'November 2024', file: 'Votes/November%202024%20Votes.xlsx' },
+            { id: '2025-05', label: 'May 2025', file: 'Votes/May%202025%20Votes.xlsx' },
+            { id: '2025-11', label: 'November 2025', file: 'Votes/November%202025%20Votes.xlsx' }
+        ];
+        const SESSION_ORDER_INDEX = SESSION_FILES.reduce((acc, session, index) => {
+            acc[session.id] = index;
+            return acc;
+        }, {});
 
         /****************************************************
-         * GLOBAL DATA STRUCTURES
+         * GLOBAL STATE
          ****************************************************/
 
-        // votingData:
-        //   key: "Name (Precinct X)"
-        //   value: { precinct: string, votes: { [voteTitle]: 'YES'|'NO'|'ABSTAIN'|'NoVote' } }
+        let LAST_VOTE_COL_INDEX = 100;
         let votingData = null;
-
-        // votes:
-        //   array of { colIndex, title, description }
         let votes = [];
-
-        // members:
-        //   array of { name, precinct, key }
         let members = [];
 
-        // Cached DOM references
+        let clusteringSessionsCache = null;
+        let clusteringLoadPromise = null;
+        let clusteringControlsInitialized = false;
+        let clusteringDebounceTimer = null;
+        let clusteringAnalysisState = null;
+        let selectedClusterMemberKey = null;
+        const clusterMemberSearchLabelToKey = new Map();
+        const clusterMemberSearchKeyToLabel = new Map();
+        const APP_MODE = new URLSearchParams(window.location.search).get('app') === 'vote-analyzer'
+            ? 'vote-analyzer'
+            : 'tmmvotes';
+
         const loadingEl = document.getElementById('loading');
         const mainContentEl = document.getElementById('main-content');
+        const clusterStatusEl = document.getElementById('cluster-status');
+        const clusterPlotEl = document.getElementById('cluster-plot');
+        const clusterMemberDetailEl = document.getElementById('cluster-member-detail');
+        const clusterNeighborsEl = document.getElementById('cluster-neighbors');
+        const clusterAxisInfoEl = document.getElementById('cluster-axis-info');
 
         /****************************************************
-         * URL / FILE SELECTION HELPERS
+         * URL / FILE HELPERS
          ****************************************************/
 
-        /**
-         * Build the GitHub raw URL for the spreadsheet currently selected
-         * in the dropdown. The <select> holds the URL-encoded filename.
-         */
+        function getSpreadsheetRawURL(file) {
+            return `${SPREADSHEET_BASE_URL}${file}`;
+        }
+
         function getSelectedSpreadsheetURL() {
             const select = document.getElementById('spreadsheet-select');
-            // Fallback: default to November 2025 votes if no select found for some reason
-            const file = select ? select.value : 'November%202025%20Votes.xlsx';
-            // Files are stored in the TM repository root (main branch)
-            return `https://raw.githubusercontent.com/millxing/TM/main/${file}`;
+            const file = select ? select.value : 'Votes/November%202025%20Votes.xlsx';
+            return getSpreadsheetRawURL(file);
+        }
+
+        function getCurrentSpreadsheetMeta() {
+            const select = document.getElementById('spreadsheet-select');
+            const selectedIndex = select ? select.selectedIndex : -1;
+            const option = select && selectedIndex >= 0 ? select.options[selectedIndex] : null;
+            const file = option ? option.value : 'Votes/November%202025%20Votes.xlsx';
+            const labelText = option ? option.textContent : 'Selected Session';
+            const label = labelText ? labelText.split('(')[0].trim() : 'Selected Session';
+            const knownSession = SESSION_FILES.find(session => session.file === file);
+
+            return {
+                id: knownSession ? knownSession.id : 'single-session',
+                label: knownSession ? knownSession.label : label,
+                file
+            };
         }
 
         /****************************************************
          * DATA NORMALIZATION & SORT HELPERS
          ****************************************************/
 
-        /**
-         * Convert a precinct string to a numeric sort key.
-         * - Numeric precincts (e.g., "1", "2") sort by their number.
-         * - "AL" (At Large) is pushed to the end using a high value (999).
-         * - Any other non-numeric precincts get a slightly smaller high value (998),
-         *   so they sort just before AL.
-         */
-        function precinctSortValue(p) {
-            const n = parseInt(p, 10);
+        function precinctSortValue(precinct) {
+            const n = parseInt(precinct, 10);
             if (!isNaN(n)) return n;
-            if (String(p).toUpperCase() === 'AL') return 999;
+            if (String(precinct).toUpperCase() === 'AL') return 999;
             return 998;
         }
 
-        /**
-         * Normalize a raw vote cell into one of:
-         *   'YES', 'NO', 'ABSTAIN', or 'NoVote'
-         *
-         * Acceptable raw inputs:
-         *   'Y', 'YES', 'N', 'NO', 'A', 'ABSTAIN' (case-insensitive).
-         * Anything else is treated as no recorded vote.
-         */
         function normalizeVote(raw) {
-            let v = (raw == null ? '' : String(raw)).trim().toUpperCase();
-
-            if (!v) return 'NoVote';
-            if (v === 'Y') return 'YES';
-            if (v === 'N') return 'NO';
-            if (v === 'A') return 'ABSTAIN';
-            if (v === 'YES' || v === 'NO' || v === 'ABSTAIN') return v;
-
-            // Catch-all: treat unknown values as no vote
+            const value = (raw == null ? '' : String(raw)).trim().toUpperCase();
+            if (!value) return 'NoVote';
+            if (value === 'Y') return 'YES';
+            if (value === 'N') return 'NO';
+            if (value === 'A') return 'ABSTAIN';
+            if (value === 'YES' || value === 'NO' || value === 'ABSTAIN') return value;
             return 'NoVote';
+        }
+
+        function voteToNumeric(voteValue) {
+            if (voteValue === 'YES') return 1;
+            if (voteValue === 'NO') return -1;
+            if (voteValue === 'ABSTAIN') return 0;
+            return NaN;
+        }
+
+        function normalizeMemberName(name) {
+            return String(name || '').trim().toLowerCase().replace(/\s+/g, ' ');
+        }
+
+        function canonicalMemberKey(name, precinct) {
+            return `${normalizeMemberName(name)}|${String(precinct || '').trim().toUpperCase()}`;
+        }
+
+        function formatPrecinctLabel(precinct) {
+            const up = String(precinct).toUpperCase();
+            if (up === 'AL') return 'AL';
+            return `P${precinct}`;
+        }
+
+        function isTerminateDebateVote(title) {
+            return String(title || '').toLowerCase().includes('terminate debate');
         }
 
         /****************************************************
          * LOADING & PARSING EXCEL
          ****************************************************/
 
-        /**
-         * Fetches the selected Excel file from GitHub, parses it using XLSX,
-         * extracts:
-         *   - global "votes" array (per-column vote metadata)
-         *   - global "members" array
-         *   - global "votingData" map
-         *
-         * Also detects the last vote column in a robust way so that
-         * extra trailing columns / formatting don't cause issues.
-         */
+        function parseRowsToData(rows, sessionMeta = {}) {
+            if (!rows || rows.length <= HEADER_ROW_INDEX) {
+                throw new Error('Spreadsheet does not contain expected header rows.');
+            }
+
+            LAST_VOTE_COL_INDEX = 100;
+            const sessionId = sessionMeta.id || 'session';
+            const sessionLabel = sessionMeta.label || 'Session';
+
+            const titleRow = rows[TITLE_ROW_INDEX] || [];
+            const descRow = rows[DESCRIPTION_ROW_INDEX] || [];
+
+            const defaultHeaderRow = rows[HEADER_ROW_INDEX] || [];
+            const possibleAltHeaderRow = rows[DESCRIPTION_ROW_INDEX] || [];
+            const hasHeaderLabels = row =>
+                String(row[PRECINCT_COL_INDEX] || '').trim().toUpperCase() === 'PRECINCT' &&
+                String(row[NAME_COL_INDEX] || '').trim().toUpperCase() === 'NAME';
+            const looksLikeDataRow = row => {
+                const precinct = String(row[PRECINCT_COL_INDEX] || '').trim();
+                const name = String(row[NAME_COL_INDEX] || '').trim();
+                const upperPrecinct = precinct.toUpperCase();
+                const precinctNum = parseInt(precinct, 10);
+                const isNumericPrecinct = !isNaN(precinctNum);
+                const isAL = upperPrecinct === 'AL';
+                return !!name && (isNumericPrecinct || isAL);
+            };
+
+            let effectiveHeaderRowIndex = HEADER_ROW_INDEX;
+            let effectiveFirstDataRowIndex = FIRST_DATA_ROW_INDEX;
+            if (
+                !hasHeaderLabels(defaultHeaderRow) &&
+                hasHeaderLabels(possibleAltHeaderRow) &&
+                looksLikeDataRow(defaultHeaderRow)
+            ) {
+                effectiveHeaderRowIndex = DESCRIPTION_ROW_INDEX;
+                effectiveFirstDataRowIndex = HEADER_ROW_INDEX;
+            }
+
+            const headerRow = rows[effectiveHeaderRowIndex] || [];
+            const maxPossibleCol = Math.max(titleRow.length, descRow.length, headerRow.length);
+
+            let lastColWithTitle = FIRST_VOTE_COL_INDEX;
+            for (let col = FIRST_VOTE_COL_INDEX; col < maxPossibleCol; col++) {
+                const possibleTitle = String(titleRow[col] || headerRow[col] || '').trim();
+                if (possibleTitle) {
+                    lastColWithTitle = col;
+                }
+            }
+            LAST_VOTE_COL_INDEX = lastColWithTitle;
+
+            const parsedVotes = [];
+            for (let col = FIRST_VOTE_COL_INDEX; col <= LAST_VOTE_COL_INDEX; col++) {
+                const title = String(titleRow[col] || headerRow[col] || '').trim();
+                if (!title) continue;
+                parsedVotes.push({
+                    id: `${sessionId}::${col}`,
+                    sessionId,
+                    sessionLabel,
+                    colIndex: col,
+                    title,
+                    description: String(descRow[col] || '').trim(),
+                    isTerminateDebate: isTerminateDebateVote(title)
+                });
+            }
+
+            const parsedMembers = [];
+            const parsedVotingData = {};
+            const canonicalMembers = {};
+
+            for (let r = effectiveFirstDataRowIndex; r < rows.length; r++) {
+                const row = rows[r] || [];
+                const name = String(row[NAME_COL_INDEX] || '').trim();
+                const precinct = String(row[PRECINCT_COL_INDEX] || '').trim();
+
+                if (!name && !precinct) continue;
+                if (!name) continue;
+
+                const upperName = name.toUpperCase();
+                const upperPrecinct = precinct.toUpperCase();
+                if (DISALLOWED_MEMBER_NAMES.has(upperName) || upperName.startsWith('TOTAL')) continue;
+
+                const precinctNum = parseInt(precinct, 10);
+                const isNumericPrecinct = !isNaN(precinctNum);
+                const isAL = upperPrecinct === 'AL';
+                if (!isNumericPrecinct && !isAL) continue;
+
+                const memberKey = `${name} (Precinct ${precinct})`;
+                const canonicalKey = canonicalMemberKey(name, precinct);
+                const voteMapByTitle = {};
+                const voteMapById = {};
+
+                parsedVotes.forEach(vote => {
+                    const normalized = normalizeVote(row[vote.colIndex]);
+                    voteMapByTitle[vote.title] = normalized;
+                    voteMapById[vote.id] = normalized;
+                });
+
+                parsedMembers.push({ name, precinct, key: memberKey });
+                parsedVotingData[memberKey] = {
+                    precinct,
+                    votes: voteMapByTitle
+                };
+
+                canonicalMembers[canonicalKey] = {
+                    name,
+                    precinct,
+                    memberKey,
+                    votesById: voteMapById
+                };
+            }
+
+            return {
+                id: sessionId,
+                label: sessionLabel,
+                file: sessionMeta.file || '',
+                votes: parsedVotes,
+                members: parsedMembers,
+                votingData: parsedVotingData,
+                canonicalMembers
+            };
+        }
+
+        function parseWorkbookArrayBuffer(arrayBuffer, sessionMeta = {}) {
+            const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+            const sheetName = workbook.SheetNames[0];
+            const sheet = workbook.Sheets[sheetName];
+            const rows = XLSX.utils.sheet_to_json(sheet, {
+                header: 1,
+                blankrows: false,
+                defval: ''
+            });
+            return parseRowsToData(rows, sessionMeta);
+        }
+
+        async function fetchAndParseSpreadsheet(sessionMeta) {
+            const response = await fetch(getSpreadsheetRawURL(sessionMeta.file));
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status} ${response.statusText}`);
+            }
+            const arrayBuffer = await response.arrayBuffer();
+            return parseWorkbookArrayBuffer(arrayBuffer, sessionMeta);
+        }
+
         async function loadVotingDataFromExcel() {
             try {
-                // Reset upper bound each time a new sheet is loaded
-                LAST_VOTE_COL_INDEX = 100;
-
                 if (loadingEl) loadingEl.textContent = 'Loading voting data from spreadsheet...';
+                const parsed = await fetchAndParseSpreadsheet(getCurrentSpreadsheetMeta());
 
-                // Download the Excel file
-                const response = await fetch(getSelectedSpreadsheetURL());
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status} ${response.statusText}`);
-                }
+                votes = parsed.votes.map(vote => ({
+                    colIndex: vote.colIndex,
+                    title: vote.title,
+                    description: vote.description
+                }));
+                members = parsed.members;
+                votingData = parsed.votingData;
 
-                // Read the response as a binary buffer
-                const arrayBuffer = await response.arrayBuffer();
-
-                // Parse the workbook
-                const workbook = XLSX.read(arrayBuffer, { type: 'array' });
-
-                // Use the first sheet in the workbook
-                const sheetName = workbook.SheetNames[0];
-                const sheet = workbook.Sheets[sheetName];
-
-                // Convert sheet to array-of-arrays:
-                //   rows[rowIndex][colIndex]
-                const rows = XLSX.utils.sheet_to_json(sheet, {
-                    header: 1,        // first row is row 0 in the array
-                    blankrows: false, // skip rows that are completely blank
-                    defval: ''        // default value for empty cells
-                });
-
-                // Basic sanity check on expected header rows
-                if (!rows || rows.length <= HEADER_ROW_INDEX) {
-                    throw new Error('Spreadsheet does not contain expected header rows.');
-                }
-
-                // Extract the important header rows
-                const titleRow = rows[TITLE_ROW_INDEX] || [];
-                // --- ADD THIS DEBUG BLOCK ---
-                console.log("DEBUGGING:", {
-                    "Sheet Range (!ref)": sheet['!ref'],
-                    "Title Row Length": titleRow.length,
-                    "Column 58 (BG) Value": titleRow[58]
-                });
-                // ----------------------------
-                // Extract the description row
-                const descRow = rows[DESCRIPTION_ROW_INDEX] || [];
-                // Extract the header row
-                const headerRow = rows[HEADER_ROW_INDEX] || [];
-
-                /********************************************
-                 * DETECT LAST VOTE COLUMN
-                 *
-                 * We want the last column that actually
-                 * has a non-empty title, using either:
-                 *   - titleRow
-                 *   - or headerRow
-                 *   (descriptionRow is less important but
-                 *    is considered in maxPossibleCol length)
-                 ********************************************/
-
-                // The maximum number of columns available among these three rows
-                const maxPossibleCol = Math.max(titleRow.length, descRow.length, headerRow.length);
-
-                // Start with the first vote column and update as we find valid titles
-                let lastColWithTitle = FIRST_VOTE_COL_INDEX;
-                for (let col = FIRST_VOTE_COL_INDEX; col < maxPossibleCol; col++) {
-                    const possibleTitle = String(titleRow[col] || headerRow[col] || '').trim();
-                    if (possibleTitle) {
-                        // Non-empty title → this column is considered a vote column
-                        lastColWithTitle = col;
-                    }
-                }
-
-                // Narrow the global last vote column bound
-                LAST_VOTE_COL_INDEX = lastColWithTitle;
-
-                /********************************************
-                 * BUILD VOTES ARRAY
-                 *
-                 * For each vote column, store:
-                 *   - its column index
-                 *   - the article title
-                 *   - the article description
-                 ********************************************/
-                votes = [];
-                for (let col = FIRST_VOTE_COL_INDEX; col <= LAST_VOTE_COL_INDEX; col++) {
-                    // Prefer titleRow for the title; fall back to header if needed
-                    const title = String(titleRow[col] || headerRow[col] || '').trim();
-                    if (!title) continue; // skip columns with no title
-
-                    const description = String(descRow[col] || '').trim();
-
-                    votes.push({
-                        colIndex: col,
-                        title: title,
-                        description: description
-                    });
-                }
-
-                /********************************************
-                 * BUILD MEMBERS ARRAY AND VOTING DATA MAP
-                 ********************************************/
-                members = [];
-                votingData = {};
-
-                // Iterate over each data row (each Town Meeting member or summary row)
-                for (let r = FIRST_DATA_ROW_INDEX; r < rows.length; r++) {
-                    const row = rows[r] || [];
-
-                    const nameRaw = row[NAME_COL_INDEX];
-                    const precinctRaw = row[PRECINCT_COL_INDEX];
-
-                    const name = String(nameRaw || '').trim();
-                    const precinct = String(precinctRaw || '').trim();
-                    const upperName = name.toUpperCase();
-                    const upperPrecinct = precinct.toUpperCase();
-
-                    // Skip rows where both name and precinct are blank
-                    // (extra spacing or padding)
-                    if (!name && !precinct) continue;
-
-                    // For safety, filter out summary/total rows:
-                    // Many sheets include rows labeled YES/NO/ABSTAIN/TOTAL/etc.
-                    const disallowedNames = ['YES', 'NO', 'ABSTAIN', 'NO VOTE', 'TOTAL', 'ARTICLE', 'MOTION'];
-
-                    // If name is missing or an obvious summary label, ignore row
-                    if (!name || disallowedNames.includes(upperName)) continue;
-
-                    // Require precinct to be either a valid integer or 'AL'
-                    const precinctNum = parseInt(precinct, 10);
-                    const isNumericPrecinct = !isNaN(precinctNum);
-                    const isAL = upperPrecinct === 'AL';
-                    if (!isNumericPrecinct && !isAL) continue;
-
-                    // Unique key combining name and precinct
-                    const memberKey = `${name} (Precinct ${precinct})`;
-
-                    // Record the member so we can build dropdowns and sort lists
-                    members.push({
-                        name,
-                        precinct,
-                        key: memberKey
-                    });
-
-                    // Build a map of { title -> normalizedVote } for this member
-                    const voteMap = {};
-                    votes.forEach(v => {
-                        const rawCell = row[v.colIndex];
-                        voteMap[v.title] = normalizeVote(rawCell);
-                    });
-
-                    // Store full voting data for this member
-                    votingData[memberKey] = {
-                        precinct,
-                        votes: voteMap
-                    };
-                }
-
-                // Once data structures are ready, initialize the UI
                 initializeApp();
             } catch (err) {
                 console.error(err);
-                if (loadingEl) loadingEl.textContent = 'Error loading spreadsheet: ' + err.message;
+                if (loadingEl) loadingEl.textContent = `Error loading spreadsheet: ${err.message}`;
             }
         }
 
@@ -647,16 +979,7 @@
          * INITIALIZATION & DROPDOWNS
          ****************************************************/
 
-        /**
-         * Initializes the UI once "members", "votes", and "votingData"
-         * have been populated:
-         *   - Sort members
-         *   - Populate the dropdowns
-         *   - Show the first vote's results by default
-         *   - Show the initial member's results by default (if any)
-         */
         function initializeApp() {
-            // Sort members by precinct then name (default behavior)
             members.sort((a, b) => {
                 const pa = precinctSortValue(a.precinct);
                 const pb = precinctSortValue(b.precinct);
@@ -664,64 +987,42 @@
                 return a.name.localeCompare(b.name);
             });
 
-            // Fill in the <select> elements
             populateDropdowns();
 
-            // Hide the loading text and show main content
             if (loadingEl) loadingEl.style.display = 'none';
             if (mainContentEl) mainContentEl.style.display = 'block';
 
-            // Default: show the first vote’s breakdown in View by Vote
             if (votes.length > 0) {
                 const voteSelect = document.getElementById('vote-select');
-                if (voteSelect) {
-                    voteSelect.value = votes[0].title;
-                }
+                if (voteSelect) voteSelect.value = votes[0].title;
                 updateVoteResults();
             }
 
-            // Default: show the first member’s voting pattern in View by Member
             const memberSelect = document.getElementById('member-select');
             if (memberSelect && memberSelect.value && votingData[memberSelect.value]) {
                 updateMemberResults();
             }
         }
 
-        /**
-         * Rebuilds the member dropdown based on:
-         *   - global "members" array
-         *   - "sort by precinct" checkbox state
-         *
-         * Keeps the previously-selected member if possible.
-         */
         function populateMemberDropdown() {
             const memberSelect = document.getElementById('member-select');
             if (!memberSelect) return;
 
             const sortByPrecinctCheckbox = document.getElementById('sort-by-precinct-member');
             const sortByPrecinct = sortByPrecinctCheckbox ? sortByPrecinctCheckbox.checked : false;
-
-            // Remember current selection so we can restore if still valid
             const currentValue = memberSelect.value;
-
-            // Work on a copy when sorting
-            let sortedMembers = [...members];
+            const sortedMembers = [...members];
 
             sortedMembers.sort((a, b) => {
                 if (sortByPrecinct) {
-                    // First sort by precinct key
                     const pa = precinctSortValue(a.precinct);
                     const pb = precinctSortValue(b.precinct);
                     if (pa !== pb) return pa - pb;
                 }
-                // Then sort by name within precinct
                 return a.name.localeCompare(b.name);
             });
 
-            // Clear existing options
             memberSelect.innerHTML = '';
-
-            // Add options as "Name (Precinct X)"
             sortedMembers.forEach(member => {
                 const option = document.createElement('option');
                 option.value = member.key;
@@ -729,29 +1030,18 @@
                 memberSelect.appendChild(option);
             });
 
-            // If the previously-selected member still exists, keep it
             if (currentValue && Array.from(memberSelect.options).some(opt => opt.value === currentValue)) {
                 memberSelect.value = currentValue;
             } else if (memberSelect.options.length > 0) {
-                // Otherwise, default to first member
                 memberSelect.value = memberSelect.options[0].value;
             }
         }
 
-        /**
-         * Populates both:
-         *   - vote dropdown
-         *   - member dropdown
-         * and attaches change listeners for them.
-         */
         function populateDropdowns() {
             const voteSelect = document.getElementById('vote-select');
             if (!voteSelect) return;
 
-            // Clear vote dropdown
             voteSelect.innerHTML = '';
-
-            // Add one option per vote (article title)
             votes.forEach(vote => {
                 const option = document.createElement('option');
                 option.value = vote.title;
@@ -759,53 +1049,30 @@
                 voteSelect.appendChild(option);
             });
 
-            // Build member dropdown (separate function)
             populateMemberDropdown();
-
-            // Attach change handler for votes
-            voteSelect.addEventListener('change', updateVoteResults);
-
-            // Attach change handler for members
-            const memberSelect = document.getElementById('member-select');
-            if (memberSelect) {
-                memberSelect.addEventListener('change', updateMemberResults);
-            }
         }
 
         /****************************************************
          * VIEW BY VOTE
          ****************************************************/
 
-        /**
-         * Updates the “View by Vote” tab:
-         *   - Reads selected vote from dropdown
-         *   - Groups members into YES/NO/ABSTAIN/NoVote
-         *   - Sorts according to the "sort by last name only" checkbox
-         *   - Computes YES/NO percentages (excluding abstentions / no-votes)
-         *   - Renders four columns of member lists
-         */
         function updateVoteResults() {
-            const selectedVote = document.getElementById('vote-select').value;
-            const sortByNameOnly = document.getElementById('sort-by-name-vote').checked;
-            const resultsDiv = document.getElementById('vote-results');
+            const voteSelect = document.getElementById('vote-select');
+            const sortByNameCheckbox = document.getElementById('sort-by-name-vote');
+            if (!voteSelect || !sortByNameCheckbox) return;
 
-            // Find the corresponding vote object to get the article description
+            const selectedVote = voteSelect.value;
+            const sortByNameOnly = sortByNameCheckbox.checked;
+            const resultsDiv = document.getElementById('vote-results');
+            if (!resultsDiv) return;
+
             const selectedVoteDetails = votes.find(v => v.title === selectedVote);
             const description = selectedVoteDetails ? selectedVoteDetails.description : '';
+            const voteGroups = { YES: [], NO: [], ABSTAIN: [], NoVote: [] };
 
-            // Buckets for each vote type
-            const voteGroups = {
-                YES: [],
-                NO: [],
-                ABSTAIN: [],
-                NoVote: []
-            };
-
-            // Place each member into the correct bucket based on their vote
             members.forEach(member => {
                 const voteVal = votingData[member.key].votes[selectedVote];
                 const normalizedVote = voteVal ? voteVal.toUpperCase() : 'NOVOTE';
-
                 if (normalizedVote === 'YES') {
                     voteGroups.YES.push(member);
                 } else if (normalizedVote === 'NO') {
@@ -817,146 +1084,95 @@
                 }
             });
 
-            // Sort each bucket
             Object.keys(voteGroups).forEach(voteType => {
                 voteGroups[voteType].sort((a, b) => {
-                    if (sortByNameOnly) {
-                        // Sort globally by last name / full name string
-                        return a.name.localeCompare(b.name);
-                    } else {
-                        // Default sort: by precinct, then by name
-                        const pa = precinctSortValue(a.precinct);
-                        const pb = precinctSortValue(b.precinct);
-                        if (pa !== pb) return pa - pb;
-                        return a.name.localeCompare(b.name);
-                    }
+                    if (sortByNameOnly) return a.name.localeCompare(b.name);
+                    const pa = precinctSortValue(a.precinct);
+                    const pb = precinctSortValue(b.precinct);
+                    if (pa !== pb) return pa - pb;
+                    return a.name.localeCompare(b.name);
                 });
             });
 
-            // Compute YES/NO percentages out of those who cast a Yes or No
             const totalVotes = voteGroups.YES.length + voteGroups.NO.length;
             const percentages = {
                 YES: totalVotes > 0 ? ((voteGroups.YES.length / totalVotes) * 100).toFixed(1) : '0.0',
                 NO: totalVotes > 0 ? ((voteGroups.NO.length / totalVotes) * 100).toFixed(1) : '0.0'
             };
 
-            let html = '';
+            resultsDiv.replaceChildren();
 
-            // If there is a description for this article, show it above the columns
             if (description) {
-                html += `
-                    <div class="article-description">
-                        <h4>Article Description</h4>
-                        <div>${description}</div>
-                    </div>
-                `;
+                const descriptionEl = document.createElement('div');
+                descriptionEl.className = 'article-description';
+                const descriptionTitleEl = document.createElement('h4');
+                descriptionTitleEl.textContent = 'Article Description';
+                const descriptionBodyEl = document.createElement('div');
+                descriptionBodyEl.textContent = description;
+                descriptionEl.appendChild(descriptionTitleEl);
+                descriptionEl.appendChild(descriptionBodyEl);
+                resultsDiv.appendChild(descriptionEl);
             }
 
-            // Helper to standardize precinct display in the listing
-            const formatPrecinctLabel = (p) => {
-                const up = String(p).toUpperCase();
-                if (up === 'AL') return 'AL';
-                return 'P' + p;
-            };
+            const resultsGridEl = document.createElement('div');
+            resultsGridEl.className = 'results';
 
-            // Build the four vote columns (Yes, No, Abstain, No Vote)
-            html += `
-                <div class="results">
-                    <!-- YES column -->
-                    <div class="vote-column yes">
-                        <h3>Yes (${voteGroups.YES.length}, ${percentages.YES}%)</h3>
-                        <div class="member-list">
-                            ${voteGroups.YES.map(m => `
-                                <div class="member-item">
-                                    <span class="precinct-label">${formatPrecinctLabel(m.precinct)}:</span> ${m.name}
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
+            function appendMemberColumn(columnClass, title, memberList) {
+                const columnEl = document.createElement('div');
+                columnEl.className = `vote-column ${columnClass}`;
 
-                    <!-- NO column -->
-                    <div class="vote-column no">
-                        <h3>No (${voteGroups.NO.length}, ${percentages.NO}%)</h3>
-                        <div class="member-list">
-                            ${voteGroups.NO.map(m => `
-                                <div class="member-item">
-                                    <span class="precinct-label">${formatPrecinctLabel(m.precinct)}:</span> ${m.name}
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
+                const headerEl = document.createElement('h3');
+                headerEl.textContent = title;
+                columnEl.appendChild(headerEl);
 
-                    <!-- ABSTAIN column -->
-                    <div class="vote-column abstain">
-                        <h3>Abstain (${voteGroups.ABSTAIN.length})</h3>
-                        <div class="member-list">
-                            ${voteGroups.ABSTAIN.map(m => `
-                                <div class="member-item">
-                                    <span class="precinct-label">${formatPrecinctLabel(m.precinct)}:</span> ${m.name}
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
+                const listEl = document.createElement('div');
+                listEl.className = 'member-list';
 
-                    <!-- NO VOTE column -->
-                    <div class="vote-column novote">
-                        <h3>Vote Not Recorded (${voteGroups.NoVote.length})</h3>
-                        <div class="member-list">
-                            ${voteGroups.NoVote.map(m => `
-                                <div class="member-item">
-                                    <span class="precinct-label">${formatPrecinctLabel(m.precinct)}:</span> ${m.name}
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                </div>
-            `;
+                memberList.forEach(member => {
+                    const itemEl = document.createElement('div');
+                    itemEl.className = 'member-item';
 
-            // Inject the assembled HTML into the DOM
-            resultsDiv.innerHTML = html;
+                    const precinctEl = document.createElement('span');
+                    precinctEl.className = 'precinct-label';
+                    precinctEl.textContent = `${formatPrecinctLabel(member.precinct)}:`;
+                    itemEl.appendChild(precinctEl);
+                    itemEl.appendChild(document.createTextNode(` ${member.name}`));
+
+                    listEl.appendChild(itemEl);
+                });
+
+                columnEl.appendChild(listEl);
+                resultsGridEl.appendChild(columnEl);
+            }
+
+            appendMemberColumn('yes', `Yes (${voteGroups.YES.length}, ${percentages.YES}%)`, voteGroups.YES);
+            appendMemberColumn('no', `No (${voteGroups.NO.length}, ${percentages.NO}%)`, voteGroups.NO);
+            appendMemberColumn('abstain', `Abstain (${voteGroups.ABSTAIN.length})`, voteGroups.ABSTAIN);
+            appendMemberColumn('novote', `Vote Not Recorded (${voteGroups.NoVote.length})`, voteGroups.NoVote);
+
+            resultsDiv.appendChild(resultsGridEl);
         }
 
         /****************************************************
          * VIEW BY MEMBER
          ****************************************************/
 
-        /**
-         * Updates the “View by Member” tab:
-         *   - Reads selected member from dropdown
-         *   - Groups this member's votes into YES/NO/ABSTAIN/NoVote
-         *   - Sorts within each bucket by article number, with
-         *     "terminate debate" motions pushed to the end
-         *   - Computes percentages for all four buckets
-         *   - Renders four columns of article titles + descriptions
-         */
         function updateMemberResults() {
-            const selectedMember = document.getElementById('member-select').value;
-            const resultsDiv = document.getElementById('member-results');
+            const memberSelect = document.getElementById('member-select');
+            if (!memberSelect) return;
 
-            // If nothing is selected or data is missing, do nothing
+            const selectedMember = memberSelect.value;
+            const resultsDiv = document.getElementById('member-results');
+            if (!resultsDiv) return;
             if (!selectedMember || !votingData[selectedMember]) return;
 
             const memberVotes = votingData[selectedMember].votes;
+            const voteGroups = { YES: [], NO: [], ABSTAIN: [], NoVote: [] };
 
-            // Initialize buckets for each vote type
-            const voteGroups = {
-                YES: [],
-                NO: [],
-                ABSTAIN: [],
-                NoVote: []
-            };
-
-            // For each vote (article), find how this member voted
             votes.forEach(vote => {
                 const voteValue = memberVotes[vote.title];
                 const normalizedVote = voteValue ? voteValue.toUpperCase() : 'NOVOTE';
-
-                // Include both title and description so we can show them in the UI
-                const voteWithDesc = {
-                    title: vote.title,
-                    description: vote.description
-                };
-
+                const voteWithDesc = { title: vote.title, description: vote.description };
                 if (normalizedVote === 'YES') {
                     voteGroups.YES.push(voteWithDesc);
                 } else if (normalizedVote === 'NO') {
@@ -968,37 +1184,22 @@
                 }
             });
 
-            /**
-             * Compare two vote objects for sorting:
-             *   - Put "Terminate debate" motions at the end
-             *   - Otherwise, try to sort numerically by "Article N"
-             *   - If that fails, fall back to plain string comparison
-             */
             const sortByArticle = (a, b) => {
                 const aIsTerminate = a.title.toLowerCase().includes('terminate debate');
                 const bIsTerminate = b.title.toLowerCase().includes('terminate debate');
-
-                // Push terminate-debate motions below regular articles
                 if (aIsTerminate && !bIsTerminate) return 1;
                 if (!aIsTerminate && bIsTerminate) return -1;
 
-                // Try to extract article numbers from "Article N" pattern
                 const aMatch = a.title.match(/Article (\d+)/i);
                 const bMatch = b.title.match(/Article (\d+)/i);
-                if (aMatch && bMatch) {
-                    return parseInt(aMatch[1]) - parseInt(bMatch[1]);
-                }
-
-                // Fallback: simple lexicographic comparison
+                if (aMatch && bMatch) return parseInt(aMatch[1], 10) - parseInt(bMatch[1], 10);
                 return a.title.localeCompare(b.title);
             };
 
-            // Sort each bucket using the helper comparison
             Object.keys(voteGroups).forEach(voteType => {
                 voteGroups[voteType].sort(sortByArticle);
             });
 
-            // Total possible votes is number of articles in the "votes" array
             const total = votes.length;
             const percentages = {
                 YES: total > 0 ? ((voteGroups.YES.length / total) * 100).toFixed(1) : '0.0',
@@ -1007,135 +1208,1210 @@
                 NoVote: total > 0 ? ((voteGroups.NoVote.length / total) * 100).toFixed(1) : '0.0'
             };
 
-            // Render four columns of article lists for this member
-            resultsDiv.innerHTML = `
-                <!-- YES column -->
-                <div class="vote-column yes">
-                    <h3>Yes (${voteGroups.YES.length}, ${percentages.YES}%)</h3>
-                    <div class="article-list">
-                        ${voteGroups.YES.map(v => `
-                            <div class="article-item-with-desc">
-                                <div class="article-title">${v.title}</div>
-                                ${v.description ? `<div class="article-desc">${v.description}</div>` : ''}
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
+            resultsDiv.replaceChildren();
 
-                <!-- NO column -->
-                <div class="vote-column no">
-                    <h3>No (${voteGroups.NO.length}, ${percentages.NO}%)</h3>
-                    <div class="article-list">
-                        ${voteGroups.NO.map(v => `
-                            <div class="article-item-with-desc">
-                                <div class="article-title">${v.title}</div>
-                                ${v.description ? `<div class="article-desc">${v.description}</div>` : ''}
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
+            function appendArticleColumn(columnClass, title, voteList) {
+                const columnEl = document.createElement('div');
+                columnEl.className = `vote-column ${columnClass}`;
 
-                <!-- ABSTAIN column -->
-                <div class="vote-column abstain">
-                    <h3>Abstain (${voteGroups.ABSTAIN.length}, ${percentages.ABSTAIN}%)</h3>
-                    <div class="article-list">
-                        ${voteGroups.ABSTAIN.map(v => `
-                            <div class="article-item-with-desc">
-                                <div class="article-title">${v.title}</div>
-                                ${v.description ? `<div class="article-desc">${v.description}</div>` : ''}
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
+                const headerEl = document.createElement('h3');
+                headerEl.textContent = title;
+                columnEl.appendChild(headerEl);
 
-                <!-- NO VOTE column -->
-                <div class="vote-column novote">
-                    <h3>Vote Not Recorded (${voteGroups.NoVote.length}, ${percentages.NoVote}%)</h3>
-                    <div class="article-list">
-                        ${voteGroups.NoVote.map(v => `
-                            <div class="article-item-with-desc">
-                                <div class="article-title">${v.title}</div>
-                                ${v.description ? `<div class="article-desc">${v.description}</div>` : ''}
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-            `;
+                const listEl = document.createElement('div');
+                listEl.className = 'article-list';
+
+                voteList.forEach(vote => {
+                    const wrapperEl = document.createElement('div');
+                    wrapperEl.className = 'article-item-with-desc';
+
+                    const titleEl = document.createElement('div');
+                    titleEl.className = 'article-title';
+                    titleEl.textContent = vote.title;
+                    wrapperEl.appendChild(titleEl);
+
+                    if (vote.description) {
+                        const descEl = document.createElement('div');
+                        descEl.className = 'article-desc';
+                        descEl.textContent = vote.description;
+                        wrapperEl.appendChild(descEl);
+                    }
+
+                    listEl.appendChild(wrapperEl);
+                });
+
+                columnEl.appendChild(listEl);
+                resultsDiv.appendChild(columnEl);
+            }
+
+            appendArticleColumn('yes', `Yes (${voteGroups.YES.length}, ${percentages.YES}%)`, voteGroups.YES);
+            appendArticleColumn('no', `No (${voteGroups.NO.length}, ${percentages.NO}%)`, voteGroups.NO);
+            appendArticleColumn('abstain', `Abstain (${voteGroups.ABSTAIN.length}, ${percentages.ABSTAIN}%)`, voteGroups.ABSTAIN);
+            appendArticleColumn('novote', `Vote Not Recorded (${voteGroups.NoVote.length}, ${percentages.NoVote}%)`, voteGroups.NoVote);
+        }
+
+        /****************************************************
+         * VOTER CLUSTERING — DATA LOADING
+         ****************************************************/
+
+        function setClusteringStatus(message, isError = false) {
+            if (!clusterStatusEl) return;
+            clusterStatusEl.textContent = message;
+            clusterStatusEl.classList.toggle('error', isError);
+        }
+
+        function setPanelMessage(panelEl, message) {
+            if (!panelEl) return;
+            panelEl.replaceChildren();
+            const msg = document.createElement('div');
+            msg.className = 'cluster-message';
+            msg.textContent = message;
+            panelEl.appendChild(msg);
+        }
+
+        function clearClusterPlot() {
+            if (!clusterPlotEl || typeof Plotly === 'undefined') return;
+            try {
+                Plotly.purge(clusterPlotEl);
+            } catch (err) {
+                console.warn('Unable to clear clustering plot:', err);
+            }
+        }
+
+        function initializeClusteringControls() {
+            if (clusteringControlsInitialized) return;
+
+            const sessionsContainer = document.getElementById('cluster-session-checkboxes');
+            const minSessionsSelect = document.getElementById('cluster-min-sessions');
+            const terminateWeightSlider = document.getElementById('cluster-terminate-weight');
+            const terminateWeightValue = document.getElementById('cluster-terminate-weight-value');
+            const colorBySelect = document.getElementById('cluster-color-by');
+            const memberSearchInput = document.getElementById('cluster-member-search');
+            const memberSearchButton = document.getElementById('cluster-member-search-go');
+
+            if (
+                !sessionsContainer ||
+                !minSessionsSelect ||
+                !terminateWeightSlider ||
+                !terminateWeightValue ||
+                !colorBySelect ||
+                !memberSearchInput ||
+                !memberSearchButton
+            ) {
+                return;
+            }
+
+            SESSION_FILES.forEach(session => {
+                const optionLabel = document.createElement('label');
+                optionLabel.className = 'session-option';
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.checked = true;
+                checkbox.value = session.id;
+                checkbox.setAttribute('data-session-id', session.id);
+
+                const text = document.createElement('span');
+                text.textContent = session.label;
+
+                optionLabel.appendChild(checkbox);
+                optionLabel.appendChild(text);
+                sessionsContainer.appendChild(optionLabel);
+            });
+
+            minSessionsSelect.replaceChildren();
+            for (let i = 1; i <= SESSION_FILES.length; i++) {
+                const option = document.createElement('option');
+                option.value = String(i);
+                option.textContent = String(i);
+                if (i === 2) option.selected = true;
+                minSessionsSelect.appendChild(option);
+            }
+
+            terminateWeightSlider.value = '0.5';
+            terminateWeightValue.textContent = '0.5';
+
+            sessionsContainer.addEventListener('change', event => {
+                if (event.target && event.target.matches('input[type="checkbox"]')) {
+                    syncMinimumSessionsControl();
+                    runClusteringAnalysis();
+                }
+            });
+
+            minSessionsSelect.addEventListener('change', runClusteringAnalysis);
+            colorBySelect.addEventListener('change', runClusteringAnalysis);
+            terminateWeightSlider.addEventListener('input', () => {
+                terminateWeightValue.textContent = Number.parseFloat(terminateWeightSlider.value).toFixed(1);
+                debouncedRunClusteringAnalysis();
+            });
+
+            memberSearchButton.addEventListener('click', selectClusterMemberFromSearch);
+            memberSearchInput.addEventListener('keydown', event => {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    selectClusterMemberFromSearch();
+                }
+            });
+
+            clusteringControlsInitialized = true;
+            syncMinimumSessionsControl();
+        }
+
+        function getSelectedClusteringSessionIds() {
+            const checked = document.querySelectorAll('#cluster-session-checkboxes input[type="checkbox"]:checked');
+            return new Set(Array.from(checked).map(input => input.value));
+        }
+
+        function syncMinimumSessionsControl() {
+            const minSessionsSelect = document.getElementById('cluster-min-sessions');
+            if (!minSessionsSelect) return;
+
+            const selectedCount = getSelectedClusteringSessionIds().size;
+            const maxAllowed = Math.max(1, selectedCount);
+            const current = Number.parseInt(minSessionsSelect.value, 10) || 1;
+
+            Array.from(minSessionsSelect.options).forEach(option => {
+                const value = Number.parseInt(option.value, 10);
+                option.disabled = value > maxAllowed;
+            });
+
+            if (current > maxAllowed) {
+                minSessionsSelect.value = String(maxAllowed);
+            }
+        }
+
+        function debouncedRunClusteringAnalysis() {
+            if (clusteringDebounceTimer) clearTimeout(clusteringDebounceTimer);
+            clusteringDebounceTimer = window.setTimeout(runClusteringAnalysis, 200);
+        }
+
+        async function ensureClusteringDataLoaded() {
+            initializeClusteringControls();
+
+            if (clusteringSessionsCache) {
+                runClusteringAnalysis();
+                return;
+            }
+            if (clusteringLoadPromise) {
+                await clusteringLoadPromise;
+                return;
+            }
+
+            const total = SESSION_FILES.length;
+            let loadedCount = 0;
+            setClusteringStatus(`Loading clustering data (0 of ${total})...`);
+            setPanelMessage(clusterMemberDetailEl, 'Loading all sessions...');
+            setPanelMessage(clusterNeighborsEl, 'Loading all sessions...');
+
+            clusteringLoadPromise = Promise.all(
+                SESSION_FILES.map(async session => {
+                    try {
+                        return await fetchAndParseSpreadsheet(session);
+                    } catch (err) {
+                        throw new Error(`${session.label}: ${err.message}`);
+                    } finally {
+                        loadedCount += 1;
+                        setClusteringStatus(`Loading clustering data (${loadedCount} of ${total})...`);
+                    }
+                })
+            ).then(results => {
+                clusteringSessionsCache = results;
+                setClusteringStatus(`Loaded ${total} sessions. Rendering clustering view...`);
+                runClusteringAnalysis();
+            }).catch(err => {
+                console.error(err);
+                clearClusterPlot();
+                setClusteringStatus(`Error loading clustering data: ${err.message}`, true);
+                setPanelMessage(clusterMemberDetailEl, 'Clustering data failed to load.');
+                setPanelMessage(clusterNeighborsEl, 'Clustering data failed to load.');
+                setPanelMessage(clusterAxisInfoEl, 'Clustering data failed to load.');
+            }).finally(() => {
+                clusteringLoadPromise = null;
+            });
+
+            await clusteringLoadPromise;
+        }
+
+        /****************************************************
+         * VOTER CLUSTERING — MATRIX BUILDING
+         ****************************************************/
+
+        function buildClusteringAnalysis(selectedSessions, minSessions, terminateWeight) {
+            if (!selectedSessions || selectedSessions.length === 0) {
+                return { error: 'Select at least one session to run clustering.' };
+            }
+
+            const allColumns = [];
+            const profileMap = new Map();
+
+            selectedSessions.forEach(session => {
+                session.votes.forEach(vote => allColumns.push(vote));
+
+                Object.entries(session.canonicalMembers).forEach(([canonicalKey, memberEntry]) => {
+                    if (!profileMap.has(canonicalKey)) {
+                        profileMap.set(canonicalKey, {
+                            canonicalKey,
+                            name: memberEntry.name,
+                            precinct: memberEntry.precinct,
+                            sessions: new Set(),
+                            rawVotesById: {}
+                        });
+                    }
+
+                    const profile = profileMap.get(canonicalKey);
+                    profile.name = memberEntry.name;
+                    profile.precinct = memberEntry.precinct;
+                    profile.sessions.add(session.id);
+
+                    Object.entries(memberEntry.votesById).forEach(([voteId, voteValue]) => {
+                        profile.rawVotesById[voteId] = voteValue;
+                    });
+                });
+            });
+
+            const includedProfiles = Array.from(profileMap.values())
+                .filter(profile => profile.sessions.size >= minSessions)
+                .sort((a, b) => {
+                    const pa = precinctSortValue(a.precinct);
+                    const pb = precinctSortValue(b.precinct);
+                    if (pa !== pb) return pa - pb;
+                    return a.name.localeCompare(b.name);
+                });
+
+            if (includedProfiles.length === 0) {
+                return { error: 'No members match the current minimum sessions setting.' };
+            }
+
+            const keptColumns = allColumns.filter(column => {
+                let nonMissing = 0;
+                includedProfiles.forEach(profile => {
+                    const voteValue = profile.rawVotesById[column.id] || 'NoVote';
+                    if (voteValue !== 'NoVote') nonMissing += 1;
+                });
+                return (nonMissing / includedProfiles.length) >= 0.2;
+            });
+
+            if (keptColumns.length === 0) {
+                return { error: 'No vote columns remain after missing-data filtering.' };
+            }
+
+            const membersForPlot = [];
+            const matrixRawWithNaN = [];
+            const matrixImputed = [];
+            const memberIndexByKey = {};
+
+            includedProfiles.forEach((profile, rowIndex) => {
+                const rawRow = [];
+                const imputedRow = [];
+                let votesCast = 0;
+
+                keptColumns.forEach(column => {
+                    const voteValue = profile.rawVotesById[column.id] || 'NoVote';
+                    if (voteValue === 'NoVote') {
+                        rawRow.push(NaN);
+                        imputedRow.push(0);
+                        return;
+                    }
+
+                    let numeric = voteToNumeric(voteValue);
+                    if (column.isTerminateDebate) numeric *= terminateWeight;
+                    rawRow.push(numeric);
+                    imputedRow.push(numeric);
+                    votesCast += 1;
+                });
+
+                matrixRawWithNaN.push(rawRow);
+                matrixImputed.push(imputedRow);
+
+                const memberRecord = {
+                    canonicalKey: profile.canonicalKey,
+                    name: profile.name,
+                    precinct: profile.precinct,
+                    sessionsAttended: profile.sessions.size,
+                    votesCast,
+                    rawVotesById: profile.rawVotesById
+                };
+                membersForPlot.push(memberRecord);
+                memberIndexByKey[profile.canonicalKey] = rowIndex;
+            });
+
+            const pcaResult = computePCA2D(matrixImputed);
+            if (pcaResult.error) return { error: pcaResult.error };
+
+            membersForPlot.forEach((member, index) => {
+                member.x = pcaResult.coordinates[index].x;
+                member.y = pcaResult.coordinates[index].y;
+            });
+
+            return {
+                members: membersForPlot,
+                columns: keptColumns,
+                matrixRawWithNaN,
+                matrixImputed,
+                memberIndexByKey,
+                selectedSessionsCount: selectedSessions.length,
+                varianceExplained: pcaResult.varianceExplained,
+                componentVectors: pcaResult.componentVectors,
+                axisInterpretation: buildAxisInterpretation(keptColumns, pcaResult.componentVectors)
+            };
+        }
+
+        /****************************************************
+         * VOTER CLUSTERING — PCA
+         ****************************************************/
+
+        function dotProduct(a, b) {
+            let sum = 0;
+            for (let i = 0; i < a.length; i++) sum += a[i] * b[i];
+            return sum;
+        }
+
+        function vectorNorm(vector) {
+            return Math.sqrt(dotProduct(vector, vector));
+        }
+
+        function multiplyMatrixVector(matrix, vector) {
+            return matrix.map(row => dotProduct(row, vector));
+        }
+
+        function orthogonalizeVector(vector, basis) {
+            const projection = dotProduct(vector, basis);
+            return vector.map((value, i) => value - (projection * basis[i]));
+        }
+
+        function normalizeVector(vector) {
+            const norm = vectorNorm(vector);
+            if (norm < 1e-12) return null;
+            return vector.map(value => value / norm);
+        }
+
+        function rayleighQuotient(matrix, vector) {
+            const multiplied = multiplyMatrixVector(matrix, vector);
+            return dotProduct(vector, multiplied);
+        }
+
+        function powerIteration(matrix, maxIterations = 250, tolerance = 1e-9) {
+            const n = matrix.length;
+            if (n === 0) return null;
+
+            let vector = Array.from({ length: n }, (_, i) => (i === 0 ? 1 : 0));
+            const normalizedSeed = normalizeVector(vector);
+            if (!normalizedSeed) return null;
+            vector = normalizedSeed;
+
+            for (let iter = 0; iter < maxIterations; iter++) {
+                const multiplied = multiplyMatrixVector(matrix, vector);
+                const normalized = normalizeVector(multiplied);
+                if (!normalized) return null;
+
+                const delta = normalized.reduce((sum, value, i) => sum + Math.abs(value - vector[i]), 0);
+                vector = normalized;
+                if (delta < tolerance) break;
+            }
+
+            return {
+                vector,
+                eigenvalue: rayleighQuotient(matrix, vector)
+            };
+        }
+
+        function deflateMatrix(matrix, vector, eigenvalue) {
+            return matrix.map((row, i) =>
+                row.map((value, j) => value - (eigenvalue * vector[i] * vector[j]))
+            );
+        }
+
+        function buildFallbackUnitVector(length, avoidVector) {
+            for (let i = 0; i < length; i++) {
+                let candidate = Array.from({ length }, (_, idx) => (idx === i ? 1 : 0));
+                if (avoidVector) {
+                    candidate = orthogonalizeVector(candidate, avoidVector);
+                }
+                const normalized = normalizeVector(candidate);
+                if (normalized) return normalized;
+            }
+            return Array.from({ length }, (_, idx) => (idx === 0 ? 1 : 0));
+        }
+
+        function buildCovarianceMatrix(centeredMatrix) {
+            const rowCount = centeredMatrix.length;
+            const colCount = centeredMatrix[0].length;
+            const covariance = Array.from({ length: colCount }, () => Array(colCount).fill(0));
+            const denom = rowCount > 1 ? rowCount - 1 : 1;
+
+            for (let r = 0; r < rowCount; r++) {
+                const row = centeredMatrix[r];
+                for (let i = 0; i < colCount; i++) {
+                    const xi = row[i];
+                    for (let j = i; j < colCount; j++) {
+                        covariance[i][j] += xi * row[j];
+                    }
+                }
+            }
+
+            for (let i = 0; i < colCount; i++) {
+                for (let j = i; j < colCount; j++) {
+                    const value = covariance[i][j] / denom;
+                    covariance[i][j] = value;
+                    covariance[j][i] = value;
+                }
+            }
+            return covariance;
+        }
+
+        function computePCA2D(matrix) {
+            const rowCount = matrix.length;
+            const colCount = rowCount > 0 ? matrix[0].length : 0;
+            if (rowCount === 0 || colCount === 0) {
+                return { error: 'Not enough data to run PCA.' };
+            }
+
+            const colMeans = Array(colCount).fill(0);
+            for (let c = 0; c < colCount; c++) {
+                let sum = 0;
+                for (let r = 0; r < rowCount; r++) sum += matrix[r][c];
+                colMeans[c] = sum / rowCount;
+            }
+
+            const centeredMatrix = matrix.map(row =>
+                row.map((value, idx) => value - colMeans[idx])
+            );
+            const covariance = buildCovarianceMatrix(centeredMatrix);
+
+            const totalVariance = covariance.reduce((sum, row, index) => sum + row[index], 0);
+            let first = powerIteration(covariance);
+            if (!first || !Number.isFinite(first.eigenvalue)) {
+                first = {
+                    vector: buildFallbackUnitVector(colCount),
+                    eigenvalue: 0
+                };
+            }
+            first.eigenvalue = rayleighQuotient(covariance, first.vector);
+
+            const deflated = deflateMatrix(covariance, first.vector, first.eigenvalue);
+            let second = powerIteration(deflated);
+            if (!second || !Number.isFinite(second.eigenvalue)) {
+                second = {
+                    vector: buildFallbackUnitVector(colCount, first.vector),
+                    eigenvalue: 0
+                };
+            } else {
+                const orthogonalized = orthogonalizeVector(second.vector, first.vector);
+                const normalized = normalizeVector(orthogonalized);
+                second.vector = normalized || buildFallbackUnitVector(colCount, first.vector);
+            }
+            second.eigenvalue = rayleighQuotient(covariance, second.vector);
+
+            const rawCoordinates = centeredMatrix.map(row => ({
+                x: dotProduct(row, first.vector),
+                y: dotProduct(row, second.vector)
+            }));
+
+            const maxAbsX = Math.max(...rawCoordinates.map(point => Math.abs(point.x)), 0);
+            const maxAbsY = Math.max(...rawCoordinates.map(point => Math.abs(point.y)), 0);
+            const scaleX = maxAbsX > 0 ? maxAbsX : 1;
+            const scaleY = maxAbsY > 0 ? maxAbsY : 1;
+            const coordinates = rawCoordinates.map(point => ({
+                x: point.x / scaleX,
+                y: point.y / scaleY
+            }));
+
+            return {
+                coordinates,
+                componentVectors: [first.vector, second.vector],
+                varianceExplained: {
+                    pc1: totalVariance > 0 ? (Math.max(0, first.eigenvalue) / totalVariance) * 100 : 0,
+                    pc2: totalVariance > 0 ? (Math.max(0, second.eigenvalue) / totalVariance) * 100 : 0
+                }
+            };
+        }
+
+        function buildAxisInterpretation(columns, componentVectors) {
+            return componentVectors.map((vector, idx) => {
+                const loadings = columns.map((column, colIndex) => ({
+                    column,
+                    value: vector[colIndex]
+                }));
+
+                return {
+                    component: idx + 1,
+                    negative: [...loadings].sort((a, b) => a.value - b.value).slice(0, 5),
+                    positive: [...loadings].sort((a, b) => b.value - a.value).slice(0, 5)
+                };
+            });
+        }
+
+        /****************************************************
+         * VOTER CLUSTERING — RENDERING
+         ****************************************************/
+
+        function runClusteringAnalysis() {
+            if (!clusteringSessionsCache) return;
+
+            const minSessionsSelect = document.getElementById('cluster-min-sessions');
+            const terminateWeightSlider = document.getElementById('cluster-terminate-weight');
+            const colorBySelect = document.getElementById('cluster-color-by');
+            if (!minSessionsSelect || !terminateWeightSlider || !colorBySelect) return;
+
+            const selectedSessionIds = getSelectedClusteringSessionIds();
+            if (selectedSessionIds.size === 0) {
+                clearClusterPlot();
+                setClusteringStatus('Select at least one session to run clustering.');
+                setPanelMessage(clusterMemberDetailEl, 'Select at least one session to run clustering.');
+                setPanelMessage(clusterNeighborsEl, 'Select at least one session to run clustering.');
+                setPanelMessage(clusterAxisInfoEl, 'Select at least one session to run clustering.');
+                selectedClusterMemberKey = null;
+                clusteringAnalysisState = null;
+                return;
+            }
+
+            const selectedSessions = clusteringSessionsCache.filter(session => selectedSessionIds.has(session.id));
+            const selectedSessionCount = selectedSessions.length;
+            let minSessions = Number.parseInt(minSessionsSelect.value, 10) || 1;
+            if (minSessions > selectedSessionCount) {
+                minSessions = selectedSessionCount;
+                minSessionsSelect.value = String(minSessions);
+            }
+
+            const terminateWeight = Number.parseFloat(terminateWeightSlider.value);
+            const colorBy = colorBySelect.value;
+            const analysis = buildClusteringAnalysis(selectedSessions, minSessions, terminateWeight);
+
+            if (analysis.error) {
+                clearClusterPlot();
+                setClusteringStatus(analysis.error);
+                setPanelMessage(clusterMemberDetailEl, analysis.error);
+                setPanelMessage(clusterNeighborsEl, analysis.error);
+                setPanelMessage(clusterAxisInfoEl, analysis.error);
+                selectedClusterMemberKey = null;
+                clusteringAnalysisState = null;
+                return;
+            }
+
+            clusteringAnalysisState = analysis;
+            renderClusteringPlot(analysis, colorBy);
+            renderAxisInterpretation(analysis);
+            populateClusterMemberSearch(analysis);
+
+            if (selectedClusterMemberKey && analysis.memberIndexByKey[selectedClusterMemberKey] !== undefined) {
+                renderClusteringMemberSelection(selectedClusterMemberKey);
+            } else {
+                selectedClusterMemberKey = null;
+                setPanelMessage(clusterMemberDetailEl, 'Click a dot to view this member\'s aggregated voting summary.');
+                setPanelMessage(clusterNeighborsEl, 'Click a dot to view the 10 most similar members.');
+            }
+
+            setClusteringStatus(
+                `Showing ${analysis.members.length} members from ${selectedSessionCount} sessions across ${analysis.columns.length} vote columns.`
+            );
+        }
+
+        function getClusterMemberSearchLabel(member) {
+            return `${member.name} (${formatPrecinctLabel(member.precinct)})`;
+        }
+
+        function populateClusterMemberSearch(analysis) {
+            const datalist = document.getElementById('cluster-member-options');
+            const input = document.getElementById('cluster-member-search');
+            if (!datalist || !input) return;
+
+            clusterMemberSearchLabelToKey.clear();
+            clusterMemberSearchKeyToLabel.clear();
+            datalist.replaceChildren();
+
+            const sortedMembers = [...analysis.members].sort((a, b) => {
+                const nameDiff = a.name.localeCompare(b.name);
+                if (nameDiff !== 0) return nameDiff;
+                return precinctSortValue(a.precinct) - precinctSortValue(b.precinct);
+            });
+
+            sortedMembers.forEach(member => {
+                const baseLabel = getClusterMemberSearchLabel(member);
+                let label = baseLabel;
+                if (clusterMemberSearchLabelToKey.has(label)) {
+                    label = `${baseLabel} [${member.canonicalKey}]`;
+                }
+
+                clusterMemberSearchLabelToKey.set(label, member.canonicalKey);
+                clusterMemberSearchKeyToLabel.set(member.canonicalKey, label);
+
+                const option = document.createElement('option');
+                option.value = label;
+                datalist.appendChild(option);
+            });
+
+            if (selectedClusterMemberKey && clusterMemberSearchKeyToLabel.has(selectedClusterMemberKey)) {
+                input.value = clusterMemberSearchKeyToLabel.get(selectedClusterMemberKey);
+            } else if (!input.value.trim()) {
+                input.value = '';
+            }
+        }
+
+        function selectClusterMemberFromSearch() {
+            if (!clusteringAnalysisState) {
+                setClusteringStatus('Load clustering data before searching for members.');
+                return;
+            }
+
+            const input = document.getElementById('cluster-member-search');
+            if (!input) return;
+
+            const query = input.value.trim();
+            if (!query) {
+                setClusteringStatus('Enter a member name to search.');
+                return;
+            }
+
+            let selectedKey = clusterMemberSearchLabelToKey.get(query) || null;
+            let note = '';
+
+            if (!selectedKey) {
+                const queryLower = query.toLowerCase();
+                const candidates = clusteringAnalysisState.members.filter(member => {
+                    const label = getClusterMemberSearchLabel(member).toLowerCase();
+                    return (
+                        member.name.toLowerCase().includes(queryLower) ||
+                        label.includes(queryLower)
+                    );
+                });
+
+                if (candidates.length === 0) {
+                    setClusteringStatus(`No member found for "${query}".`);
+                    return;
+                }
+
+                candidates.sort((a, b) => {
+                    const startsA = a.name.toLowerCase().startsWith(queryLower) ? 0 : 1;
+                    const startsB = b.name.toLowerCase().startsWith(queryLower) ? 0 : 1;
+                    if (startsA !== startsB) return startsA - startsB;
+                    const nameDiff = a.name.localeCompare(b.name);
+                    if (nameDiff !== 0) return nameDiff;
+                    return precinctSortValue(a.precinct) - precinctSortValue(b.precinct);
+                });
+
+                selectedKey = candidates[0].canonicalKey;
+                if (candidates.length > 1) {
+                    note = ` (${candidates.length} matches, showing closest match)`;
+                }
+            }
+
+            selectedClusterMemberKey = selectedKey;
+            runClusteringAnalysis();
+            if (clusterMemberSearchKeyToLabel.has(selectedKey)) {
+                input.value = clusterMemberSearchKeyToLabel.get(selectedKey);
+            }
+
+            const selectedMember = clusteringAnalysisState.members[clusteringAnalysisState.memberIndexByKey[selectedKey]];
+            if (selectedMember) {
+                setClusteringStatus(`Selected ${selectedMember.name} (${formatPrecinctLabel(selectedMember.precinct)})${note}.`);
+            }
+        }
+
+        function formatVoteLabelForPanel(column) {
+            return `${column.title} (${column.sessionLabel})`;
+        }
+
+        function compareClusterVoteMeta(a, b) {
+            const sessionDiff = (SESSION_ORDER_INDEX[a.sessionId] ?? 999) - (SESSION_ORDER_INDEX[b.sessionId] ?? 999);
+            if (sessionDiff !== 0) return sessionDiff;
+
+            const aTerminate = a.title.toLowerCase().includes('terminate debate');
+            const bTerminate = b.title.toLowerCase().includes('terminate debate');
+            if (aTerminate && !bTerminate) return 1;
+            if (!aTerminate && bTerminate) return -1;
+
+            const aMatch = a.title.match(/Article (\d+)/i);
+            const bMatch = b.title.match(/Article (\d+)/i);
+            if (aMatch && bMatch) return parseInt(aMatch[1], 10) - parseInt(bMatch[1], 10);
+            return a.title.localeCompare(b.title);
+        }
+
+        function renderClusteringMemberSelection(canonicalKey) {
+            if (!clusteringAnalysisState) return;
+
+            const analysis = clusteringAnalysisState;
+            const rowIndex = analysis.memberIndexByKey[canonicalKey];
+            if (rowIndex === undefined) return;
+
+            selectedClusterMemberKey = canonicalKey;
+            const member = analysis.members[rowIndex];
+            const searchInput = document.getElementById('cluster-member-search');
+            if (searchInput && clusterMemberSearchKeyToLabel.has(canonicalKey)) {
+                searchInput.value = clusterMemberSearchKeyToLabel.get(canonicalKey);
+            }
+
+            if (clusterMemberDetailEl) {
+                clusterMemberDetailEl.replaceChildren();
+
+                const meta = document.createElement('div');
+                meta.className = 'cluster-member-meta';
+                meta.textContent =
+                    `${member.name} (${formatPrecinctLabel(member.precinct)}) • ` +
+                    `${member.sessionsAttended} sessions attended • ${member.votesCast} recorded votes`;
+                clusterMemberDetailEl.appendChild(meta);
+
+                const voteGroups = { YES: [], NO: [], ABSTAIN: [], NoVote: [] };
+                analysis.columns.forEach(column => {
+                    const voteValue = member.rawVotesById[column.id] || 'NoVote';
+                    if (voteValue === 'YES') {
+                        voteGroups.YES.push(column);
+                    } else if (voteValue === 'NO') {
+                        voteGroups.NO.push(column);
+                    } else if (voteValue === 'ABSTAIN') {
+                        voteGroups.ABSTAIN.push(column);
+                    } else {
+                        voteGroups.NoVote.push(column);
+                    }
+                });
+
+                Object.keys(voteGroups).forEach(groupKey => voteGroups[groupKey].sort(compareClusterVoteMeta));
+
+                const total = analysis.columns.length;
+                const resultsGrid = document.createElement('div');
+                resultsGrid.className = 'results';
+
+                function appendColumn(columnClass, title, items) {
+                    const columnEl = document.createElement('div');
+                    columnEl.className = `vote-column ${columnClass}`;
+
+                    const percent = total > 0 ? ((items.length / total) * 100).toFixed(1) : '0.0';
+                    const header = document.createElement('h3');
+                    header.textContent = `${title} (${items.length}, ${percent}%)`;
+                    columnEl.appendChild(header);
+
+                    const list = document.createElement('div');
+                    list.className = 'article-list';
+
+                    items.forEach(columnMeta => {
+                        const wrapper = document.createElement('div');
+                        wrapper.className = 'article-item-with-desc';
+
+                        const titleEl = document.createElement('div');
+                        titleEl.className = 'article-title';
+                        titleEl.textContent = formatVoteLabelForPanel(columnMeta);
+                        wrapper.appendChild(titleEl);
+
+                        if (columnMeta.description) {
+                            const desc = document.createElement('div');
+                            desc.className = 'article-desc';
+                            desc.textContent = columnMeta.description;
+                            wrapper.appendChild(desc);
+                        }
+
+                        list.appendChild(wrapper);
+                    });
+
+                    columnEl.appendChild(list);
+                    resultsGrid.appendChild(columnEl);
+                }
+
+                appendColumn('yes', 'Yes', voteGroups.YES);
+                appendColumn('no', 'No', voteGroups.NO);
+                appendColumn('abstain', 'Abstain', voteGroups.ABSTAIN);
+                appendColumn('novote', 'Vote Not Recorded', voteGroups.NoVote);
+                clusterMemberDetailEl.appendChild(resultsGrid);
+            }
+
+            renderClusteringNeighbors(canonicalKey);
+        }
+
+        function computeNearestNeighbors(canonicalKey, analysis, limit = 10) {
+            const sourceIndex = analysis.memberIndexByKey[canonicalKey];
+            if (sourceIndex === undefined) return [];
+
+            const sourceMember = analysis.members[sourceIndex];
+            const sourceRow = analysis.matrixRawWithNaN[sourceIndex];
+            const neighbors = [];
+
+            analysis.members.forEach((candidateMember, candidateIndex) => {
+                if (candidateIndex === sourceIndex) return;
+
+                const candidateRow = analysis.matrixRawWithNaN[candidateIndex];
+                let overlap = 0;
+                let agreements = 0;
+                let sumSq = 0;
+
+                analysis.columns.forEach((column, colIndex) => {
+                    const a = sourceRow[colIndex];
+                    const b = candidateRow[colIndex];
+                    if (Number.isNaN(a) || Number.isNaN(b)) return;
+
+                    overlap += 1;
+                    const diff = a - b;
+                    sumSq += diff * diff;
+
+                    const sourceVote = sourceMember.rawVotesById[column.id] || 'NoVote';
+                    const candidateVote = candidateMember.rawVotesById[column.id] || 'NoVote';
+                    if (sourceVote === candidateVote) agreements += 1;
+                });
+
+                if (overlap === 0) {
+                    neighbors.push({
+                        member: candidateMember,
+                        hasOverlap: false,
+                        overlap: 0,
+                        distance: Number.POSITIVE_INFINITY,
+                        agreement: null
+                    });
+                    return;
+                }
+
+                neighbors.push({
+                    member: candidateMember,
+                    hasOverlap: true,
+                    overlap,
+                    distance: Math.sqrt(sumSq / overlap),
+                    agreement: (agreements / overlap) * 100
+                });
+            });
+
+            neighbors.sort((a, b) => {
+                if (a.hasOverlap !== b.hasOverlap) return a.hasOverlap ? -1 : 1;
+                if (a.hasOverlap && b.hasOverlap && a.distance !== b.distance) return a.distance - b.distance;
+                return a.member.name.localeCompare(b.member.name);
+            });
+
+            return neighbors.slice(0, limit);
+        }
+
+        function renderClusteringNeighbors(canonicalKey) {
+            if (!clusterNeighborsEl || !clusteringAnalysisState) return;
+
+            const neighbors = computeNearestNeighbors(canonicalKey, clusteringAnalysisState, 10);
+            if (neighbors.length === 0) {
+                setPanelMessage(clusterNeighborsEl, 'No neighbors available for the selected member.');
+                return;
+            }
+
+            clusterNeighborsEl.replaceChildren();
+            const list = document.createElement('ol');
+            list.className = 'cluster-neighbor-list';
+
+            neighbors.forEach((neighbor, index) => {
+                const item = document.createElement('li');
+                const prefix =
+                    `${index + 1}. ${neighbor.member.name} (${formatPrecinctLabel(neighbor.member.precinct)})`;
+
+                if (neighbor.hasOverlap) {
+                    item.textContent =
+                        `${prefix} - distance ${neighbor.distance.toFixed(3)}, ` +
+                        `agreement ${neighbor.agreement.toFixed(1)}% (${neighbor.overlap} shared votes)`;
+                } else {
+                    item.textContent = `${prefix} - agreement N/A (no overlapping votes)`;
+                }
+
+                list.appendChild(item);
+            });
+
+            clusterNeighborsEl.appendChild(list);
+        }
+
+        function renderAxisInterpretation(analysis) {
+            if (!clusterAxisInfoEl) return;
+
+            clusterAxisInfoEl.replaceChildren();
+
+            analysis.axisInterpretation.forEach((componentInfo, index) => {
+                const section = document.createElement('div');
+                section.className = 'axis-component';
+
+                const header = document.createElement('h4');
+                const variance = index === 0 ? analysis.varianceExplained.pc1 : analysis.varianceExplained.pc2;
+                header.textContent = `PC${componentInfo.component} (${variance.toFixed(1)}% variance)`;
+                section.appendChild(header);
+
+                const negative = document.createElement('div');
+                negative.className = 'axis-direction';
+                const negativeStrong = document.createElement('strong');
+                negativeStrong.textContent = '\u2190 Negative: ';
+                negative.appendChild(negativeStrong);
+                negative.appendChild(document.createTextNode(
+                    componentInfo.negative.map(item => formatVoteLabelForPanel(item.column)).join(', ')
+                ));
+
+                const positive = document.createElement('div');
+                positive.className = 'axis-direction';
+                const positiveStrong = document.createElement('strong');
+                positiveStrong.textContent = '\u2192 Positive: ';
+                positive.appendChild(positiveStrong);
+                positive.appendChild(document.createTextNode(
+                    componentInfo.positive.map(item => formatVoteLabelForPanel(item.column)).join(', ')
+                ));
+
+                section.appendChild(negative);
+                section.appendChild(positive);
+                clusterAxisInfoEl.appendChild(section);
+            });
+        }
+
+        function buildPrecinctColorMap(precincts) {
+            const palette = [
+                '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b',
+                '#e377c2', '#7f7f7f', '#bcbd22', '#17becf', '#393b79', '#637939',
+                '#8c6d31', '#843c39', '#7b4173', '#3182bd', '#31a354', '#756bb1'
+            ];
+            const map = {};
+            precincts.forEach((precinct, index) => {
+                map[precinct] = palette[index % palette.length];
+            });
+            return map;
+        }
+
+        function renderClusteringPlot(analysis, colorBy) {
+            if (!clusterPlotEl) return;
+            if (typeof Plotly === 'undefined') {
+                setClusteringStatus('Plotly is unavailable. Unable to render clustering plot.', true);
+                return;
+            }
+
+            const hoverTemplate = [
+                '<b>%{customdata[1]}</b>',
+                'Precinct: %{customdata[2]}',
+                'Sessions attended: %{customdata[3]}',
+                'Votes cast: %{customdata[4]}',
+                '<extra></extra>'
+            ].join('<br>');
+
+            const traces = [];
+
+            if (colorBy === 'precinct') {
+                const grouped = {};
+                analysis.members.forEach(member => {
+                    const precinctKey = String(member.precinct).toUpperCase();
+                    if (!grouped[precinctKey]) grouped[precinctKey] = [];
+                    grouped[precinctKey].push(member);
+                });
+
+                const precinctKeys = Object.keys(grouped).sort((a, b) => {
+                    const pa = precinctSortValue(a);
+                    const pb = precinctSortValue(b);
+                    if (pa !== pb) return pa - pb;
+                    return a.localeCompare(b);
+                });
+                const colorMap = buildPrecinctColorMap(precinctKeys);
+
+                precinctKeys.forEach(precinctKey => {
+                    const points = grouped[precinctKey];
+                    traces.push({
+                        type: 'scattergl',
+                        mode: 'markers',
+                        name: formatPrecinctLabel(precinctKey),
+                        x: points.map(member => member.x),
+                        y: points.map(member => member.y),
+                        customdata: points.map(member => [
+                            member.canonicalKey,
+                            member.name,
+                            member.precinct,
+                            member.sessionsAttended,
+                            member.votesCast
+                        ]),
+                        marker: {
+                            size: 10,
+                            color: colorMap[precinctKey]
+                        },
+                        hovertemplate: hoverTemplate
+                    });
+                });
+            } else if (colorBy === 'sessions') {
+                const maxSessions = Math.max(...analysis.members.map(member => member.sessionsAttended), 1);
+                traces.push({
+                    type: 'scattergl',
+                    mode: 'markers',
+                    name: 'Members',
+                    x: analysis.members.map(member => member.x),
+                    y: analysis.members.map(member => member.y),
+                    customdata: analysis.members.map(member => [
+                        member.canonicalKey,
+                        member.name,
+                        member.precinct,
+                        member.sessionsAttended,
+                        member.votesCast
+                    ]),
+                    marker: {
+                        size: 10,
+                        color: analysis.members.map(member => member.sessionsAttended),
+                        colorscale: 'Blues',
+                        cmin: 1,
+                        cmax: maxSessions,
+                        showscale: true,
+                        colorbar: { title: 'Sessions' }
+                    },
+                    hovertemplate: hoverTemplate
+                });
+            } else {
+                traces.push({
+                    type: 'scattergl',
+                    mode: 'markers',
+                    name: 'Members',
+                    x: analysis.members.map(member => member.x),
+                    y: analysis.members.map(member => member.y),
+                    customdata: analysis.members.map(member => [
+                        member.canonicalKey,
+                        member.name,
+                        member.precinct,
+                        member.sessionsAttended,
+                        member.votesCast
+                    ]),
+                    marker: {
+                        size: 10,
+                        color: '#3498db'
+                    },
+                    hovertemplate: hoverTemplate
+                });
+            }
+
+            if (selectedClusterMemberKey && analysis.memberIndexByKey[selectedClusterMemberKey] !== undefined) {
+                const selectedMember = analysis.members[analysis.memberIndexByKey[selectedClusterMemberKey]];
+                traces.push({
+                    type: 'scattergl',
+                    mode: 'markers',
+                    name: 'Selected',
+                    x: [selectedMember.x],
+                    y: [selectedMember.y],
+                    customdata: [[
+                        selectedMember.canonicalKey,
+                        selectedMember.name,
+                        selectedMember.precinct,
+                        selectedMember.sessionsAttended,
+                        selectedMember.votesCast
+                    ]],
+                    marker: {
+                        size: 20,
+                        color: 'rgba(0,0,0,0)',
+                        line: {
+                            color: '#111',
+                            width: 3
+                        }
+                    },
+                    showlegend: false,
+                    hovertemplate: hoverTemplate
+                });
+            }
+
+            const layout = {
+                margin: { t: 16, r: 20, b: 60, l: 70 },
+                height: 600,
+                plot_bgcolor: '#ffffff',
+                paper_bgcolor: '#ffffff',
+                legend: { orientation: 'h', y: -0.15 },
+                xaxis: {
+                    title: `Component 1 (${analysis.varianceExplained.pc1.toFixed(1)}% variance)`,
+                    gridcolor: '#e9ecef',
+                    zeroline: true,
+                    zerolinecolor: '#ced4da'
+                },
+                yaxis: {
+                    title: `Component 2 (${analysis.varianceExplained.pc2.toFixed(1)}% variance)`,
+                    gridcolor: '#e9ecef',
+                    zeroline: true,
+                    zerolinecolor: '#ced4da'
+                }
+            };
+
+            Plotly.react(clusterPlotEl, traces, layout, {
+                responsive: true,
+                displaylogo: false
+            });
+
+            if (typeof clusterPlotEl.removeAllListeners === 'function') {
+                clusterPlotEl.removeAllListeners('plotly_click');
+            }
+            if (typeof clusterPlotEl.on === 'function') {
+                clusterPlotEl.on('plotly_click', event => {
+                    const point = event && event.points && event.points[0];
+                    if (!point || !point.customdata) return;
+                    selectedClusterMemberKey = point.customdata[0];
+                    runClusteringAnalysis();
+                });
+            }
         }
 
         /****************************************************
          * TAB SWITCHING
          ****************************************************/
 
-        /**
-         * Switch between the two tabs:
-         *   - 'by-vote'
-         *   - 'by-member'
-         *
-         * Hides all tab content divs, then shows the selected one.
-         * Also updates the active tab button styling.
-         */
-        function switchTab(tabName) {
-            // Remove 'active' class from all tab buttons
+        function switchTab(evt, tabName) {
             document.querySelectorAll('.tab').forEach(tab => {
                 tab.classList.remove('active');
             });
+            if (evt && evt.target) evt.target.classList.add('active');
 
-            // Mark the clicked tab button as active
-            // (relies on the browser giving us the event target)
-            if (event && event.target) {
-                event.target.classList.add('active');
-            }
-
-            // Hide all tab content containers
             document.querySelectorAll('.tab-content').forEach(content => {
                 content.classList.remove('active');
             });
+            const targetTab = document.getElementById(tabName);
+            if (targetTab) targetTab.classList.add('active');
 
-            // Show the requested tab content
-            document.getElementById(tabName).classList.add('active');
-
-            // If we just switched to "View by Member" and we have data,
-            // ensure that the member results are drawn.
             if (tabName === 'by-member' && members.length > 0) {
                 updateMemberResults();
             }
+
+            if (tabName === 'voter-clustering') {
+                ensureClusteringDataLoaded();
+            }
+        }
+
+        function enterVoteAnalyzerMode() {
+            if (loadingEl) loadingEl.style.display = 'none';
+            if (mainContentEl) mainContentEl.style.display = 'block';
+
+            const titleEl = document.querySelector('.container h1');
+            if (titleEl) titleEl.textContent = 'Brookline Vote Analyzer';
+
+            const subtitleEl = document.querySelector('.subtitle');
+            if (subtitleEl) {
+                subtitleEl.textContent = 'Advanced clustering and cross-session voting pattern analysis.';
+            }
+
+            const spreadsheetControls = document.querySelector('#main-content > .controls');
+            if (spreadsheetControls) spreadsheetControls.style.display = 'none';
+
+            const tabsBar = document.querySelector('.tabs');
+            if (tabsBar) tabsBar.style.display = 'none';
+
+            const byVoteEl = document.getElementById('by-vote');
+            const byMemberEl = document.getElementById('by-member');
+            const clusteringEl = document.getElementById('voter-clustering');
+            if (byVoteEl) byVoteEl.classList.remove('active');
+            if (byMemberEl) byMemberEl.classList.remove('active');
+            if (clusteringEl) clusteringEl.classList.add('active');
+
+            ensureClusteringDataLoaded();
         }
 
         /****************************************************
          * INITIAL PAGE LOAD
          ****************************************************/
 
-        // Run once the DOM is ready. Set up the spreadsheet dropdown
-        // listener and trigger an initial data load.
         window.addEventListener('DOMContentLoaded', () => {
+            if (APP_MODE === 'vote-analyzer') {
+                enterVoteAnalyzerMode();
+                return;
+            }
+
+            const voteSelect = document.getElementById('vote-select');
+            if (voteSelect) voteSelect.addEventListener('change', updateVoteResults);
+
+            const memberSelect = document.getElementById('member-select');
+            if (memberSelect) memberSelect.addEventListener('change', updateMemberResults);
+
             const spreadsheetSelect = document.getElementById('spreadsheet-select');
             if (spreadsheetSelect) {
-                // When the spreadsheet selection changes:
-                //   - show the loading message
-                //   - hide main content
-                //   - clear previous data
-                //   - load the new spreadsheet
                 spreadsheetSelect.addEventListener('change', () => {
                     if (loadingEl) {
                         loadingEl.style.display = 'block';
                         loadingEl.textContent = 'Loading voting data...';
                     }
-                    if (mainContentEl) {
-                        mainContentEl.style.display = 'none';
-                    }
+                    if (mainContentEl) mainContentEl.style.display = 'none';
 
-                    // Clear global data structures for safety
                     votingData = null;
                     votes = [];
                     members = [];
 
-                    // Load data from the newly selected Excel file
                     loadVotingDataFromExcel();
                 });
             }
 
-            // Initial load for whichever spreadsheet is selected by default
             loadVotingDataFromExcel();
         });
     </script>
