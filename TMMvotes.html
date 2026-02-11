@@ -306,11 +306,11 @@
                     -->
                     <select id="spreadsheet-select">
                         <option value="May%202022%20Votes.xlsx">May 2022 Votes (57 votes)</option>
-                        <option value="November%202022%20Votes.xlsx" selected>November 2022 Votes (68 votes)</option>
+                        <option value="November%202022%20Votes.xlsx">November 2022 Votes (68 votes)</option>
                         <option value="May%202023%20Votes.xlsx">May 2023 Votes (44 votes)</option>
-                        <option value="November%202023%20Votes.xlsx" selected>November 2023 Votes (24 votes)</option>
+                        <option value="November%202023%20Votes.xlsx">November 2023 Votes (24 votes)</option>
                         <option value="May%202024%20Votes.xlsx">May 2024 Votes (34 votes)</option>
-                        <option value="November%202024%20Votes.xlsx" selected>November 2024 Votes (28 votes)</option>
+                        <option value="November%202024%20Votes.xlsx">November 2024 Votes (28 votes)</option>
                         <option value="May%202025%20Votes.xlsx">May 2025 Votes (45 votes)</option>
                         <option value="November%202025%20Votes.xlsx" selected>November 2025 Votes (19 votes)</option>
                     </select>
@@ -319,8 +319,8 @@
 
             <!-- Tab selector buttons: View by Vote vs View by Member -->
             <div class="tabs">
-                <button class="tab active" onclick="switchTab('by-vote')">View by Vote</button>
-                <button class="tab" onclick="switchTab('by-member')">View by Member</button>
+                <button class="tab active" onclick="switchTab(event, 'by-vote')">View by Vote</button>
+                <button class="tab" onclick="switchTab(event, 'by-member')">View by Member</button>
             </div>
 
             <!-- TAB: View by Vote -->
@@ -742,7 +742,7 @@
          * Populates both:
          *   - vote dropdown
          *   - member dropdown
-         * and attaches change listeners for them.
+         * using the current in-memory data.
          */
         function populateDropdowns() {
             const voteSelect = document.getElementById('vote-select');
@@ -761,15 +761,6 @@
 
             // Build member dropdown (separate function)
             populateMemberDropdown();
-
-            // Attach change handler for votes
-            voteSelect.addEventListener('change', updateVoteResults);
-
-            // Attach change handler for members
-            const memberSelect = document.getElementById('member-select');
-            if (memberSelect) {
-                memberSelect.addEventListener('change', updateMemberResults);
-            }
         }
 
         /****************************************************
@@ -785,9 +776,14 @@
          *   - Renders four columns of member lists
          */
         function updateVoteResults() {
-            const selectedVote = document.getElementById('vote-select').value;
-            const sortByNameOnly = document.getElementById('sort-by-name-vote').checked;
+            const voteSelect = document.getElementById('vote-select');
+            const sortByNameCheckbox = document.getElementById('sort-by-name-vote');
+            if (!voteSelect || !sortByNameCheckbox) return;
+
+            const selectedVote = voteSelect.value;
+            const sortByNameOnly = sortByNameCheckbox.checked;
             const resultsDiv = document.getElementById('vote-results');
+            if (!resultsDiv) return;
 
             // Find the corresponding vote object to get the article description
             const selectedVoteDetails = votes.find(v => v.title === selectedVote);
@@ -840,16 +836,23 @@
                 NO: totalVotes > 0 ? ((voteGroups.NO.length / totalVotes) * 100).toFixed(1) : '0.0'
             };
 
-            let html = '';
+            // Clear old results before rendering.
+            resultsDiv.replaceChildren();
 
             // If there is a description for this article, show it above the columns
             if (description) {
-                html += `
-                    <div class="article-description">
-                        <h4>Article Description</h4>
-                        <div>${description}</div>
-                    </div>
-                `;
+                const descriptionEl = document.createElement('div');
+                descriptionEl.className = 'article-description';
+
+                const descriptionTitleEl = document.createElement('h4');
+                descriptionTitleEl.textContent = 'Article Description';
+                descriptionEl.appendChild(descriptionTitleEl);
+
+                const descriptionBodyEl = document.createElement('div');
+                descriptionBodyEl.textContent = description;
+                descriptionEl.appendChild(descriptionBodyEl);
+
+                resultsDiv.appendChild(descriptionEl);
             }
 
             // Helper to standardize precinct display in the listing
@@ -859,61 +862,44 @@
                 return 'P' + p;
             };
 
+            const resultsGridEl = document.createElement('div');
+            resultsGridEl.className = 'results';
+
+            function appendMemberColumn(columnClass, title, memberList) {
+                const columnEl = document.createElement('div');
+                columnEl.className = `vote-column ${columnClass}`;
+
+                const headerEl = document.createElement('h3');
+                headerEl.textContent = title;
+                columnEl.appendChild(headerEl);
+
+                const listEl = document.createElement('div');
+                listEl.className = 'member-list';
+
+                memberList.forEach(member => {
+                    const itemEl = document.createElement('div');
+                    itemEl.className = 'member-item';
+
+                    const precinctEl = document.createElement('span');
+                    precinctEl.className = 'precinct-label';
+                    precinctEl.textContent = `${formatPrecinctLabel(member.precinct)}:`;
+                    itemEl.appendChild(precinctEl);
+                    itemEl.appendChild(document.createTextNode(` ${member.name}`));
+
+                    listEl.appendChild(itemEl);
+                });
+
+                columnEl.appendChild(listEl);
+                resultsGridEl.appendChild(columnEl);
+            }
+
             // Build the four vote columns (Yes, No, Abstain, No Vote)
-            html += `
-                <div class="results">
-                    <!-- YES column -->
-                    <div class="vote-column yes">
-                        <h3>Yes (${voteGroups.YES.length}, ${percentages.YES}%)</h3>
-                        <div class="member-list">
-                            ${voteGroups.YES.map(m => `
-                                <div class="member-item">
-                                    <span class="precinct-label">${formatPrecinctLabel(m.precinct)}:</span> ${m.name}
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
+            appendMemberColumn('yes', `Yes (${voteGroups.YES.length}, ${percentages.YES}%)`, voteGroups.YES);
+            appendMemberColumn('no', `No (${voteGroups.NO.length}, ${percentages.NO}%)`, voteGroups.NO);
+            appendMemberColumn('abstain', `Abstain (${voteGroups.ABSTAIN.length})`, voteGroups.ABSTAIN);
+            appendMemberColumn('novote', `Vote Not Recorded (${voteGroups.NoVote.length})`, voteGroups.NoVote);
 
-                    <!-- NO column -->
-                    <div class="vote-column no">
-                        <h3>No (${voteGroups.NO.length}, ${percentages.NO}%)</h3>
-                        <div class="member-list">
-                            ${voteGroups.NO.map(m => `
-                                <div class="member-item">
-                                    <span class="precinct-label">${formatPrecinctLabel(m.precinct)}:</span> ${m.name}
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-
-                    <!-- ABSTAIN column -->
-                    <div class="vote-column abstain">
-                        <h3>Abstain (${voteGroups.ABSTAIN.length})</h3>
-                        <div class="member-list">
-                            ${voteGroups.ABSTAIN.map(m => `
-                                <div class="member-item">
-                                    <span class="precinct-label">${formatPrecinctLabel(m.precinct)}:</span> ${m.name}
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-
-                    <!-- NO VOTE column -->
-                    <div class="vote-column novote">
-                        <h3>Vote Not Recorded (${voteGroups.NoVote.length})</h3>
-                        <div class="member-list">
-                            ${voteGroups.NoVote.map(m => `
-                                <div class="member-item">
-                                    <span class="precinct-label">${formatPrecinctLabel(m.precinct)}:</span> ${m.name}
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            // Inject the assembled HTML into the DOM
-            resultsDiv.innerHTML = html;
+            resultsDiv.appendChild(resultsGridEl);
         }
 
         /****************************************************
@@ -930,8 +916,12 @@
          *   - Renders four columns of article titles + descriptions
          */
         function updateMemberResults() {
-            const selectedMember = document.getElementById('member-select').value;
+            const memberSelect = document.getElementById('member-select');
+            if (!memberSelect) return;
+
+            const selectedMember = memberSelect.value;
             const resultsDiv = document.getElementById('member-results');
+            if (!resultsDiv) return;
 
             // If nothing is selected or data is missing, do nothing
             if (!selectedMember || !votingData[selectedMember]) return;
@@ -1008,59 +998,46 @@
             };
 
             // Render four columns of article lists for this member
-            resultsDiv.innerHTML = `
-                <!-- YES column -->
-                <div class="vote-column yes">
-                    <h3>Yes (${voteGroups.YES.length}, ${percentages.YES}%)</h3>
-                    <div class="article-list">
-                        ${voteGroups.YES.map(v => `
-                            <div class="article-item-with-desc">
-                                <div class="article-title">${v.title}</div>
-                                ${v.description ? `<div class="article-desc">${v.description}</div>` : ''}
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
+            resultsDiv.replaceChildren();
 
-                <!-- NO column -->
-                <div class="vote-column no">
-                    <h3>No (${voteGroups.NO.length}, ${percentages.NO}%)</h3>
-                    <div class="article-list">
-                        ${voteGroups.NO.map(v => `
-                            <div class="article-item-with-desc">
-                                <div class="article-title">${v.title}</div>
-                                ${v.description ? `<div class="article-desc">${v.description}</div>` : ''}
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
+            function appendArticleColumn(columnClass, title, voteList) {
+                const columnEl = document.createElement('div');
+                columnEl.className = `vote-column ${columnClass}`;
 
-                <!-- ABSTAIN column -->
-                <div class="vote-column abstain">
-                    <h3>Abstain (${voteGroups.ABSTAIN.length}, ${percentages.ABSTAIN}%)</h3>
-                    <div class="article-list">
-                        ${voteGroups.ABSTAIN.map(v => `
-                            <div class="article-item-with-desc">
-                                <div class="article-title">${v.title}</div>
-                                ${v.description ? `<div class="article-desc">${v.description}</div>` : ''}
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
+                const headerEl = document.createElement('h3');
+                headerEl.textContent = title;
+                columnEl.appendChild(headerEl);
 
-                <!-- NO VOTE column -->
-                <div class="vote-column novote">
-                    <h3>Vote Not Recorded (${voteGroups.NoVote.length}, ${percentages.NoVote}%)</h3>
-                    <div class="article-list">
-                        ${voteGroups.NoVote.map(v => `
-                            <div class="article-item-with-desc">
-                                <div class="article-title">${v.title}</div>
-                                ${v.description ? `<div class="article-desc">${v.description}</div>` : ''}
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-            `;
+                const listEl = document.createElement('div');
+                listEl.className = 'article-list';
+
+                voteList.forEach(vote => {
+                    const wrapperEl = document.createElement('div');
+                    wrapperEl.className = 'article-item-with-desc';
+
+                    const titleEl = document.createElement('div');
+                    titleEl.className = 'article-title';
+                    titleEl.textContent = vote.title;
+                    wrapperEl.appendChild(titleEl);
+
+                    if (vote.description) {
+                        const descEl = document.createElement('div');
+                        descEl.className = 'article-desc';
+                        descEl.textContent = vote.description;
+                        wrapperEl.appendChild(descEl);
+                    }
+
+                    listEl.appendChild(wrapperEl);
+                });
+
+                columnEl.appendChild(listEl);
+                resultsDiv.appendChild(columnEl);
+            }
+
+            appendArticleColumn('yes', `Yes (${voteGroups.YES.length}, ${percentages.YES}%)`, voteGroups.YES);
+            appendArticleColumn('no', `No (${voteGroups.NO.length}, ${percentages.NO}%)`, voteGroups.NO);
+            appendArticleColumn('abstain', `Abstain (${voteGroups.ABSTAIN.length}, ${percentages.ABSTAIN}%)`, voteGroups.ABSTAIN);
+            appendArticleColumn('novote', `Vote Not Recorded (${voteGroups.NoVote.length}, ${percentages.NoVote}%)`, voteGroups.NoVote);
         }
 
         /****************************************************
@@ -1075,16 +1052,15 @@
          * Hides all tab content divs, then shows the selected one.
          * Also updates the active tab button styling.
          */
-        function switchTab(tabName) {
+        function switchTab(evt, tabName) {
             // Remove 'active' class from all tab buttons
             document.querySelectorAll('.tab').forEach(tab => {
                 tab.classList.remove('active');
             });
 
-            // Mark the clicked tab button as active
-            // (relies on the browser giving us the event target)
-            if (event && event.target) {
-                event.target.classList.add('active');
+            // Mark the clicked tab button as active.
+            if (evt && evt.target) {
+                evt.target.classList.add('active');
             }
 
             // Hide all tab content containers
@@ -1109,6 +1085,16 @@
         // Run once the DOM is ready. Set up the spreadsheet dropdown
         // listener and trigger an initial data load.
         window.addEventListener('DOMContentLoaded', () => {
+            const voteSelect = document.getElementById('vote-select');
+            if (voteSelect) {
+                voteSelect.addEventListener('change', updateVoteResults);
+            }
+
+            const memberSelect = document.getElementById('member-select');
+            if (memberSelect) {
+                memberSelect.addEventListener('change', updateMemberResults);
+            }
+
             const spreadsheetSelect = document.getElementById('spreadsheet-select');
             if (spreadsheetSelect) {
                 // When the spreadsheet selection changes:
