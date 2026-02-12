@@ -194,6 +194,13 @@
             font-weight: 600;
         }
 
+        .article-meta {
+            margin-bottom: 8px;
+            color: #4a5b6b;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
         /* Wrapper used in View by Member for title+description pairs */
         .article-item-with-desc {
             margin-bottom: 12px;
@@ -219,6 +226,23 @@
             color: #666;
             font-style: italic;
             border-left: 3px solid #dee2e6;
+        }
+
+        .article-links {
+            margin-top: 8px;
+            margin-left: 18px;
+            padding-left: 10px;
+        }
+
+        .article-links li {
+            margin-bottom: 4px;
+            font-size: 13px;
+            line-height: 1.35;
+        }
+
+        .article-links a {
+            color: #1f78b4;
+            text-decoration: underline;
         }
 
         /* Color theming for the four vote types */
@@ -318,6 +342,23 @@
 
         .cluster-inline-select {
             min-width: 170px;
+        }
+
+        .cluster-member-search-group {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 0;
+            flex-wrap: nowrap;
+        }
+
+        .cluster-member-search-group label {
+            white-space: nowrap;
+        }
+
+        .cluster-member-search-group .cluster-search-input {
+            flex: 1 1 auto;
+            min-width: 220px;
         }
 
         .cluster-search-input {
@@ -511,6 +552,14 @@
                 min-width: 180px;
             }
 
+            .cluster-member-search-group {
+                width: 100%;
+            }
+
+            .cluster-member-search-group .cluster-search-input {
+                min-width: 0;
+            }
+
             .results {
                 grid-template-columns: 1fr;
             }
@@ -538,24 +587,25 @@
             <!-- Spreadsheet selector -->
             <div class="controls" style="margin-bottom: 20px;">
                 <div class="control-group">
-                    <label for="spreadsheet-select">Select Spreadsheet:</label>
+                    <label for="spreadsheet-select">Select Town Meeting:</label>
                     <!--
                         value is URL-encoded file name located in:
                         https://github.com/millxing/TM/blob/main/<file>
                         which is fetched via the GitHub raw URL.
                     -->
                     <select id="spreadsheet-select">
-                        <option value="Votes/May%202021%20Votes.xlsx">May 2021 Votes (68 votes)</option>
-                        <option value="Votes/October%202021%20Votes.xlsx">October 2021 Votes (10 votes)</option>
-                        <option value="Votes/November%202021%20Votes.xlsx">November 2021 Votes (48 votes)</option>
-                        <option value="Votes/May%202022%20Votes.xlsx">May 2022 Votes (57 votes)</option>
-                        <option value="Votes/November%202022%20Votes.xlsx">November 2022 Votes (68 votes)</option>
-                        <option value="Votes/May%202023%20Votes.xlsx">May 2023 Votes (44 votes)</option>
-                        <option value="Votes/November%202023%20Votes.xlsx">November 2023 Votes (24 votes)</option>
-                        <option value="Votes/May%202024%20Votes.xlsx">May 2024 Votes (34 votes)</option>
-                        <option value="Votes/November%202024%20Votes.xlsx">November 2024 Votes (28 votes)</option>
-                        <option value="Votes/May%202025%20Votes.xlsx">May 2025 Votes (45 votes)</option>
                         <option value="Votes/November%202025%20Votes.xlsx" selected>November 2025 Votes (19 votes)</option>
+                        <option value="Votes/May%202025%20Votes.xlsx">May 2025 Votes (45 votes)</option>
+                        <option value="Votes/November%202024%20Votes.xlsx">November 2024 Votes (28 votes)</option>
+                        <option value="Votes/May%202024%20Votes.xlsx">May 2024 Votes (34 votes)</option>
+                        <option value="Votes/November%202023%20Votes.xlsx">November 2023 Votes (24 votes)</option>
+                        <option value="Votes/May%202023%20Votes.xlsx">May 2023 Votes (44 votes)</option>
+                        <option value="Votes/January%202023%20Votes.xlsx">January 2023 Votes (4 votes)</option>
+                        <option value="Votes/November%202022%20Votes.xlsx">November 2022 Votes (68 votes)</option>
+                        <option value="Votes/May%202022%20Votes.xlsx">May 2022 Votes (57 votes)</option>
+                        <option value="Votes/November%202021%20Votes.xlsx">November 2021 Votes (48 votes)</option>
+                        <option value="Votes/October%202021%20Votes.xlsx">October 2021 Votes (10 votes)</option>
+                        <option value="Votes/May%202021%20Votes.xlsx">May 2021 Votes (68 votes)</option>
                     </select>
                 </div>
             </div>
@@ -616,27 +666,29 @@
 
                             <div class="cluster-slider-group">
                                 <label for="cluster-terminate-weight">Terminate Debate weight:</label>
-                                <input type="range" id="cluster-terminate-weight" min="0" max="1" step="0.1" value="0.5">
-                                <span id="cluster-terminate-weight-value" class="cluster-slider-value">0.5</span>
+                                <input type="range" id="cluster-terminate-weight" min="0" max="1" step="0.1" value="0">
+                                <span id="cluster-terminate-weight-value" class="cluster-slider-value">0.0</span>
                             </div>
 
                             <label for="cluster-color-by">Color by:</label>
                             <select id="cluster-color-by" class="cluster-inline-select">
-                                <option value="precinct" selected>Precinct</option>
+                                <option value="precinct">Precinct</option>
                                 <option value="sessions">Number of sessions attended</option>
-                                <option value="none">None</option>
+                                <option value="none" selected>None</option>
                             </select>
 
-                            <label for="cluster-member-search">Find member:</label>
-                            <input
-                                type="search"
-                                id="cluster-member-search"
-                                class="cluster-search-input"
-                                list="cluster-member-options"
-                                placeholder="Type member name..."
-                                autocomplete="off">
+                            <div class="cluster-member-search-group">
+                                <label for="cluster-member-search">Find member:</label>
+                                <input
+                                    type="search"
+                                    id="cluster-member-search"
+                                    class="cluster-search-input"
+                                    list="cluster-member-options"
+                                    placeholder="Type member name..."
+                                    autocomplete="off">
+                                <button type="button" id="cluster-member-search-go" class="cluster-action-btn">Select</button>
+                            </div>
                             <datalist id="cluster-member-options"></datalist>
-                            <button type="button" id="cluster-member-search-go" class="cluster-action-btn">Select</button>
                         </div>
                     </div>
                 </div>
@@ -682,6 +734,11 @@
         const PRECINCT_COL_INDEX = 0;
         const NAME_COL_INDEX = 1;
         const FIRST_VOTE_COL_INDEX = 2;
+        const VOTE_GUIDE_FILE_NAMES = [
+            'VoteGuide.xlsx',
+            'Vote%20Guide.xlsx',
+            'voteguide.xlsx'
+        ];
 
         const SPREADSHEET_BASE_URL = 'https://raw.githubusercontent.com/millxing/TM/main/';
         const DISALLOWED_MEMBER_NAMES = new Set(['YES', 'NO', 'ABSTAIN', 'NO VOTE', 'TOTAL', 'ARTICLE', 'MOTION']);
@@ -691,6 +748,7 @@
             { id: '2021-11', label: 'November 2021', file: 'Votes/November%202021%20Votes.xlsx' },
             { id: '2022-05', label: 'May 2022', file: 'Votes/May%202022%20Votes.xlsx' },
             { id: '2022-11', label: 'November 2022', file: 'Votes/November%202022%20Votes.xlsx' },
+            { id: '2023-01', label: 'January 2023', file: 'Votes/January%202023%20Votes.xlsx' },
             { id: '2023-05', label: 'May 2023', file: 'Votes/May%202023%20Votes.xlsx' },
             { id: '2023-11', label: 'November 2023', file: 'Votes/November%202023%20Votes.xlsx' },
             { id: '2024-05', label: 'May 2024', file: 'Votes/May%202024%20Votes.xlsx' },
@@ -711,6 +769,10 @@
         let votingData = null;
         let votes = [];
         let members = [];
+        let voteGuideLoadPromise = null;
+        let voteGuideLoadComplete = false;
+        let voteGuideBySessionAndVote = new Map();
+        let voteGuideBySessionAndLooseVote = new Map();
 
         let clusteringSessionsCache = null;
         let clusteringLoadPromise = null;
@@ -762,6 +824,25 @@
             };
         }
 
+        function buildVoteGuideCandidateFiles() {
+            const selectedMeta = getCurrentSpreadsheetMeta();
+            const selectedFile = String(selectedMeta.file || '');
+            const selectedDir = selectedFile.includes('/')
+                ? selectedFile.slice(0, selectedFile.lastIndexOf('/') + 1)
+                : '';
+
+            const candidateSet = new Set();
+
+            VOTE_GUIDE_FILE_NAMES.forEach(name => {
+                if (selectedDir) candidateSet.add(`${selectedDir}${name}`);
+                candidateSet.add(`Votes/${name}`);
+                candidateSet.add(`Vote/${name}`);
+                candidateSet.add(name);
+            });
+
+            return Array.from(candidateSet);
+        }
+
         /****************************************************
          * DATA NORMALIZATION & SORT HELPERS
          ****************************************************/
@@ -808,9 +889,203 @@
             return String(title || '').toLowerCase().includes('terminate debate');
         }
 
+        function normalizeVoteTitleForMatch(title) {
+            return String(title || '')
+                .toLowerCase()
+                .replace(/\s+/g, ' ')
+                .trim();
+        }
+
+        function buildVoteGuideKey(sessionId, voteTitle) {
+            return `${sessionId}||${normalizeVoteTitleForMatch(voteTitle)}`;
+        }
+
+        function normalizeVoteTitleForLooseMatch(title) {
+            return normalizeVoteTitleForMatch(title)
+                .replace(/\barticles\b/g, 'article')
+                .replace(/\bmain motion\b/g, 'motion')
+                .replace(/\s+/g, ' ')
+                .trim();
+        }
+
+        function buildLooseVoteGuideKey(sessionId, voteTitle) {
+            return `${sessionId}||${normalizeVoteTitleForLooseMatch(voteTitle)}`;
+        }
+
+        function getSessionIdFromGuideLabel(sessionLabel) {
+            const normalized = String(sessionLabel || '').toLowerCase().trim();
+            if (!normalized) return null;
+
+            const direct = SESSION_FILES.find(session =>
+                normalized.includes(session.label.toLowerCase())
+            );
+            if (direct) return direct.id;
+
+            const match = normalized.match(/\b(january|may|october|november)\s+(20\d{2})\b/i);
+            if (!match) return null;
+
+            const monthMap = { january: '01', may: '05', october: '10', november: '11' };
+            const month = monthMap[match[1].toLowerCase()];
+            const year = match[2];
+            const candidate = `${year}-${month}`;
+            return SESSION_ORDER_INDEX[candidate] !== undefined ? candidate : null;
+        }
+
+        function getVoteGuideDetails(sessionId, voteTitle) {
+            if (!sessionId || voteGuideBySessionAndVote.size === 0) return null;
+            return (
+                voteGuideBySessionAndVote.get(buildVoteGuideKey(sessionId, voteTitle)) ||
+                voteGuideBySessionAndLooseVote.get(buildLooseVoteGuideKey(sessionId, voteTitle)) ||
+                null
+            );
+        }
+
+        function buildArticleLinksElement(links) {
+            if (!Array.isArray(links) || links.length === 0) return null;
+
+            const sanitizedLinks = links
+                .map(link => String(link || '').trim())
+                .filter(link => /^https?:\/\//i.test(link));
+            if (sanitizedLinks.length === 0) return null;
+
+            const listEl = document.createElement('ul');
+            listEl.className = 'article-links';
+
+            sanitizedLinks.forEach((url, index) => {
+                const itemEl = document.createElement('li');
+                const linkEl = document.createElement('a');
+                linkEl.href = url;
+                linkEl.target = '_blank';
+                linkEl.rel = 'noopener noreferrer';
+                linkEl.textContent = `Reference ${index + 1}`;
+                itemEl.appendChild(linkEl);
+                listEl.appendChild(itemEl);
+            });
+
+            return listEl;
+        }
+
         /****************************************************
          * LOADING & PARSING EXCEL
          ****************************************************/
+
+        function parseVoteGuideRows(rows) {
+            const index = new Map();
+            const looseIndex = new Map();
+            if (!rows || rows.length < 2) return { index, looseIndex };
+
+            const headers = (rows[0] || []).map(cell => String(cell || '').trim().toLowerCase());
+            const sessionCol = headers.findIndex(header => header === 'town meeting session');
+            const nightCol = headers.findIndex(header => header.startsWith('night'));
+            const voteCol = headers.findIndex(header => header === 'vote');
+            const descriptionCol = headers.findIndex(header => header === 'description');
+            const linkCols = headers
+                .map((header, idx) => ({ header, idx }))
+                .filter(entry => entry.header.startsWith('link'))
+                .map(entry => entry.idx);
+
+            if (sessionCol < 0 || voteCol < 0) return { index, looseIndex };
+
+            for (let r = 1; r < rows.length; r++) {
+                const row = rows[r] || [];
+                const sessionLabel = String(row[sessionCol] || '').trim();
+                const voteTitle = String(row[voteCol] || '').trim();
+                if (!sessionLabel || !voteTitle) continue;
+
+                const sessionId = getSessionIdFromGuideLabel(sessionLabel);
+                if (!sessionId) continue;
+
+                const description = descriptionCol >= 0 ? String(row[descriptionCol] || '').trim() : '';
+                const night = nightCol >= 0 ? String(row[nightCol] || '').trim() : '';
+                const links = linkCols
+                    .map(colIndex => String(row[colIndex] || '').trim())
+                    .filter(link => /^https?:\/\//i.test(link));
+
+                const key = buildVoteGuideKey(sessionId, voteTitle);
+                const mergeGuideEntry = (existing, incoming) => {
+                    if (!existing) return incoming;
+                    const mergedLinks = Array.from(new Set([...(existing.links || []), ...(incoming.links || [])]));
+                    return {
+                        description: (incoming.description.length > (existing.description || '').length)
+                            ? incoming.description
+                            : existing.description,
+                        night: existing.night || incoming.night,
+                        links: mergedLinks,
+                        sessionLabel: existing.sessionLabel || incoming.sessionLabel
+                    };
+                };
+
+                const incoming = { description, night, links, sessionLabel };
+                index.set(key, mergeGuideEntry(index.get(key), incoming));
+
+                const looseKey = buildLooseVoteGuideKey(sessionId, voteTitle);
+                looseIndex.set(looseKey, mergeGuideEntry(looseIndex.get(looseKey), incoming));
+            }
+
+            return { index, looseIndex };
+        }
+
+        async function ensureVoteGuideLoaded() {
+            if (voteGuideLoadComplete || voteGuideBySessionAndVote.size > 0) return;
+            if (voteGuideLoadPromise) {
+                await voteGuideLoadPromise;
+                return;
+            }
+
+            voteGuideLoadPromise = (async () => {
+                try {
+                    let loadedFromFile = '';
+                    const attemptErrors = [];
+                    const candidateFiles = buildVoteGuideCandidateFiles();
+
+                    for (const guideFile of candidateFiles) {
+                        try {
+                            const response = await fetch(getSpreadsheetRawURL(guideFile));
+                            if (!response.ok) {
+                                attemptErrors.push(`${guideFile}: HTTP ${response.status} ${response.statusText}`);
+                                continue;
+                            }
+
+                            const arrayBuffer = await response.arrayBuffer();
+                            const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+                            const sheetName = workbook.SheetNames[0];
+                            const sheet = workbook.Sheets[sheetName];
+                            const rows = XLSX.utils.sheet_to_json(sheet, {
+                                header: 1,
+                                blankrows: false,
+                                defval: ''
+                            });
+
+                            const parsedGuide = parseVoteGuideRows(rows);
+                            if (parsedGuide.index.size === 0) {
+                                attemptErrors.push(`${guideFile}: loaded but no valid VoteGuide rows were found`);
+                                continue;
+                            }
+
+                            voteGuideBySessionAndVote = parsedGuide.index;
+                            voteGuideBySessionAndLooseVote = parsedGuide.looseIndex;
+                            loadedFromFile = guideFile;
+                            break;
+                        } catch (err) {
+                            attemptErrors.push(`${guideFile}: ${err && err.message ? err.message : 'load error'}`);
+                        }
+                    }
+
+                    if (!loadedFromFile) {
+                        throw new Error(attemptErrors.join(' | ') || 'VoteGuide file not found');
+                    }
+                } catch (err) {
+                    console.warn('VoteGuide could not be loaded; using spreadsheet descriptions only.', err);
+                    voteGuideBySessionAndVote = new Map();
+                    voteGuideBySessionAndLooseVote = new Map();
+                } finally {
+                    voteGuideLoadComplete = true;
+                    voteGuideLoadPromise = null;
+                }
+            })();
+
+            await voteGuideLoadPromise;
+        }
 
         function parseRowsToData(rows, sessionMeta = {}) {
             if (!rows || rows.length <= HEADER_ROW_INDEX) {
@@ -866,13 +1141,21 @@
             for (let col = FIRST_VOTE_COL_INDEX; col <= LAST_VOTE_COL_INDEX; col++) {
                 const title = String(titleRow[col] || headerRow[col] || '').trim();
                 if (!title) continue;
+                const guideDetails = getVoteGuideDetails(sessionId, title);
+                const descriptionFromSheet = String(descRow[col] || '').trim();
                 parsedVotes.push({
                     id: `${sessionId}::${col}`,
                     sessionId,
                     sessionLabel,
                     colIndex: col,
                     title,
-                    description: String(descRow[col] || '').trim(),
+                    night: guideDetails ? String(guideDetails.night || '').trim() : '',
+                    description: guideDetails && guideDetails.description
+                        ? String(guideDetails.description).trim()
+                        : descriptionFromSheet,
+                    links: guideDetails && Array.isArray(guideDetails.links)
+                        ? guideDetails.links
+                        : [],
                     isTerminateDebate: isTerminateDebateVote(title)
                 });
             }
@@ -958,12 +1241,15 @@
         async function loadVotingDataFromExcel() {
             try {
                 if (loadingEl) loadingEl.textContent = 'Loading voting data from spreadsheet...';
+                await ensureVoteGuideLoaded();
                 const parsed = await fetchAndParseSpreadsheet(getCurrentSpreadsheetMeta());
 
                 votes = parsed.votes.map(vote => ({
                     colIndex: vote.colIndex,
                     title: vote.title,
-                    description: vote.description
+                    description: vote.description,
+                    links: vote.links || [],
+                    night: vote.night || ''
                 }));
                 members = parsed.members;
                 votingData = parsed.votingData;
@@ -1068,6 +1354,10 @@
 
             const selectedVoteDetails = votes.find(v => v.title === selectedVote);
             const description = selectedVoteDetails ? selectedVoteDetails.description : '';
+            const links = selectedVoteDetails && Array.isArray(selectedVoteDetails.links)
+                ? selectedVoteDetails.links
+                : [];
+            const night = selectedVoteDetails ? selectedVoteDetails.night : '';
             const voteGroups = { YES: [], NO: [], ABSTAIN: [], NoVote: [] };
 
             members.forEach(member => {
@@ -1102,15 +1392,30 @@
 
             resultsDiv.replaceChildren();
 
-            if (description) {
+            if (description || night || links.length > 0) {
                 const descriptionEl = document.createElement('div');
                 descriptionEl.className = 'article-description';
                 const descriptionTitleEl = document.createElement('h4');
                 descriptionTitleEl.textContent = 'Article Description';
-                const descriptionBodyEl = document.createElement('div');
-                descriptionBodyEl.textContent = description;
                 descriptionEl.appendChild(descriptionTitleEl);
-                descriptionEl.appendChild(descriptionBodyEl);
+
+                if (night) {
+                    const metaEl = document.createElement('div');
+                    metaEl.className = 'article-meta';
+                    metaEl.textContent = night;
+                    descriptionEl.appendChild(metaEl);
+                }
+
+                if (description) {
+                    const descriptionBodyEl = document.createElement('div');
+                    descriptionBodyEl.textContent = description;
+                    descriptionEl.appendChild(descriptionBodyEl);
+                }
+
+                const linksEl = buildArticleLinksElement(links);
+                if (linksEl) {
+                    descriptionEl.appendChild(linksEl);
+                }
                 resultsDiv.appendChild(descriptionEl);
             }
 
@@ -1172,7 +1477,11 @@
             votes.forEach(vote => {
                 const voteValue = memberVotes[vote.title];
                 const normalizedVote = voteValue ? voteValue.toUpperCase() : 'NOVOTE';
-                const voteWithDesc = { title: vote.title, description: vote.description };
+                const voteWithDesc = {
+                    title: vote.title,
+                    description: vote.description,
+                    links: vote.links || []
+                };
                 if (normalizedVote === 'YES') {
                     voteGroups.YES.push(voteWithDesc);
                 } else if (normalizedVote === 'NO') {
@@ -1235,6 +1544,11 @@
                         descEl.className = 'article-desc';
                         descEl.textContent = vote.description;
                         wrapperEl.appendChild(descEl);
+                    }
+
+                    const linksEl = buildArticleLinksElement(vote.links);
+                    if (linksEl) {
+                        wrapperEl.appendChild(linksEl);
                     }
 
                     listEl.appendChild(wrapperEl);
@@ -1301,13 +1615,16 @@
                 return;
             }
 
-            SESSION_FILES.forEach(session => {
+            const defaultSelectedSessionCount = Math.min(4, SESSION_FILES.length);
+            const defaultMinimumSessions = Math.min(4, SESSION_FILES.length);
+
+            [...SESSION_FILES].reverse().forEach((session, index) => {
                 const optionLabel = document.createElement('label');
                 optionLabel.className = 'session-option';
 
                 const checkbox = document.createElement('input');
                 checkbox.type = 'checkbox';
-                checkbox.checked = true;
+                checkbox.checked = index < defaultSelectedSessionCount;
                 checkbox.value = session.id;
                 checkbox.setAttribute('data-session-id', session.id);
 
@@ -1324,12 +1641,13 @@
                 const option = document.createElement('option');
                 option.value = String(i);
                 option.textContent = String(i);
-                if (i === 2) option.selected = true;
+                if (i === defaultMinimumSessions) option.selected = true;
                 minSessionsSelect.appendChild(option);
             }
 
-            terminateWeightSlider.value = '0.5';
-            terminateWeightValue.textContent = '0.5';
+            terminateWeightSlider.value = '0';
+            terminateWeightValue.textContent = Number.parseFloat(terminateWeightSlider.value).toFixed(1);
+            colorBySelect.value = 'none';
 
             sessionsContainer.addEventListener('change', event => {
                 if (event.target && event.target.matches('input[type="checkbox"]')) {
@@ -1402,6 +1720,7 @@
             setClusteringStatus(`Loading clustering data (0 of ${total})...`);
             setPanelMessage(clusterMemberDetailEl, 'Loading all sessions...');
             setPanelMessage(clusterNeighborsEl, 'Loading all sessions...');
+            await ensureVoteGuideLoaded();
 
             clusteringLoadPromise = Promise.all(
                 SESSION_FILES.map(async session => {
@@ -1996,6 +2315,11 @@
                             desc.className = 'article-desc';
                             desc.textContent = columnMeta.description;
                             wrapper.appendChild(desc);
+                        }
+
+                        const linksEl = buildArticleLinksElement(columnMeta.links);
+                        if (linksEl) {
+                            wrapper.appendChild(linksEl);
                         }
 
                         list.appendChild(wrapper);
