@@ -201,6 +201,26 @@
             font-weight: 600;
         }
 
+        .article-summary-line {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 8px;
+            color: #4a5b6b;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .article-summary-primary {
+            color: #2c3e50;
+            font-size: 14px;
+        }
+
+        .article-summary-separator {
+            color: #8a99a5;
+        }
+
         /* Wrapper used in View by Member for title+description pairs */
         .article-item-with-desc {
             margin-bottom: 12px;
@@ -228,16 +248,73 @@
             border-left: 3px solid #dee2e6;
         }
 
+        .article-detail {
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            background-color: white;
+        }
+
+        .article-title-toggle {
+            cursor: pointer;
+            list-style: none;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .article-title-toggle::-webkit-details-marker {
+            display: none;
+        }
+
+        .article-title-toggle::after {
+            content: '+';
+            color: #1f78b4;
+            font-size: 16px;
+            font-weight: 700;
+            line-height: 1;
+            margin-left: 12px;
+        }
+
+        .article-detail[open] .article-title-toggle::after {
+            content: '-';
+        }
+
+        .article-detail-body {
+            padding-bottom: 8px;
+        }
+
+        .article-vote-result {
+            margin-left: 12px;
+            margin-top: 4px;
+            margin-bottom: 6px;
+            color: #4a5b6b;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
         .article-links {
-            margin-top: 8px;
-            margin-left: 18px;
-            padding-left: 10px;
+            margin-top: 6px;
+            margin-left: 12px;
+            padding-left: 0;
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
         }
 
         .article-links li {
-            margin-bottom: 4px;
+            margin-bottom: 0;
             font-size: 13px;
             line-height: 1.35;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .article-links li:not(:last-child)::after {
+            content: '•';
+            margin-left: 8px;
+            color: #8a99a5;
         }
 
         .article-links a {
@@ -529,6 +606,40 @@
             color: #2c3e50;
         }
 
+        .page-footer {
+            margin-top: 28px;
+            padding-top: 18px;
+            border-top: 1px solid #e3e8ed;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .page-footer-text {
+            text-align: center;
+            color: #445566;
+            font-size: 16px;
+            line-height: 1.45;
+        }
+
+        .page-footer-text a {
+            color: inherit;
+            text-decoration: underline;
+        }
+
+        .page-footer-credit {
+            font-weight: 700;
+        }
+
+        .page-footer-logo {
+            width: 120px;
+            height: auto;
+            display: block;
+            flex: 0 0 auto;
+        }
+
         @media (max-width: 900px) {
             select {
                 min-width: 220px;
@@ -540,6 +651,10 @@
 
             .cluster-panels {
                 grid-template-columns: 1fr;
+            }
+
+            .page-footer-logo {
+                width: 80px;
             }
 
             .results {
@@ -718,6 +833,14 @@
                 </div>
             </div>
         </div>
+
+        <footer class="page-footer">
+            <div class="page-footer-text">
+                <p>If you find any bugs or errors, please report them to: robschoen.robschoen at gmail dot com</p>
+                <p class="page-footer-credit">created by Rob Schoen TMM P1 // Entangled Particles // <a href="https://www.longwoodmall.org" target="_blank" rel="noopener noreferrer">www.longwoodmall.org</a></p>
+            </div>
+            <img class="page-footer-logo" src="entangledParticlesLogo.jpg" alt="Entangled Particles logo">
+        </footer>
     </div>
 
 
@@ -887,6 +1010,45 @@
 
         function isTerminateDebateVote(title) {
             return String(title || '').toLowerCase().includes('terminate debate');
+        }
+
+        function normalizeVoteResult(value) {
+            const text = String(value || '').trim().toUpperCase();
+            if (!text) return '';
+            if (text.includes('APPROVED')) return 'APPROVED';
+            if (text.includes('FAILED')) return 'FAILED';
+            return '';
+        }
+
+        function extractVoteResultsByColumn(rows, startRowIndex, lastVoteColIndex) {
+            if (!Array.isArray(rows) || rows.length === 0) return {};
+
+            let bestRowIndex = -1;
+            let bestMatchCount = 0;
+            const scanStart = Math.max(0, startRowIndex);
+
+            for (let r = scanStart; r < rows.length; r++) {
+                const row = rows[r] || [];
+                let matchCount = 0;
+                for (let col = FIRST_VOTE_COL_INDEX; col <= lastVoteColIndex; col++) {
+                    if (normalizeVoteResult(row[col])) matchCount += 1;
+                }
+
+                if (matchCount > bestMatchCount) {
+                    bestMatchCount = matchCount;
+                    bestRowIndex = r;
+                }
+            }
+
+            if (bestRowIndex < 0 || bestMatchCount === 0) return {};
+
+            const resultsByCol = {};
+            const resultRow = rows[bestRowIndex] || [];
+            for (let col = FIRST_VOTE_COL_INDEX; col <= lastVoteColIndex; col++) {
+                const voteResult = normalizeVoteResult(resultRow[col]);
+                if (voteResult) resultsByCol[col] = voteResult;
+            }
+            return resultsByCol;
         }
 
         function normalizeVoteTitleForMatch(title) {
@@ -1163,6 +1325,7 @@
             const parsedMembers = [];
             const parsedVotingData = {};
             const canonicalMembers = {};
+            let lastMemberDataRowIndex = effectiveFirstDataRowIndex - 1;
 
             for (let r = effectiveFirstDataRowIndex; r < rows.length; r++) {
                 const row = rows[r] || [];
@@ -1197,6 +1360,7 @@
                     precinct,
                     votes: voteMapByTitle
                 };
+                lastMemberDataRowIndex = r;
 
                 canonicalMembers[canonicalKey] = {
                     name,
@@ -1205,6 +1369,15 @@
                     votesById: voteMapById
                 };
             }
+
+            const voteResultsByCol = extractVoteResultsByColumn(
+                rows,
+                lastMemberDataRowIndex + 1,
+                LAST_VOTE_COL_INDEX
+            );
+            parsedVotes.forEach(vote => {
+                vote.result = voteResultsByCol[vote.colIndex] || '';
+            });
 
             return {
                 id: sessionId,
@@ -1249,7 +1422,8 @@
                     title: vote.title,
                     description: vote.description,
                     links: vote.links || [],
-                    night: vote.night || ''
+                    night: vote.night || '',
+                    result: vote.result || ''
                 }));
                 members = parsed.members;
                 votingData = parsed.votingData;
@@ -1358,6 +1532,8 @@
                 ? selectedVoteDetails.links
                 : [];
             const night = selectedVoteDetails ? selectedVoteDetails.night : '';
+            const voteResult = selectedVoteDetails ? selectedVoteDetails.result : '';
+            const sessionLabel = getCurrentSpreadsheetMeta().label || '';
             const voteGroups = { YES: [], NO: [], ABSTAIN: [], NoVote: [] };
 
             members.forEach(member => {
@@ -1392,19 +1568,33 @@
 
             resultsDiv.replaceChildren();
 
-            if (description || night || links.length > 0) {
+            if (selectedVoteDetails || description || links.length > 0) {
                 const descriptionEl = document.createElement('div');
                 descriptionEl.className = 'article-description';
-                const descriptionTitleEl = document.createElement('h4');
-                descriptionTitleEl.textContent = 'Article Description';
-                descriptionEl.appendChild(descriptionTitleEl);
+                const summaryEl = document.createElement('div');
+                summaryEl.className = 'article-summary-line';
 
-                if (night) {
-                    const metaEl = document.createElement('div');
-                    metaEl.className = 'article-meta';
-                    metaEl.textContent = night;
-                    descriptionEl.appendChild(metaEl);
-                }
+                const summaryValues = [
+                    { text: selectedVote || 'Vote title unavailable', className: 'article-summary-primary' },
+                    { text: `Session: ${sessionLabel || 'Not listed'}` },
+                    { text: `Night/Date: ${night || 'Not listed'}` },
+                    { text: `Vote: ${voteResult || 'Not listed'}` }
+                ];
+
+                summaryValues.forEach((part, index) => {
+                    const valueEl = document.createElement('span');
+                    valueEl.textContent = part.text;
+                    if (part.className) valueEl.className = part.className;
+                    summaryEl.appendChild(valueEl);
+
+                    if (index < summaryValues.length - 1) {
+                        const sepEl = document.createElement('span');
+                        sepEl.className = 'article-summary-separator';
+                        sepEl.textContent = '•';
+                        summaryEl.appendChild(sepEl);
+                    }
+                });
+                descriptionEl.appendChild(summaryEl);
 
                 if (description) {
                     const descriptionBodyEl = document.createElement('div');
@@ -1480,6 +1670,7 @@
                 const voteWithDesc = {
                     title: vote.title,
                     description: vote.description,
+                    result: vote.result || '',
                     links: vote.links || []
                 };
                 if (normalizedVote === 'YES') {
@@ -1534,22 +1725,38 @@
                     const wrapperEl = document.createElement('div');
                     wrapperEl.className = 'article-item-with-desc';
 
-                    const titleEl = document.createElement('div');
-                    titleEl.className = 'article-title';
+                    const detailsEl = document.createElement('details');
+                    detailsEl.className = 'article-detail';
+
+                    const titleEl = document.createElement('summary');
+                    titleEl.className = 'article-title article-title-toggle';
                     titleEl.textContent = vote.title;
-                    wrapperEl.appendChild(titleEl);
+                    detailsEl.appendChild(titleEl);
+
+                    const detailBodyEl = document.createElement('div');
+                    detailBodyEl.className = 'article-detail-body';
+
+                    if (vote.result) {
+                        const resultEl = document.createElement('div');
+                        resultEl.className = 'article-vote-result';
+                        resultEl.textContent = `Vote: ${vote.result}`;
+                        detailBodyEl.appendChild(resultEl);
+                    }
 
                     if (vote.description) {
                         const descEl = document.createElement('div');
                         descEl.className = 'article-desc';
                         descEl.textContent = vote.description;
-                        wrapperEl.appendChild(descEl);
+                        detailBodyEl.appendChild(descEl);
                     }
 
                     const linksEl = buildArticleLinksElement(vote.links);
                     if (linksEl) {
-                        wrapperEl.appendChild(linksEl);
+                        detailBodyEl.appendChild(linksEl);
                     }
+
+                    detailsEl.appendChild(detailBodyEl);
+                    wrapperEl.appendChild(detailsEl);
 
                     listEl.appendChild(wrapperEl);
                 });
