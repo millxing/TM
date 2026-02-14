@@ -56,7 +56,7 @@
         .tabs {
             display: flex;
             border-bottom: 2px solid #e0e0e0;
-            margin-bottom: 30px;
+            margin-bottom: 16px;
         }
 
         /* Individual tab button */
@@ -80,6 +80,14 @@
         .tab.active {
             color: #2c3e50;
             border-bottom-color: #3498db;
+            font-weight: 600;
+        }
+
+        .module-instruction {
+            display: none;
+            margin-bottom: 12px;
+            color: #4a5b6b;
+            font-size: 14px;
             font-weight: 600;
         }
 
@@ -320,6 +328,14 @@
         .article-links a {
             color: #1f78b4;
             text-decoration: underline;
+        }
+
+        .counted-vote-outcome {
+            margin-top: 8px;
+            margin-left: 12px;
+            font-size: 13px;
+            font-weight: 700;
+            color: #2c3e50;
         }
 
         /* Color theming for the four vote types */
@@ -582,6 +598,82 @@
             line-height: 1.4;
         }
 
+        .member-network-table-wrap {
+            overflow: auto;
+            max-height: 860px;
+        }
+
+        .member-network-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 520px;
+            table-layout: fixed;
+        }
+
+        .member-network-table th,
+        .member-network-table td {
+            border: 1px solid #e9ecef;
+            padding: 8px 10px;
+            text-align: center;
+            font-size: 14px;
+            line-height: 1.35;
+            background-color: #fff;
+        }
+
+        .member-network-table th {
+            background-color: #f1f5f8;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .member-network-sort-btn {
+            width: 100%;
+            border: 0;
+            padding: 0;
+            margin: 0;
+            background: transparent;
+            color: inherit;
+            font: inherit;
+            font-weight: 600;
+            text-align: inherit;
+            cursor: pointer;
+        }
+
+        .member-network-sort-btn:hover {
+            color: #1d6fa5;
+        }
+
+        .member-network-table .rank-col {
+            width: 56px;
+            white-space: nowrap;
+        }
+
+        .member-network-table .member-col {
+            width: 200px;
+            white-space: normal;
+            overflow-wrap: anywhere;
+        }
+
+        .member-network-table .precinct-col {
+            width: 92px;
+            white-space: nowrap;
+            text-align: center;
+        }
+
+        .member-network-table .shared-col {
+            width: 112px;
+            white-space: nowrap;
+            text-align: center;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .member-network-table .sim-col {
+            width: 96px;
+            white-space: nowrap;
+            text-align: center;
+            font-variant-numeric: tabular-nums;
+        }
+
         .axis-component {
             margin-bottom: 16px;
             background-color: #fff;
@@ -604,6 +696,331 @@
 
         .axis-direction strong {
             color: #2c3e50;
+        }
+
+        .vote-history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .vote-history-session {
+            border: 1px solid #dce5ed;
+            border-radius: 8px;
+            background-color: #f8fbfd;
+            overflow: hidden;
+        }
+
+        .vote-history-session summary {
+            cursor: pointer;
+            padding: 10px 14px;
+            font-weight: 600;
+            color: #2c3e50;
+            background-color: #eef6fb;
+            list-style: none;
+        }
+
+        .vote-history-session summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .vote-history-session[open] summary {
+            border-bottom: 1px solid #dce5ed;
+        }
+
+        .vote-history-table-wrap {
+            overflow-x: auto;
+            background-color: white;
+        }
+
+        .vote-history-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1250px;
+        }
+
+        .vote-history-table th,
+        .vote-history-table td {
+            border: 1px solid #e9ecef;
+            padding: 8px 10px;
+            text-align: left;
+            vertical-align: top;
+            font-size: 13px;
+            line-height: 1.35;
+        }
+
+        .vote-history-table th {
+            background-color: #f1f5f8;
+            color: #2c3e50;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        .vote-history-table .num-col {
+            text-align: right;
+            white-space: nowrap;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .vote-history-table th:nth-child(1),
+        .vote-history-table td:nth-child(1) {
+            min-width: 96px;
+            white-space: nowrap;
+        }
+
+        .vote-history-table th:nth-child(2),
+        .vote-history-table td:nth-child(2) {
+            min-width: 130px;
+            white-space: nowrap;
+        }
+
+        .vote-history-table th:nth-child(5),
+        .vote-history-table td:nth-child(5),
+        .vote-history-table th:nth-child(6),
+        .vote-history-table td:nth-child(6),
+        .vote-history-table th:nth-child(7),
+        .vote-history-table td:nth-child(7),
+        .vote-history-table th:nth-child(8),
+        .vote-history-table td:nth-child(8) {
+            width: 88px;
+            min-width: 88px;
+            max-width: 88px;
+            text-align: left;
+        }
+
+        .vote-history-table .description-col {
+            min-width: 220px;
+        }
+
+        .vote-history-table .link-col {
+            white-space: nowrap;
+            text-align: center;
+        }
+
+        .vote-history-table th:nth-child(10),
+        .vote-history-table td:nth-child(10),
+        .vote-history-table th:nth-child(11),
+        .vote-history-table td:nth-child(11),
+        .vote-history-table th:nth-child(12),
+        .vote-history-table td:nth-child(12),
+        .vote-history-table th:nth-child(13),
+        .vote-history-table td:nth-child(13) {
+            text-align: center;
+        }
+
+        .vote-history-message {
+            padding: 12px 14px;
+            border: 1px solid #e0e7ee;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+            color: #4a5b6b;
+            font-size: 14px;
+        }
+
+        .contentious-votes-controls {
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .contentious-votes-table-wrap {
+            overflow: auto;
+            max-height: 860px;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            background-color: #fff;
+        }
+
+        .contentious-votes-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 960px;
+            table-layout: fixed;
+        }
+
+        .contentious-votes-table th,
+        .contentious-votes-table td {
+            border: 1px solid #e9ecef;
+            padding: 8px 10px;
+            text-align: left;
+            vertical-align: top;
+            font-size: 13px;
+            line-height: 1.35;
+        }
+
+        .contentious-votes-table th {
+            background-color: #f1f5f8;
+            color: #2c3e50;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        .contentious-votes-table .description-col {
+            min-width: 260px;
+        }
+
+        .contentious-votes-table .num-col {
+            width: 84px;
+            min-width: 84px;
+            white-space: nowrap;
+            text-align: right;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .contentious-votes-table th:nth-child(7),
+        .contentious-votes-table td:nth-child(7) {
+            width: 72px;
+            min-width: 72px;
+        }
+
+        .contentious-votes-table th:nth-child(7) {
+            white-space: normal;
+            line-height: 1.2;
+        }
+
+        .contentious-votes-table th:nth-child(8),
+        .contentious-votes-table td:nth-child(8) {
+            width: 96px;
+            min-width: 96px;
+        }
+
+        .precinct-votes-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .precinct-votes-table-wrap {
+            overflow: auto;
+            max-height: min(68vh, 640px);
+            background-color: white;
+            overscroll-behavior: contain;
+        }
+
+        .precinct-votes-scroll-top {
+            display: none;
+            overflow-x: auto;
+            overflow-y: hidden;
+            height: 12px;
+            background-color: white;
+            border-top: 1px solid #e9ecef;
+            border-left: 1px solid #e9ecef;
+            border-right: 1px solid #e9ecef;
+        }
+
+        .precinct-votes-scroll-inner {
+            height: 1px;
+        }
+
+        .precinct-votes-table {
+            /* Keep frozen-column widths and sticky offsets in sync via variables. */
+            --precinct-col-1-width: 100px;
+            --precinct-col-2-width: 200px;
+            --precinct-col-3-width: 100px;
+            /* Width for "All" + precinct percentage columns (P1..P17). */
+            --precinct-col-width: 50px;
+            width: max-content;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+
+        .precinct-votes-table th,
+        .precinct-votes-table td {
+            border: 1px solid #e9ecef;
+            padding: 8px 10px;
+            text-align: left;
+            vertical-align: top;
+            font-size: 13px;
+            line-height: 1.35;
+            box-sizing: border-box;
+        }
+
+        .precinct-votes-table th {
+            background-color: #f1f5f8;
+            color: #2c3e50;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+            white-space: nowrap;
+        }
+
+        .precinct-votes-table th:nth-child(n+4) {
+            text-align: right;
+        }
+
+        .precinct-votes-table th:nth-child(n+4),
+        .precinct-votes-table td:nth-child(n+4) {
+            width: var(--precinct-col-width);
+            min-width: var(--precinct-col-width);
+            max-width: var(--precinct-col-width);
+            padding-left: 4px;
+            padding-right: 4px;
+            white-space: nowrap;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .precinct-votes-table th:nth-child(1),
+        .precinct-votes-table td:nth-child(1) {
+            width: var(--precinct-col-1-width);
+            min-width: var(--precinct-col-1-width);
+            max-width: var(--precinct-col-1-width);
+            position: sticky;
+            left: 0;
+            z-index: 3;
+            background-color: white;
+        }
+
+        .precinct-votes-table th:nth-child(2),
+        .precinct-votes-table td:nth-child(2) {
+            width: var(--precinct-col-2-width);
+            min-width: var(--precinct-col-2-width);
+            max-width: var(--precinct-col-2-width);
+            position: sticky;
+            /* Sticky start exactly after column 1. */
+            left: var(--precinct-col-1-width);
+            z-index: 3;
+            background-color: white;
+        }
+
+        .precinct-votes-table th:nth-child(3),
+        .precinct-votes-table td:nth-child(3) {
+            width: var(--precinct-col-3-width);
+            min-width: var(--precinct-col-3-width);
+            max-width: var(--precinct-col-3-width);
+            white-space: nowrap;
+            position: sticky;
+            /* Sticky start exactly after columns 1 and 2. */
+            left: calc(var(--precinct-col-1-width) + var(--precinct-col-2-width));
+            z-index: 3;
+            background-color: white;
+        }
+
+        .precinct-votes-table th:nth-child(1),
+        .precinct-votes-table th:nth-child(2),
+        .precinct-votes-table th:nth-child(3) {
+            z-index: 6;
+            background-color: #f1f5f8;
+        }
+
+        .precinct-votes-table .description-col {
+            width: var(--precinct-col-2-width);
+            min-width: var(--precinct-col-2-width);
+            max-width: var(--precinct-col-2-width);
+        }
+
+        .precinct-votes-table .aggregate-col {
+            text-align: center;
+        }
+
+        .precinct-votes-table .pct-col {
+            text-align: center;
         }
 
         .page-footer {
@@ -689,7 +1106,7 @@
 <body>
     <div class="container">
         <h1>Brookline Town Meeting Voting Analysis</h1>
-        <p class="subtitle">Use the dropdown below to select a Town Meeting session.</p>
+        <p class="subtitle">Choose a module below, then select a Town Meeting session when needed.</p>
 
         <!-- Shown initially while spreadsheet data is being fetched and parsed -->
         <div class="loading" id="loading">
@@ -699,9 +1116,20 @@
         <!-- All main content is hidden until data is successfully loaded -->
         <div id="main-content" style="display: none;">
 
-            <!-- Spreadsheet selector -->
-            <div class="controls" style="margin-bottom: 20px;">
-                <div class="control-group">
+            <!-- Module selector buttons -->
+            <div class="tabs" id="module-menu">
+                <button class="tab active" onclick="switchTab(event, 'by-vote')">View by Vote</button>
+                <button class="tab" onclick="switchTab(event, 'by-member')">View by Member</button>
+                <button class="tab" onclick="switchTab(event, 'member-networks')">Member Networks</button>
+                <button class="tab" onclick="switchTab(event, 'vote-history')">Vote History</button>
+                <button class="tab" onclick="switchTab(event, 'precinct-votes')">Precinct Votes</button>
+                <button class="tab" onclick="switchTab(event, 'contentious-votes')">Closest Votes</button>
+            </div>
+            <div id="module-instruction" class="module-instruction"></div>
+
+            <!-- Context controls shown for modules that operate on a single session -->
+            <div id="module-context-controls" class="controls" style="margin-bottom: 20px;">
+                <div id="single-session-controls" class="control-group">
                     <label for="spreadsheet-select">Select Town Meeting:</label>
                     <!--
                         value is URL-encoded file name located in:
@@ -709,26 +1137,20 @@
                         which is fetched via the GitHub raw URL.
                     -->
                     <select id="spreadsheet-select">
-                        <option value="Votes/November%202025%20Votes.xlsx" selected>November 2025 Votes (19 votes)</option>
-                        <option value="Votes/May%202025%20Votes.xlsx">May 2025 Votes (45 votes)</option>
-                        <option value="Votes/November%202024%20Votes.xlsx">November 2024 Votes (28 votes)</option>
-                        <option value="Votes/May%202024%20Votes.xlsx">May 2024 Votes (34 votes)</option>
-                        <option value="Votes/November%202023%20Votes.xlsx">November 2023 Votes (24 votes)</option>
-                        <option value="Votes/May%202023%20Votes.xlsx">May 2023 Votes (44 votes)</option>
-                        <option value="Votes/January%202023%20Votes.xlsx">January 2023 Votes (4 votes)</option>
-                        <option value="Votes/November%202022%20Votes.xlsx">November 2022 Votes (68 votes)</option>
-                        <option value="Votes/May%202022%20Votes.xlsx">May 2022 Votes (57 votes)</option>
-                        <option value="Votes/November%202021%20Votes.xlsx">November 2021 Votes (48 votes)</option>
-                        <option value="Votes/October%202021%20Votes.xlsx">October 2021 Votes (10 votes)</option>
-                        <option value="Votes/May%202021%20Votes.xlsx">May 2021 Votes (68 votes)</option>
+                        <option value="Votes/November%202025%20Votes.xlsx" selected>November 2025 Special Town Meeting (19 votes)</option>
+                        <option value="Votes/May%202025%20Votes.xlsx">May 2025 Annual Town Meeting (45 votes)</option>
+                        <option value="Votes/November%202024%20Votes.xlsx">November 2024 Special Town Meeting (28 votes)</option>
+                        <option value="Votes/May%202024%20Votes.xlsx">May 2024 Annual Town Meeting (34 votes)</option>
+                        <option value="Votes/November%202023%20Votes.xlsx">November 2023 Special Town Meeting (24 votes)</option>
+                        <option value="Votes/May%202023%20Votes.xlsx">May 2023 Annual Town Meeting (44 votes)</option>
+                        <option value="Votes/January%202023%20Votes.xlsx">January 2023 Special Town Meeting (4 votes)</option>
+                        <option value="Votes/November%202022%20Votes.xlsx">November 2022 Special Town Meeting (68 votes)</option>
+                        <option value="Votes/May%202022%20Votes.xlsx">May 2022 Annual Town Meeting (57 votes)</option>
+                        <option value="Votes/November%202021%20Votes.xlsx">November 2021 Special Town Meeting (48 votes)</option>
+                        <option value="Votes/October%202021%20Votes.xlsx">October 2021 Special Town Meeting (10 votes)</option>
+                        <option value="Votes/May%202021%20Votes.xlsx">May 2021 Annual Town Meeting (68 votes)</option>
                     </select>
                 </div>
-            </div>
-
-            <!-- Tab selector buttons: View by Vote vs View by Member -->
-            <div class="tabs">
-                <button class="tab active" onclick="switchTab(event, 'by-vote')">View by Vote</button>
-                <button class="tab" onclick="switchTab(event, 'by-member')">View by Member</button>
             </div>
 
             <!-- TAB: View by Vote -->
@@ -765,6 +1187,84 @@
                 </div>
                 <!-- Grid of four columns: for this one member, show which articles they voted Yes/No/Abstain/No Vote -->
                 <div id="member-results" class="results"></div>
+            </div>
+
+            <!-- TAB: Member Networks -->
+            <div id="member-networks" class="tab-content">
+                <div class="controls">
+                    <div class="control-group">
+                        <label for="member-network-select">Select Member:</label>
+                        <select id="member-network-select" onchange="updateMemberNetworkResults()"></select>
+                        <div class="checkbox-group">
+                            <input
+                                type="checkbox"
+                                id="sort-by-precinct-network"
+                                checked
+                                onchange="populateMemberNetworkDropdown(); updateMemberNetworkResults()">
+                            <label for="sort-by-precinct-network">Sort by precinct, then last name</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input
+                                type="checkbox"
+                                id="member-network-ignore-terminate"
+                                checked
+                                onchange="updateMemberNetworkResults()">
+                            <label for="member-network-ignore-terminate">Ignore motions to terminate debate</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input
+                                type="checkbox"
+                                id="member-network-ignore-abstain"
+                                onchange="updateMemberNetworkResults()">
+                            <label for="member-network-ignore-abstain">Ignore abstain votes</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="member-network-status" class="cluster-status">
+                    Select a member to view nearest voting neighbors.
+                </div>
+
+                <div class="cluster-panels">
+                    <div class="cluster-panel member-detail">
+                        <h3>Closest Members</h3>
+                        <div id="member-network-neighbors" class="cluster-panel-body">
+                            <div class="cluster-message">Select a member to compute voting similarity.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB: Vote History -->
+            <div id="vote-history" class="tab-content">
+                <div id="vote-history-results" class="vote-history-message">Open this module to load all sessions.</div>
+            </div>
+
+            <!-- TAB: Precinct Votes -->
+            <div id="precinct-votes" class="tab-content">
+                <div id="precinct-votes-results" class="vote-history-message">Open this module to load all sessions.</div>
+            </div>
+
+            <!-- TAB: Contentious Votes -->
+            <div id="contentious-votes" class="tab-content">
+                <div class="controls contentious-votes-controls">
+                    <div class="checkbox-group">
+                        <input
+                            type="checkbox"
+                            id="contentious-ignore-terminate"
+                            checked
+                            onchange="renderContentiousVotes()">
+                        <label for="contentious-ignore-terminate">Ignore motions to terminate debate</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input
+                            type="checkbox"
+                            id="contentious-ignore-abstain"
+                            onchange="renderContentiousVotes()">
+                        <label for="contentious-ignore-abstain">Ignore abstain votes</label>
+                    </div>
+                </div>
+                <div id="contentious-votes-results" class="vote-history-message">Open this module to load all sessions.</div>
             </div>
 
             <!-- TAB: Voter Clustering -->
@@ -862,27 +1362,50 @@
             'Vote%20Guide.xlsx',
             'voteguide.xlsx'
         ];
+        const MEMBER_ALIASES_FILE_NAMES = [
+            'members_aliases.xlsx',
+            'members%20aliases.xlsx',
+            'member_aliases.xlsx',
+            'MemberAliases.xlsx'
+        ];
 
         const SPREADSHEET_BASE_URL = 'https://raw.githubusercontent.com/millxing/TM/main/';
         const DISALLOWED_MEMBER_NAMES = new Set(['YES', 'NO', 'ABSTAIN', 'NO VOTE', 'TOTAL', 'ARTICLE', 'MOTION']);
+        // Fallback alias overrides for known name variants.
+        const DEFAULT_MEMBER_IDENTITY_ALIASES = new Map([
+            ['ingraham, katherine a', 'ingraham, katherine'],
+            ['warren, paul s', 'warren, paul']
+        ]);
         const SESSION_FILES = [
-            { id: '2021-05', label: 'May 2021', file: 'Votes/May%202021%20Votes.xlsx' },
-            { id: '2021-10', label: 'October 2021', file: 'Votes/October%202021%20Votes.xlsx' },
-            { id: '2021-11', label: 'November 2021', file: 'Votes/November%202021%20Votes.xlsx' },
-            { id: '2022-05', label: 'May 2022', file: 'Votes/May%202022%20Votes.xlsx' },
-            { id: '2022-11', label: 'November 2022', file: 'Votes/November%202022%20Votes.xlsx' },
-            { id: '2023-01', label: 'January 2023', file: 'Votes/January%202023%20Votes.xlsx' },
-            { id: '2023-05', label: 'May 2023', file: 'Votes/May%202023%20Votes.xlsx' },
-            { id: '2023-11', label: 'November 2023', file: 'Votes/November%202023%20Votes.xlsx' },
-            { id: '2024-05', label: 'May 2024', file: 'Votes/May%202024%20Votes.xlsx' },
-            { id: '2024-11', label: 'November 2024', file: 'Votes/November%202024%20Votes.xlsx' },
-            { id: '2025-05', label: 'May 2025', file: 'Votes/May%202025%20Votes.xlsx' },
-            { id: '2025-11', label: 'November 2025', file: 'Votes/November%202025%20Votes.xlsx' }
+            { id: '2021-05', label: 'May 2021 Annual Town Meeting', file: 'Votes/May%202021%20Votes.xlsx' },
+            { id: '2021-10', label: 'October 2021 Special Town Meeting', file: 'Votes/October%202021%20Votes.xlsx' },
+            { id: '2021-11', label: 'November 2021 Special Town Meeting', file: 'Votes/November%202021%20Votes.xlsx' },
+            { id: '2022-05', label: 'May 2022 Annual Town Meeting', file: 'Votes/May%202022%20Votes.xlsx' },
+            { id: '2022-11', label: 'November 2022 Special Town Meeting', file: 'Votes/November%202022%20Votes.xlsx' },
+            { id: '2023-01', label: 'January 2023 Special Town Meeting', file: 'Votes/January%202023%20Votes.xlsx' },
+            { id: '2023-05', label: 'May 2023 Annual Town Meeting', file: 'Votes/May%202023%20Votes.xlsx' },
+            { id: '2023-11', label: 'November 2023 Special Town Meeting', file: 'Votes/November%202023%20Votes.xlsx' },
+            { id: '2024-05', label: 'May 2024 Annual Town Meeting', file: 'Votes/May%202024%20Votes.xlsx' },
+            { id: '2024-11', label: 'November 2024 Special Town Meeting', file: 'Votes/November%202024%20Votes.xlsx' },
+            { id: '2025-05', label: 'May 2025 Annual Town Meeting', file: 'Votes/May%202025%20Votes.xlsx' },
+            { id: '2025-11', label: 'November 2025 Special Town Meeting', file: 'Votes/November%202025%20Votes.xlsx' }
         ];
         const SESSION_ORDER_INDEX = SESSION_FILES.reduce((acc, session, index) => {
             acc[session.id] = index;
             return acc;
         }, {});
+        const COUNTED_VOTE_OVERRIDES = {
+            '2025-11::article 19 main motion to table': {
+                counts: { YES: 146, NO: 78, ABSTAIN: 7, NoVote: 32 },
+                detailLine: 'FAILED 146-78-7, required 2/3 majority'
+            },
+            '2025-11::article 19 main motion': {
+                counts: { YES: 141, NO: 27, ABSTAIN: 20, NoVote: 75 },
+                detailLine: 'APPROVED 141-27-20'
+            }
+        };
+        // Canonical precinct list used by cross-session precinct reporting.
+        const STANDARD_PRECINCTS = Array.from({ length: 17 }, (_, idx) => String(idx + 1));
 
         /****************************************************
          * GLOBAL STATE
@@ -892,10 +1415,23 @@
         let votingData = null;
         let votes = [];
         let members = [];
+        let memberAliasesLoadPromise = null;
+        let memberAliasesLoadComplete = false;
+        let memberIdentityAliases = new Map(DEFAULT_MEMBER_IDENTITY_ALIASES);
+        let memberIdentityCanonicalDisplayNames = new Map();
         let voteGuideLoadPromise = null;
         let voteGuideLoadComplete = false;
         let voteGuideBySessionAndVote = new Map();
         let voteGuideBySessionAndLooseVote = new Map();
+        let voteHistorySessionsCache = null;
+        let voteHistoryLoadPromise = null;
+        let precinctVotesLoadPromise = null;
+        let contentiousVotesLoadPromise = null;
+        let memberNetworkProfilesCache = null;
+        let memberNetworkProfileByKey = new Map();
+        let memberNetworkLoadPromise = null;
+        let memberNetworkCurrentData = null;
+        let memberNetworkSortState = { key: 'baseRank', direction: 'asc' };
 
         let clusteringSessionsCache = null;
         let clusteringLoadPromise = null;
@@ -908,9 +1444,14 @@
         const APP_MODE = new URLSearchParams(window.location.search).get('app') === 'vote-analyzer'
             ? 'vote-analyzer'
             : 'tmmvotes';
+        const SINGLE_SESSION_MODULE_IDS = new Set(['by-vote', 'by-member']);
 
         const loadingEl = document.getElementById('loading');
         const mainContentEl = document.getElementById('main-content');
+        const moduleInstructionEl = document.getElementById('module-instruction');
+        const moduleContextControlsEl = document.getElementById('module-context-controls');
+        const memberNetworkStatusEl = document.getElementById('member-network-status');
+        const memberNetworkNeighborsEl = document.getElementById('member-network-neighbors');
         const clusterStatusEl = document.getElementById('cluster-status');
         const clusterPlotEl = document.getElementById('cluster-plot');
         const clusterMemberDetailEl = document.getElementById('cluster-member-detail');
@@ -956,7 +1497,26 @@
 
             const candidateSet = new Set();
 
+            // Try sibling directory first, then legacy fallbacks used in earlier commits.
             VOTE_GUIDE_FILE_NAMES.forEach(name => {
+                if (selectedDir) candidateSet.add(`${selectedDir}${name}`);
+                candidateSet.add(`Votes/${name}`);
+                candidateSet.add(`Vote/${name}`);
+                candidateSet.add(name);
+            });
+
+            return Array.from(candidateSet);
+        }
+
+        function buildMemberAliasesCandidateFiles() {
+            const selectedMeta = getCurrentSpreadsheetMeta();
+            const selectedFile = String(selectedMeta.file || '');
+            const selectedDir = selectedFile.includes('/')
+                ? selectedFile.slice(0, selectedFile.lastIndexOf('/') + 1)
+                : '';
+
+            const candidateSet = new Set();
+            MEMBER_ALIASES_FILE_NAMES.forEach(name => {
                 if (selectedDir) candidateSet.add(`${selectedDir}${name}`);
                 candidateSet.add(`Votes/${name}`);
                 candidateSet.add(`Vote/${name}`);
@@ -978,6 +1538,7 @@
         }
 
         function normalizeVote(raw) {
+            // Keep this contract strict; downstream views assume only these 4 buckets.
             const value = (raw == null ? '' : String(raw)).trim().toUpperCase();
             if (!value) return 'NoVote';
             if (value === 'Y') return 'YES';
@@ -998,14 +1559,145 @@
             return String(name || '').trim().toLowerCase().replace(/\s+/g, ' ');
         }
 
+        function normalizeMemberAliasToken(name) {
+            return normalizeMemberName(name)
+                .replace(/\./g, '')
+                .replace(/\s*,\s*/g, ', ')
+                .replace(/\s+/g, ' ')
+                .trim();
+        }
+
+        function reorderNameIfLikelyFirstLast(normalizedName) {
+            if (!normalizedName || normalizedName.includes(',')) return '';
+            const tokens = normalizedName.split(/\s+/).filter(Boolean);
+            if (tokens.length < 2) return '';
+
+            const suffixPattern = /^(jr|sr|ii|iii|iv|v|vi)$/i;
+            let suffix = '';
+            if (tokens.length > 2 && suffixPattern.test(tokens[tokens.length - 1])) {
+                suffix = tokens.pop();
+            }
+
+            const last = tokens.pop();
+            if (!last || tokens.length === 0) return '';
+            const given = suffix ? [...tokens, suffix] : tokens;
+            return `${last}, ${given.join(' ')}`.replace(/\s+/g, ' ').trim();
+        }
+
+        function stripLikelyMiddleInitials(normalizedName) {
+            if (!normalizedName) return '';
+
+            if (normalizedName.includes(',')) {
+                const parts = normalizedName.split(',');
+                const last = (parts[0] || '').trim();
+                const given = (parts.slice(1).join(',') || '').trim();
+                if (!given) return last;
+
+                const tokens = given
+                    .replace(/\./g, '')
+                    .split(/\s+/)
+                    .filter(Boolean);
+
+                if (tokens.length > 1 && /^[a-z]$/.test(tokens[tokens.length - 1])) {
+                    tokens.pop();
+                }
+
+                return `${last}, ${tokens.join(' ')}`.replace(/\s+/g, ' ').trim();
+            }
+
+            const tokens = normalizedName
+                .replace(/\./g, '')
+                .split(/\s+/)
+                .filter(Boolean);
+
+            if (tokens.length > 1 && /^[a-z]$/.test(tokens[tokens.length - 1])) {
+                tokens.pop();
+            } else if (tokens.length === 3 && /^[a-z]$/.test(tokens[1])) {
+                tokens.splice(1, 1);
+            }
+
+            return tokens.join(' ');
+        }
+
+        function canonicalMemberIdentityName(name) {
+            const normalized = normalizeMemberAliasToken(name);
+            if (!normalized) return '';
+
+            const candidates = [];
+            const pushCandidate = value => {
+                const token = normalizeMemberAliasToken(value);
+                if (token && !candidates.includes(token)) candidates.push(token);
+            };
+
+            pushCandidate(normalized);
+            pushCandidate(stripLikelyMiddleInitials(normalized));
+
+            const reordered = reorderNameIfLikelyFirstLast(normalized);
+            if (reordered) {
+                pushCandidate(reordered);
+                pushCandidate(stripLikelyMiddleInitials(reordered));
+            }
+
+            for (const candidate of candidates) {
+                const mapped = memberIdentityAliases.get(candidate);
+                if (mapped) return mapped;
+            }
+
+            return candidates[1] || candidates[0];
+        }
+
+        function preferDisplayName(existingName, incomingName) {
+            const existing = String(existingName || '').trim();
+            const incoming = String(incomingName || '').trim();
+            if (!existing) return incoming;
+            if (!incoming) return existing;
+            if (incoming.length < existing.length) return incoming;
+            return existing;
+        }
+
+        function summarizePrecinctSet(precinctSet) {
+            const items = Array.from(precinctSet || []).filter(Boolean);
+            if (items.length === 0) return '';
+            if (items.length === 1) return items[0];
+            if (items.includes('AL')) return 'AL';
+            const numeric = items
+                .map(value => parseInt(value, 10))
+                .filter(value => !isNaN(value))
+                .sort((a, b) => a - b);
+            if (numeric.length > 0) return String(numeric[0]);
+            return items[0];
+        }
+
+        function getSessionOrderIndex(sessionId) {
+            return SESSION_ORDER_INDEX[sessionId] !== undefined ? SESSION_ORDER_INDEX[sessionId] : -1;
+        }
+
         function canonicalMemberKey(name, precinct) {
-            return `${normalizeMemberName(name)}|${String(precinct || '').trim().toUpperCase()}`;
+            // Cross-session identity intentionally ignores precinct so redistricting/AL service doesn't split members.
+            void precinct;
+            return canonicalMemberIdentityName(name);
         }
 
         function formatPrecinctLabel(precinct) {
             const up = String(precinct).toUpperCase();
             if (up === 'AL') return 'AL';
+            if (up === 'MULTI') return 'MULTI';
             return `P${precinct}`;
+        }
+
+        function getLastNameForSort(name) {
+            const normalized = String(name || '').trim();
+            if (!normalized) return '';
+
+            // Prefer "Last, First" format when present.
+            if (normalized.includes(',')) {
+                return normalized.split(',')[0].trim().toLowerCase();
+            }
+
+            // Fallback for "First Last" format.
+            const parts = normalized.split(/\s+/).filter(Boolean);
+            if (parts.length === 0) return '';
+            return parts[parts.length - 1].toLowerCase();
         }
 
         function isTerminateDebateVote(title) {
@@ -1027,6 +1719,7 @@
             let bestMatchCount = 0;
             const scanStart = Math.max(0, startRowIndex);
 
+            // Vote-result rows are not always fixed; pick the row with most APPROVED/FAILED matches.
             for (let r = scanStart; r < rows.length; r++) {
                 const row = rows[r] || [];
                 let matchCount = 0;
@@ -1078,6 +1771,7 @@
             const normalized = String(sessionLabel || '').toLowerCase().trim();
             if (!normalized) return null;
 
+            // Prefer exact known labels from SESSION_FILES before parsing month/year text.
             const direct = SESSION_FILES.find(session =>
                 normalized.includes(session.label.toLowerCase())
             );
@@ -1127,15 +1821,815 @@
             return listEl;
         }
 
+        function splitNightDateLabel(nightAndDateText) {
+            const raw = String(nightAndDateText || '').trim();
+            if (!raw) return { night: '', date: '' };
+
+            let match = raw.match(/^(Night\s*\d+)\s*\(([^)]+)\)$/i);
+            if (match) {
+                return {
+                    night: match[1].trim(),
+                    date: match[2].trim()
+                };
+            }
+
+            match = raw.match(/^(Night\s*\d+)\s*[-–:]\s*(.+)$/i);
+            if (match) {
+                return {
+                    night: match[1].trim(),
+                    date: match[2].trim()
+                };
+            }
+
+            match = raw.match(/^(.+?)\s*\(([^)]+)\)$/);
+            if (match) {
+                return {
+                    night: match[1].trim(),
+                    date: match[2].trim()
+                };
+            }
+
+            return { night: raw, date: '' };
+        }
+
+        function normalizeVoteTitleKey(title) {
+            return String(title || '')
+                .trim()
+                .toLowerCase()
+                .replace(/\s+/g, ' ');
+        }
+
+        function getCountedVoteOverride(sessionId, voteTitle) {
+            const key = `${String(sessionId || '').trim()}::${normalizeVoteTitleKey(voteTitle)}`;
+            return COUNTED_VOTE_OVERRIDES[key] || null;
+        }
+
+        function computeVoteBreakdownFromSession(sessionData, voteMeta) {
+            const counts = { YES: 0, NO: 0, ABSTAIN: 0, NoVote: 0 };
+            if (!sessionData || !voteMeta || !sessionData.canonicalMembers) return counts;
+
+            const countedOverride = getCountedVoteOverride(sessionData.id, voteMeta.title);
+            if (countedOverride && countedOverride.counts) {
+                return {
+                    YES: Number(countedOverride.counts.YES) || 0,
+                    NO: Number(countedOverride.counts.NO) || 0,
+                    ABSTAIN: Number(countedOverride.counts.ABSTAIN) || 0,
+                    NoVote: Number(countedOverride.counts.NoVote) || 0
+                };
+            }
+
+            Object.values(sessionData.canonicalMembers).forEach(member => {
+                const rawVote = member && member.votesById ? member.votesById[voteMeta.id] : '';
+                const normalized = normalizeVote(rawVote);
+                if (normalized === 'YES') {
+                    counts.YES += 1;
+                } else if (normalized === 'NO') {
+                    counts.NO += 1;
+                } else if (normalized === 'ABSTAIN') {
+                    counts.ABSTAIN += 1;
+                } else {
+                    counts.NoVote += 1;
+                }
+            });
+
+            return counts;
+        }
+
+        function formatYesPercent(yesCount, noCount) {
+            const yes = Number(yesCount) || 0;
+            const no = Number(noCount) || 0;
+            const total = yes + no;
+            if (total === 0) return '—';
+            return `${Math.round((yes / total) * 100)}%`;
+        }
+
+        function normalizeToStandardPrecinct(precinctValue) {
+            const raw = String(precinctValue || '').trim();
+            const parsed = parseInt(raw, 10);
+            if (isNaN(parsed)) return '';
+            if (parsed < 1 || parsed > 17) return '';
+            return String(parsed);
+        }
+
+        function computePrecinctYesPercentages(sessionData, voteMeta) {
+            const countsByPrecinct = {};
+            STANDARD_PRECINCTS.forEach(precinct => {
+                countsByPrecinct[precinct] = { yes: 0, no: 0 };
+            });
+
+            if (!sessionData || !voteMeta || !sessionData.canonicalMembers) {
+                const empty = {};
+                STANDARD_PRECINCTS.forEach(precinct => {
+                    empty[precinct] = '—';
+                });
+                return empty;
+            }
+
+            Object.values(sessionData.canonicalMembers).forEach(member => {
+                const precinct = normalizeToStandardPrecinct(member ? member.precinct : '');
+                if (!precinct) return;
+
+                const rawVote = member && member.votesById ? member.votesById[voteMeta.id] : '';
+                const normalized = normalizeVote(rawVote);
+                if (normalized === 'YES') {
+                    countsByPrecinct[precinct].yes += 1;
+                } else if (normalized === 'NO') {
+                    countsByPrecinct[precinct].no += 1;
+                }
+            });
+
+            const percentages = {};
+            STANDARD_PRECINCTS.forEach(precinct => {
+                const counts = countsByPrecinct[precinct];
+                percentages[precinct] = formatYesPercent(counts.yes, counts.no);
+            });
+            return percentages;
+        }
+
+        function getAggregateYesPercentForVote(sessionData, voteMeta, counts) {
+            const countedOverride = getCountedVoteOverride(
+                sessionData ? sessionData.id : '',
+                voteMeta ? voteMeta.title : ''
+            );
+            if (countedOverride && countedOverride.counts) {
+                return formatYesPercent(countedOverride.counts.YES, countedOverride.counts.NO);
+            }
+            return formatYesPercent(counts.YES, counts.NO);
+        }
+
+        function renderVoteHistory() {
+            const container = document.getElementById('vote-history-results');
+            if (!container) return;
+
+            if (!Array.isArray(voteHistorySessionsCache) || voteHistorySessionsCache.length === 0) {
+                container.className = 'vote-history-message';
+                container.textContent = 'Vote History is unavailable.';
+                return;
+            }
+
+            const orderedSessions = [...voteHistorySessionsCache].sort((a, b) => {
+                const ai = SESSION_ORDER_INDEX[a.id] !== undefined ? SESSION_ORDER_INDEX[a.id] : -1;
+                const bi = SESSION_ORDER_INDEX[b.id] !== undefined ? SESSION_ORDER_INDEX[b.id] : -1;
+                return bi - ai;
+            });
+
+            container.replaceChildren();
+            container.className = 'vote-history-list';
+
+            const headers = [
+                'Night',
+                'Date',
+                'Vote Title',
+                'Vote Description',
+                'Yes',
+                'No',
+                'Abstain',
+                'No Vote Recorded',
+                'Vote Result',
+                'Link 1',
+                'Link 2',
+                'Link 3',
+                'Link 4'
+            ];
+
+            orderedSessions.forEach(session => {
+                const detailsEl = document.createElement('details');
+                detailsEl.className = 'vote-history-session';
+
+                const summaryEl = document.createElement('summary');
+                summaryEl.textContent = `${session.label} (${session.votes.length} votes)`;
+                detailsEl.appendChild(summaryEl);
+
+                const tableWrapEl = document.createElement('div');
+                tableWrapEl.className = 'vote-history-table-wrap';
+
+                const tableEl = document.createElement('table');
+                tableEl.className = 'vote-history-table';
+
+                const theadEl = document.createElement('thead');
+                const headRowEl = document.createElement('tr');
+                headers.forEach(headerText => {
+                    const th = document.createElement('th');
+                    th.textContent = headerText;
+                    headRowEl.appendChild(th);
+                });
+                theadEl.appendChild(headRowEl);
+                tableEl.appendChild(theadEl);
+
+                const tbodyEl = document.createElement('tbody');
+                session.votes.forEach(vote => {
+                    const rowEl = document.createElement('tr');
+                    const nightDate = splitNightDateLabel(vote.night || '');
+                    const counts = computeVoteBreakdownFromSession(session, vote);
+                    const links = Array.isArray(vote.links) ? vote.links : [];
+
+                    const addTextCell = (text, className = '') => {
+                        const td = document.createElement('td');
+                        if (className) td.className = className;
+                        td.textContent = text;
+                        rowEl.appendChild(td);
+                    };
+
+                    addTextCell(nightDate.night || '—');
+                    addTextCell(nightDate.date || '—');
+                    addTextCell(vote.title || '');
+                    addTextCell(vote.description || '—', 'description-col');
+                    addTextCell(String(counts.YES), 'num-col');
+                    addTextCell(String(counts.NO), 'num-col');
+                    addTextCell(String(counts.ABSTAIN), 'num-col');
+                    addTextCell(String(counts.NoVote), 'num-col');
+                    addTextCell(vote.result || '—');
+
+                    for (let i = 0; i < 4; i++) {
+                        const td = document.createElement('td');
+                        td.className = 'link-col';
+                        const url = String(links[i] || '').trim();
+                        if (/^https?:\/\//i.test(url)) {
+                            const linkEl = document.createElement('a');
+                            linkEl.href = url;
+                            linkEl.target = '_blank';
+                            linkEl.rel = 'noopener noreferrer';
+                            linkEl.textContent = `Link ${i + 1}`;
+                            td.appendChild(linkEl);
+                        } else {
+                            td.textContent = '—';
+                        }
+                        rowEl.appendChild(td);
+                    }
+
+                    tbodyEl.appendChild(rowEl);
+                });
+
+                tableEl.appendChild(tbodyEl);
+                tableWrapEl.appendChild(tableEl);
+                detailsEl.appendChild(tableWrapEl);
+                container.appendChild(detailsEl);
+            });
+        }
+
+        async function ensureVoteHistoryDataLoaded() {
+            const container = document.getElementById('vote-history-results');
+            if (!container) return;
+
+            // Reuse already-loaded session data whenever possible.
+            if (voteHistorySessionsCache) {
+                renderVoteHistory();
+                return;
+            }
+
+            if (clusteringSessionsCache) {
+                voteHistorySessionsCache = clusteringSessionsCache;
+                renderVoteHistory();
+                return;
+            }
+
+            if (voteHistoryLoadPromise) {
+                await voteHistoryLoadPromise;
+                return;
+            }
+            // Avoid duplicate network fetches when another module is already loading all sessions.
+            if (precinctVotesLoadPromise) {
+                await precinctVotesLoadPromise;
+                if (voteHistorySessionsCache) {
+                    renderVoteHistory();
+                    return;
+                }
+            }
+
+            if (clusteringLoadPromise) {
+                await clusteringLoadPromise;
+                if (clusteringSessionsCache) {
+                    voteHistorySessionsCache = clusteringSessionsCache;
+                    renderVoteHistory();
+                    return;
+                }
+            }
+
+            let loadedCount = 0;
+            const total = SESSION_FILES.length;
+            container.className = 'vote-history-message';
+            container.textContent = `Loading Vote History (0 of ${total})...`;
+
+            // Fetch every configured session once, then cache for other cross-session modules.
+            voteHistoryLoadPromise = Promise.all(
+                SESSION_FILES.map(async session => {
+                    try {
+                        return await fetchAndParseSpreadsheet(session);
+                    } catch (err) {
+                        throw new Error(`${session.label}: ${err.message}`);
+                    } finally {
+                        loadedCount += 1;
+                        container.textContent = `Loading Vote History (${loadedCount} of ${total})...`;
+                    }
+                })
+            ).then(results => {
+                voteHistorySessionsCache = results;
+                if (!clusteringSessionsCache) clusteringSessionsCache = results;
+                renderVoteHistory();
+            }).catch(err => {
+                console.error(err);
+                container.className = 'vote-history-message';
+                container.textContent = `Error loading Vote History: ${err.message}`;
+            }).finally(() => {
+                voteHistoryLoadPromise = null;
+            });
+
+            await voteHistoryLoadPromise;
+        }
+
+        function renderPrecinctVotes() {
+            const container = document.getElementById('precinct-votes-results');
+            if (!container) return;
+
+            if (!Array.isArray(voteHistorySessionsCache) || voteHistorySessionsCache.length === 0) {
+                container.className = 'vote-history-message';
+                container.textContent = 'Precinct Votes is unavailable.';
+                return;
+            }
+
+            const orderedSessions = [...voteHistorySessionsCache].sort((a, b) => {
+                const ai = SESSION_ORDER_INDEX[a.id] !== undefined ? SESSION_ORDER_INDEX[a.id] : -1;
+                const bi = SESSION_ORDER_INDEX[b.id] !== undefined ? SESSION_ORDER_INDEX[b.id] : -1;
+                return bi - ai;
+            });
+
+            container.replaceChildren();
+            container.className = 'precinct-votes-list';
+
+            const headers = [
+                'Vote Title',
+                'Vote Description',
+                'Vote Result',
+                'All',
+                ...STANDARD_PRECINCTS.map(precinct => `P${precinct}`)
+            ];
+
+            orderedSessions.forEach(session => {
+                const detailsEl = document.createElement('details');
+                detailsEl.className = 'vote-history-session';
+
+                const summaryEl = document.createElement('summary');
+                summaryEl.textContent = `${session.label} (${session.votes.length} votes)`;
+                detailsEl.appendChild(summaryEl);
+
+                const topScrollEl = document.createElement('div');
+                topScrollEl.className = 'precinct-votes-scroll-top';
+                const topScrollInnerEl = document.createElement('div');
+                topScrollInnerEl.className = 'precinct-votes-scroll-inner';
+                topScrollEl.appendChild(topScrollInnerEl);
+                detailsEl.appendChild(topScrollEl);
+
+                const tableWrapEl = document.createElement('div');
+                tableWrapEl.className = 'precinct-votes-table-wrap';
+
+                const tableEl = document.createElement('table');
+                tableEl.className = 'precinct-votes-table';
+
+                const theadEl = document.createElement('thead');
+                const headRowEl = document.createElement('tr');
+                headers.forEach(headerText => {
+                    const th = document.createElement('th');
+                    th.textContent = headerText;
+                    headRowEl.appendChild(th);
+                });
+                theadEl.appendChild(headRowEl);
+                tableEl.appendChild(theadEl);
+
+                const tbodyEl = document.createElement('tbody');
+                session.votes.forEach(vote => {
+                    const rowEl = document.createElement('tr');
+                    const counts = computeVoteBreakdownFromSession(session, vote);
+                    const precinctPercentages = computePrecinctYesPercentages(session, vote);
+
+                    const addCell = (text, className = '') => {
+                        const td = document.createElement('td');
+                        if (className) td.className = className;
+                        td.textContent = text;
+                        rowEl.appendChild(td);
+                    };
+
+                    addCell(vote.title || '');
+                    addCell(vote.description || '—', 'description-col');
+                    addCell(vote.result || '—');
+                    addCell(getAggregateYesPercentForVote(session, vote, counts), 'aggregate-col');
+
+                    STANDARD_PRECINCTS.forEach(precinct => {
+                        addCell(precinctPercentages[precinct] || '—', 'pct-col');
+                    });
+
+                    tbodyEl.appendChild(rowEl);
+                });
+
+                tableEl.appendChild(tbodyEl);
+                tableWrapEl.appendChild(tableEl);
+                detailsEl.appendChild(tableWrapEl);
+                container.appendChild(detailsEl);
+
+                const syncTopScroll = () => {
+                    // Top scrollbar mirrors the table scroller for easier horizontal navigation.
+                    const fullWidth = Math.max(tableEl.scrollWidth, tableWrapEl.clientWidth);
+                    topScrollInnerEl.style.width = `${fullWidth}px`;
+                    topScrollEl.style.display = fullWidth > tableWrapEl.clientWidth ? 'block' : 'none';
+                };
+
+                let syncing = false;
+                topScrollEl.addEventListener('scroll', () => {
+                    if (syncing) return;
+                    syncing = true;
+                    tableWrapEl.scrollLeft = topScrollEl.scrollLeft;
+                    syncing = false;
+                });
+                tableWrapEl.addEventListener('scroll', () => {
+                    if (syncing) return;
+                    syncing = true;
+                    topScrollEl.scrollLeft = tableWrapEl.scrollLeft;
+                    syncing = false;
+                });
+
+                detailsEl.addEventListener('toggle', () => {
+                    if (detailsEl.open) syncTopScroll();
+                });
+                window.addEventListener('resize', syncTopScroll);
+            });
+        }
+
+        async function ensurePrecinctVotesDataLoaded() {
+            const container = document.getElementById('precinct-votes-results');
+            if (!container) return;
+
+            if (voteHistorySessionsCache) {
+                renderPrecinctVotes();
+                return;
+            }
+
+            if (clusteringSessionsCache) {
+                voteHistorySessionsCache = clusteringSessionsCache;
+                renderPrecinctVotes();
+                return;
+            }
+
+            if (precinctVotesLoadPromise) {
+                await precinctVotesLoadPromise;
+                return;
+            }
+
+            // Reuse shared cache if Vote History or Clustering already loaded all sessions.
+            if (voteHistoryLoadPromise) {
+                await voteHistoryLoadPromise;
+                if (voteHistorySessionsCache) {
+                    renderPrecinctVotes();
+                    return;
+                }
+            }
+
+            if (clusteringLoadPromise) {
+                await clusteringLoadPromise;
+                if (clusteringSessionsCache) {
+                    voteHistorySessionsCache = clusteringSessionsCache;
+                    renderPrecinctVotes();
+                    return;
+                }
+            }
+
+            let loadedCount = 0;
+            const total = SESSION_FILES.length;
+            container.className = 'vote-history-message';
+            container.textContent = `Loading Precinct Votes (0 of ${total})...`;
+
+            precinctVotesLoadPromise = Promise.all(
+                SESSION_FILES.map(async session => {
+                    try {
+                        return await fetchAndParseSpreadsheet(session);
+                    } catch (err) {
+                        throw new Error(`${session.label}: ${err.message}`);
+                    } finally {
+                        loadedCount += 1;
+                        container.textContent = `Loading Precinct Votes (${loadedCount} of ${total})...`;
+                    }
+                })
+            ).then(results => {
+                voteHistorySessionsCache = results;
+                if (!clusteringSessionsCache) clusteringSessionsCache = results;
+                renderPrecinctVotes();
+            }).catch(err => {
+                console.error(err);
+                container.className = 'vote-history-message';
+                container.textContent = `Error loading Precinct Votes: ${err.message}`;
+            }).finally(() => {
+                precinctVotesLoadPromise = null;
+            });
+
+            await precinctVotesLoadPromise;
+        }
+
+        function computeContentiousYesFraction(counts, ignoreAbstainVotes) {
+            const yes = Number(counts && counts.YES) || 0;
+            const no = Number(counts && counts.NO) || 0;
+            const abstain = Number(counts && counts.ABSTAIN) || 0;
+            const denominator = ignoreAbstainVotes ? (yes + no) : (yes + no + abstain);
+            if (denominator <= 0) return null;
+            return yes / denominator;
+        }
+
+        function renderContentiousVotes() {
+            const container = document.getElementById('contentious-votes-results');
+            if (!container) return;
+
+            if (!Array.isArray(voteHistorySessionsCache) || voteHistorySessionsCache.length === 0) {
+                container.className = 'vote-history-message';
+                container.textContent = 'Closest Votes is unavailable.';
+                return;
+            }
+
+            const ignoreTerminateCheckbox = document.getElementById('contentious-ignore-terminate');
+            const ignoreAbstainCheckbox = document.getElementById('contentious-ignore-abstain');
+            const ignoreTerminate = ignoreTerminateCheckbox ? ignoreTerminateCheckbox.checked : true;
+            const ignoreAbstain = ignoreAbstainCheckbox ? ignoreAbstainCheckbox.checked : false;
+
+            const flattenedVotes = [];
+            voteHistorySessionsCache.forEach(session => {
+                const sessionOrder = getSessionOrderIndex(session.id);
+                (session.votes || []).forEach((vote, voteIndex) => {
+                    if (ignoreTerminate && vote && vote.isTerminateDebate) return;
+                    const counts = computeVoteBreakdownFromSession(session, vote);
+                    const yesFraction = computeContentiousYesFraction(counts, ignoreAbstain);
+                    if (!Number.isFinite(yesFraction)) return;
+
+                    flattenedVotes.push({
+                        sessionLabel: session.label || 'Unknown Session',
+                        sessionOrder,
+                        voteIndex,
+                        voteTitle: vote && vote.title ? vote.title : '',
+                        voteDescription: vote && vote.description ? vote.description : '—',
+                        yes: counts.YES,
+                        no: counts.NO,
+                        abstain: counts.ABSTAIN,
+                        noVote: counts.NoVote,
+                        result: vote && vote.result ? vote.result : '—',
+                        distanceToEven: Math.abs(yesFraction - 0.5),
+                        totalCast: counts.YES + counts.NO + counts.ABSTAIN
+                    });
+                });
+            });
+
+            flattenedVotes.sort((a, b) => {
+                if (a.distanceToEven !== b.distanceToEven) return a.distanceToEven - b.distanceToEven;
+                if (b.totalCast !== a.totalCast) return b.totalCast - a.totalCast;
+                if (b.sessionOrder !== a.sessionOrder) return b.sessionOrder - a.sessionOrder;
+                if (a.voteIndex !== b.voteIndex) return a.voteIndex - b.voteIndex;
+                return a.voteTitle.localeCompare(b.voteTitle);
+            });
+
+            const topVotes = flattenedVotes.slice(0, 50);
+            if (topVotes.length === 0) {
+                container.className = 'vote-history-message';
+                container.textContent = 'No votes match the current filters.';
+                return;
+            }
+
+            container.replaceChildren();
+            container.className = '';
+
+            const summaryEl = document.createElement('div');
+            summaryEl.className = 'vote-history-message';
+            summaryEl.textContent = `Showing ${topVotes.length} votes closest to 50-50 split across all sessions.`;
+            container.appendChild(summaryEl);
+
+            const tableWrapEl = document.createElement('div');
+            tableWrapEl.className = 'contentious-votes-table-wrap';
+
+            const tableEl = document.createElement('table');
+            tableEl.className = 'contentious-votes-table';
+
+            const headers = [
+                { text: 'Session', className: '' },
+                { text: 'Vote Title', className: '' },
+                { text: 'Vote Description', className: '' },
+                { text: 'Yes', className: 'num-col' },
+                { text: 'No', className: 'num-col' },
+                { text: 'Abstain', className: 'num-col' },
+                { text: 'No Vote Recorded', className: 'num-col' },
+                { text: 'Vote Result', className: '' }
+            ];
+
+            const theadEl = document.createElement('thead');
+            const headRowEl = document.createElement('tr');
+            headers.forEach(header => {
+                const th = document.createElement('th');
+                if (header.className) th.className = header.className;
+                th.textContent = header.text;
+                headRowEl.appendChild(th);
+            });
+            theadEl.appendChild(headRowEl);
+            tableEl.appendChild(theadEl);
+
+            const tbodyEl = document.createElement('tbody');
+            topVotes.forEach(entry => {
+                const rowEl = document.createElement('tr');
+
+                const addTextCell = (text, className = '') => {
+                    const td = document.createElement('td');
+                    if (className) td.className = className;
+                    td.textContent = text;
+                    rowEl.appendChild(td);
+                };
+
+                addTextCell(entry.sessionLabel);
+                addTextCell(entry.voteTitle);
+                addTextCell(entry.voteDescription, 'description-col');
+                addTextCell(String(entry.yes), 'num-col');
+                addTextCell(String(entry.no), 'num-col');
+                addTextCell(String(entry.abstain), 'num-col');
+                addTextCell(String(entry.noVote), 'num-col');
+                addTextCell(entry.result);
+
+                tbodyEl.appendChild(rowEl);
+            });
+
+            tableEl.appendChild(tbodyEl);
+            tableWrapEl.appendChild(tableEl);
+            container.appendChild(tableWrapEl);
+        }
+
+        async function ensureContentiousVotesDataLoaded() {
+            const container = document.getElementById('contentious-votes-results');
+            if (!container) return;
+
+            if (voteHistorySessionsCache) {
+                renderContentiousVotes();
+                return;
+            }
+
+            if (clusteringSessionsCache) {
+                voteHistorySessionsCache = clusteringSessionsCache;
+                renderContentiousVotes();
+                return;
+            }
+
+            if (contentiousVotesLoadPromise) {
+                await contentiousVotesLoadPromise;
+                return;
+            }
+
+            if (voteHistoryLoadPromise) {
+                await voteHistoryLoadPromise;
+                if (voteHistorySessionsCache) {
+                    renderContentiousVotes();
+                    return;
+                }
+            }
+
+            if (precinctVotesLoadPromise) {
+                await precinctVotesLoadPromise;
+                if (voteHistorySessionsCache) {
+                    renderContentiousVotes();
+                    return;
+                }
+            }
+
+            if (clusteringLoadPromise) {
+                await clusteringLoadPromise;
+                if (clusteringSessionsCache) {
+                    voteHistorySessionsCache = clusteringSessionsCache;
+                    renderContentiousVotes();
+                    return;
+                }
+            }
+
+            let loadedCount = 0;
+            const total = SESSION_FILES.length;
+            container.className = 'vote-history-message';
+            container.textContent = `Loading Closest Votes (0 of ${total})...`;
+
+            contentiousVotesLoadPromise = Promise.all(
+                SESSION_FILES.map(async session => {
+                    try {
+                        return await fetchAndParseSpreadsheet(session);
+                    } catch (err) {
+                        throw new Error(`${session.label}: ${err.message}`);
+                    } finally {
+                        loadedCount += 1;
+                        container.textContent = `Loading Closest Votes (${loadedCount} of ${total})...`;
+                    }
+                })
+            ).then(results => {
+                voteHistorySessionsCache = results;
+                if (!clusteringSessionsCache) clusteringSessionsCache = results;
+                renderContentiousVotes();
+            }).catch(err => {
+                console.error(err);
+                container.className = 'vote-history-message';
+                container.textContent = `Error loading Closest Votes: ${err.message}`;
+            }).finally(() => {
+                contentiousVotesLoadPromise = null;
+            });
+
+            await contentiousVotesLoadPromise;
+        }
+
         /****************************************************
          * LOADING & PARSING EXCEL
          ****************************************************/
+
+        function parseMemberAliasesRows(rows) {
+            const aliasMap = new Map();
+            const canonicalDisplayNames = new Map();
+            if (!Array.isArray(rows) || rows.length === 0) {
+                return { aliasMap, canonicalDisplayNames };
+            }
+
+            const firstCol = String(((rows[0] || [])[0]) || '').trim().toLowerCase();
+            const secondCol = String(((rows[0] || [])[1]) || '').trim().toLowerCase();
+            const hasHeaderRow =
+                (firstCol.includes('canonical') || firstCol === 'name') &&
+                secondCol.includes('alias');
+            const startRow = hasHeaderRow ? 1 : 0;
+
+            for (let r = startRow; r < rows.length; r++) {
+                const row = rows[r] || [];
+                const canonicalRaw = String(row[0] || '').trim();
+                const aliasesRaw = String(row[1] || '').trim();
+                if (!canonicalRaw) continue;
+
+                const canonical = normalizeMemberAliasToken(canonicalRaw);
+                if (!canonical) continue;
+                if (!canonicalDisplayNames.has(canonical)) {
+                    canonicalDisplayNames.set(canonical, canonicalRaw);
+                }
+
+                aliasMap.set(canonical, canonical);
+                if (!aliasesRaw) continue;
+
+                aliasesRaw
+                    .split('::')
+                    .map(token => normalizeMemberAliasToken(token))
+                    .filter(Boolean)
+                    .forEach(alias => aliasMap.set(alias, canonical));
+            }
+
+            return { aliasMap, canonicalDisplayNames };
+        }
+
+        async function ensureMemberAliasesLoaded() {
+            if (memberAliasesLoadComplete) return;
+            if (memberAliasesLoadPromise) {
+                await memberAliasesLoadPromise;
+                return;
+            }
+
+            memberAliasesLoadPromise = (async () => {
+                const attemptErrors = [];
+                const candidateFiles = buildMemberAliasesCandidateFiles();
+                for (const aliasFile of candidateFiles) {
+                    try {
+                        const response = await fetch(getSpreadsheetRawURL(aliasFile));
+                        if (!response.ok) {
+                            throw new Error(`HTTP ${response.status}`);
+                        }
+
+                        const arrayBuffer = await response.arrayBuffer();
+                        const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+                        const sheetName = workbook.SheetNames[0];
+                        const sheet = workbook.Sheets[sheetName];
+                        const rows = XLSX.utils.sheet_to_json(sheet, {
+                            header: 1,
+                            blankrows: false,
+                            defval: ''
+                        });
+                        const parsedAliases = parseMemberAliasesRows(rows);
+                        if (parsedAliases.aliasMap.size === 0) {
+                            throw new Error('loaded but no alias rows were found');
+                        }
+
+                        const mergedAliases = new Map(DEFAULT_MEMBER_IDENTITY_ALIASES);
+                        parsedAliases.aliasMap.forEach((canonical, alias) => mergedAliases.set(alias, canonical));
+                        memberIdentityAliases = mergedAliases;
+                        memberIdentityCanonicalDisplayNames = parsedAliases.canonicalDisplayNames;
+                        memberAliasesLoadComplete = true;
+                        return;
+                    } catch (err) {
+                        attemptErrors.push(`${aliasFile}: ${err && err.message ? err.message : 'load error'}`);
+                    }
+                }
+
+                throw new Error(
+                    `Unable to load members_aliases.xlsx from remote repository. ${attemptErrors.join(' | ') || 'No candidate paths found.'}`
+                );
+            })();
+
+            try {
+                await memberAliasesLoadPromise;
+            } finally {
+                memberAliasesLoadPromise = null;
+            }
+        }
 
         function parseVoteGuideRows(rows) {
             const index = new Map();
             const looseIndex = new Map();
             if (!rows || rows.length < 2) return { index, looseIndex };
 
+            // Header matching is case-insensitive to tolerate workbook formatting drift.
             const headers = (rows[0] || []).map(cell => String(cell || '').trim().toLowerCase());
             const sessionCol = headers.findIndex(header => header === 'town meeting session');
             const nightCol = headers.findIndex(header => header.startsWith('night'));
@@ -1166,6 +2660,7 @@
                 const key = buildVoteGuideKey(sessionId, voteTitle);
                 const mergeGuideEntry = (existing, incoming) => {
                     if (!existing) return incoming;
+                    // Keep richer description and union links when guide has duplicate rows.
                     const mergedLinks = Array.from(new Set([...(existing.links || []), ...(incoming.links || [])]));
                     return {
                         description: (incoming.description.length > (existing.description || '').length)
@@ -1200,6 +2695,7 @@
                     const attemptErrors = [];
                     const candidateFiles = buildVoteGuideCandidateFiles();
 
+                    // Try all candidate file paths; first valid parse wins.
                     for (const guideFile of candidateFiles) {
                         try {
                             const response = await fetch(getSpreadsheetRawURL(guideFile));
@@ -1237,6 +2733,7 @@
                         throw new Error(attemptErrors.join(' | ') || 'VoteGuide file not found');
                     }
                 } catch (err) {
+                    // Fail soft: app remains usable with base spreadsheet descriptions.
                     console.warn('VoteGuide could not be loaded; using spreadsheet descriptions only.', err);
                     voteGuideBySessionAndVote = new Map();
                     voteGuideBySessionAndLooseVote = new Map();
@@ -1278,6 +2775,7 @@
 
             let effectiveHeaderRowIndex = HEADER_ROW_INDEX;
             let effectiveFirstDataRowIndex = FIRST_DATA_ROW_INDEX;
+            // Some sessions place the header one row higher; detect and shift safely.
             if (
                 !hasHeaderLabels(defaultHeaderRow) &&
                 hasHeaderLabels(possibleAltHeaderRow) &&
@@ -1303,6 +2801,7 @@
             for (let col = FIRST_VOTE_COL_INDEX; col <= LAST_VOTE_COL_INDEX; col++) {
                 const title = String(titleRow[col] || headerRow[col] || '').trim();
                 if (!title) continue;
+                // VoteGuide enriches description/night/links when available for this session+vote.
                 const guideDetails = getVoteGuideDetails(sessionId, title);
                 const descriptionFromSheet = String(descRow[col] || '').trim();
                 parsedVotes.push({
@@ -1362,12 +2861,32 @@
                 };
                 lastMemberDataRowIndex = r;
 
-                canonicalMembers[canonicalKey] = {
-                    name,
-                    precinct,
-                    memberKey,
-                    votesById: voteMapById
-                };
+                // Canonical key lets cross-session modules merge the same person reliably.
+                const canonicalDisplayName = memberIdentityCanonicalDisplayNames.get(canonicalKey) || name;
+                if (!canonicalMembers[canonicalKey]) {
+                    canonicalMembers[canonicalKey] = {
+                        name: canonicalDisplayName,
+                        precinct,
+                        memberKey,
+                        votesById: voteMapById
+                    };
+                } else {
+                    const existing = canonicalMembers[canonicalKey];
+                    existing.name = memberIdentityCanonicalDisplayNames.get(canonicalKey) ||
+                        preferDisplayName(existing.name, name);
+                    if (String(existing.precinct || '').toUpperCase() !== 'AL' && String(precinct || '').toUpperCase() === 'AL') {
+                        existing.precinct = precinct;
+                    } else if (!existing.precinct && precinct) {
+                        existing.precinct = precinct;
+                    }
+
+                    Object.entries(voteMapById).forEach(([voteId, voteValue]) => {
+                        const existingVote = existing.votesById[voteId];
+                        if (existingVote === undefined || existingVote === 'NoVote') {
+                            existing.votesById[voteId] = voteValue;
+                        }
+                    });
+                }
             }
 
             const voteResultsByCol = extractVoteResultsByColumn(
@@ -1403,6 +2922,7 @@
         }
 
         async function fetchAndParseSpreadsheet(sessionMeta) {
+            await ensureMemberAliasesLoaded();
             const response = await fetch(getSpreadsheetRawURL(sessionMeta.file));
             if (!response.ok) {
                 throw new Error(`HTTP ${response.status} ${response.statusText}`);
@@ -1423,11 +2943,13 @@
                     description: vote.description,
                     links: vote.links || [],
                     night: vote.night || '',
-                    result: vote.result || ''
+                    result: vote.result || '',
+                    isTerminateDebate: !!vote.isTerminateDebate
                 }));
                 members = parsed.members;
                 votingData = parsed.votingData;
 
+                // Rebuild UI from fresh in-memory state after every spreadsheet load.
                 initializeApp();
             } catch (err) {
                 console.error(err);
@@ -1461,6 +2983,10 @@
             const memberSelect = document.getElementById('member-select');
             if (memberSelect && memberSelect.value && votingData[memberSelect.value]) {
                 updateMemberResults();
+            }
+
+            if (getActiveModuleId() === 'member-networks') {
+                ensureMemberNetworkDataLoaded();
             }
         }
 
@@ -1533,7 +3059,12 @@
                 : [];
             const night = selectedVoteDetails ? selectedVoteDetails.night : '';
             const voteResult = selectedVoteDetails ? selectedVoteDetails.result : '';
-            const sessionLabel = getCurrentSpreadsheetMeta().label || '';
+            const currentSessionMeta = getCurrentSpreadsheetMeta();
+            const sessionLabel = currentSessionMeta.label || '';
+            const countedVoteOverride = getCountedVoteOverride(
+                currentSessionMeta.id,
+                selectedVoteDetails ? selectedVoteDetails.title : selectedVote
+            );
             const voteGroups = { YES: [], NO: [], ABSTAIN: [], NoVote: [] };
 
             members.forEach(member => {
@@ -1560,10 +3091,24 @@
                 });
             });
 
-            const totalVotes = voteGroups.YES.length + voteGroups.NO.length;
+            const displayCounts = countedVoteOverride && countedVoteOverride.counts
+                ? {
+                    YES: Number(countedVoteOverride.counts.YES) || 0,
+                    NO: Number(countedVoteOverride.counts.NO) || 0,
+                    ABSTAIN: Number(countedVoteOverride.counts.ABSTAIN) || 0,
+                    NoVote: Number(countedVoteOverride.counts.NoVote) || 0
+                }
+                : {
+                    YES: voteGroups.YES.length,
+                    NO: voteGroups.NO.length,
+                    ABSTAIN: voteGroups.ABSTAIN.length,
+                    NoVote: voteGroups.NoVote.length
+                };
+
+            const totalVotes = displayCounts.YES + displayCounts.NO;
             const percentages = {
-                YES: totalVotes > 0 ? ((voteGroups.YES.length / totalVotes) * 100).toFixed(1) : '0.0',
-                NO: totalVotes > 0 ? ((voteGroups.NO.length / totalVotes) * 100).toFixed(1) : '0.0'
+                YES: totalVotes > 0 ? ((displayCounts.YES / totalVotes) * 100).toFixed(1) : '0.0',
+                NO: totalVotes > 0 ? ((displayCounts.NO / totalVotes) * 100).toFixed(1) : '0.0'
             };
 
             resultsDiv.replaceChildren();
@@ -1606,6 +3151,13 @@
                 if (linksEl) {
                     descriptionEl.appendChild(linksEl);
                 }
+
+                if (countedVoteOverride && countedVoteOverride.detailLine) {
+                    const countedLineEl = document.createElement('div');
+                    countedLineEl.className = 'counted-vote-outcome';
+                    countedLineEl.textContent = countedVoteOverride.detailLine;
+                    descriptionEl.appendChild(countedLineEl);
+                }
                 resultsDiv.appendChild(descriptionEl);
             }
 
@@ -1640,10 +3192,10 @@
                 resultsGridEl.appendChild(columnEl);
             }
 
-            appendMemberColumn('yes', `Yes (${voteGroups.YES.length}, ${percentages.YES}%)`, voteGroups.YES);
-            appendMemberColumn('no', `No (${voteGroups.NO.length}, ${percentages.NO}%)`, voteGroups.NO);
-            appendMemberColumn('abstain', `Abstain (${voteGroups.ABSTAIN.length})`, voteGroups.ABSTAIN);
-            appendMemberColumn('novote', `Vote Not Recorded (${voteGroups.NoVote.length})`, voteGroups.NoVote);
+            appendMemberColumn('yes', `Yes (${displayCounts.YES}, ${percentages.YES}%)`, voteGroups.YES);
+            appendMemberColumn('no', `No (${displayCounts.NO}, ${percentages.NO}%)`, voteGroups.NO);
+            appendMemberColumn('abstain', `Abstain (${displayCounts.ABSTAIN})`, voteGroups.ABSTAIN);
+            appendMemberColumn('novote', `Vote Not Recorded (${displayCounts.NoVote})`, voteGroups.NoVote);
 
             resultsDiv.appendChild(resultsGridEl);
         }
@@ -1769,6 +3321,535 @@
             appendArticleColumn('no', `No (${voteGroups.NO.length}, ${percentages.NO}%)`, voteGroups.NO);
             appendArticleColumn('abstain', `Abstain (${voteGroups.ABSTAIN.length}, ${percentages.ABSTAIN}%)`, voteGroups.ABSTAIN);
             appendArticleColumn('novote', `Vote Not Recorded (${voteGroups.NoVote.length}, ${percentages.NoVote}%)`, voteGroups.NoVote);
+        }
+
+        /****************************************************
+         * MEMBER NETWORKS
+         ****************************************************/
+
+        function setMemberNetworkStatus(message, isError = false, allowHtml = false) {
+            if (!memberNetworkStatusEl) return;
+            if (allowHtml) {
+                memberNetworkStatusEl.innerHTML = message;
+            } else {
+                memberNetworkStatusEl.textContent = message;
+            }
+            memberNetworkStatusEl.classList.toggle('error', isError);
+        }
+
+        function isComparableVoteValue(voteValue) {
+            return voteValue === 'YES' || voteValue === 'NO' || voteValue === 'ABSTAIN';
+        }
+
+        function countSharedSessions(aSessions, bSessions) {
+            if (!aSessions || !bSessions) return 0;
+            const first = aSessions.size <= bSessions.size ? aSessions : bSessions;
+            const second = first === aSessions ? bSessions : aSessions;
+            let shared = 0;
+            first.forEach(sessionId => {
+                if (second.has(sessionId)) shared += 1;
+            });
+            return shared;
+        }
+
+        function getDefaultMemberNetworkSortDirection(sortKey) {
+            if (sortKey === 'similarity' || sortKey === 'sharedSessions') return 'desc';
+            return 'asc';
+        }
+
+        function setMemberNetworkSort(sortKey) {
+            if (!sortKey) return;
+            if (memberNetworkSortState.key === sortKey) {
+                memberNetworkSortState.direction = memberNetworkSortState.direction === 'asc' ? 'desc' : 'asc';
+            } else {
+                memberNetworkSortState.key = sortKey;
+                memberNetworkSortState.direction = getDefaultMemberNetworkSortDirection(sortKey);
+            }
+            if (memberNetworkCurrentData) renderMemberNetworkNeighbors(memberNetworkCurrentData);
+        }
+
+        function sortMemberNetworkComparisons(comparisons) {
+            const rows = (comparisons || []).map((entry, index) => ({
+                ...entry,
+                baseRank: index + 1
+            }));
+            const sortKey = memberNetworkSortState.key || 'baseRank';
+            const direction = memberNetworkSortState.direction === 'desc' ? -1 : 1;
+
+            rows.sort((a, b) => {
+                let cmp = 0;
+
+                if (sortKey === 'baseRank') {
+                    cmp = a.baseRank - b.baseRank;
+                } else if (sortKey === 'name') {
+                    const lastA = getLastNameForSort(a.profile.name);
+                    const lastB = getLastNameForSort(b.profile.name);
+                    cmp = lastA.localeCompare(lastB);
+                    if (cmp === 0) cmp = a.profile.name.localeCompare(b.profile.name);
+                } else if (sortKey === 'precinct') {
+                    const pa = precinctSortValue(a.profile.precinct);
+                    const pb = precinctSortValue(b.profile.precinct);
+                    cmp = pa - pb;
+                    if (cmp === 0) cmp = a.profile.name.localeCompare(b.profile.name);
+                } else if (sortKey === 'sharedSessions') {
+                    cmp = a.sharedSessions - b.sharedSessions;
+                } else if (sortKey === 'similarity') {
+                    cmp = a.similarity - b.similarity;
+                }
+
+                // Deterministic tiebreaker: preserve original ranking order.
+                if (cmp === 0) cmp = a.baseRank - b.baseRank;
+                return cmp * direction;
+            });
+
+            return rows;
+        }
+
+        function computeSimilarityOnVoteIds(sourceVotesById, candidateVotesById, voteIds, ignoreAbstainVotes = false) {
+            let overlap = 0;
+            let exactMatches = 0;
+            let similaritySum = 0;
+
+            voteIds.forEach(voteId => {
+                const a = sourceVotesById[voteId];
+                const b = candidateVotesById[voteId];
+                if (!isComparableVoteValue(a) || !isComparableVoteValue(b)) return;
+                if (ignoreAbstainVotes && (a === 'ABSTAIN' || b === 'ABSTAIN')) return;
+
+                const aNumeric = voteToNumeric(a);
+                const bNumeric = voteToNumeric(b);
+                if (!Number.isFinite(aNumeric) || !Number.isFinite(bNumeric)) return;
+
+                overlap += 1;
+                if (a === b) exactMatches += 1;
+                similaritySum += 1 - (Math.abs(aNumeric - bNumeric) / 2);
+            });
+
+            if (overlap === 0) return null;
+            return {
+                overlap,
+                exactMatches,
+                similarity: similaritySum / overlap
+            };
+        }
+
+        function cacheMemberNetworkProfilesFromSessions(sessionDataList) {
+            const profileMap = new Map();
+
+            (sessionDataList || []).forEach(session => {
+                if (!session) return;
+                const sessionOrder = getSessionOrderIndex(session.id);
+
+                const voteMetaById = {};
+                (session.votes || []).forEach(vote => {
+                    voteMetaById[vote.id] = vote;
+                });
+
+                Object.entries(session.canonicalMembers || {}).forEach(([canonicalKey, memberEntry]) => {
+                    if (!profileMap.has(canonicalKey)) {
+                        profileMap.set(canonicalKey, {
+                            canonicalKey,
+                            name: memberEntry.name,
+                            precinct: memberEntry.precinct,
+                            precincts: new Set(),
+                            memberLabel: memberEntry.name,
+                            latestPrecinct: '',
+                            latestSessionOrder: -1,
+                            sessions: new Set(),
+                            votesById: {},
+                            voteMetaById: {}
+                        });
+                    }
+
+                    const profile = profileMap.get(canonicalKey);
+                    profile.name = preferDisplayName(profile.name, memberEntry.name);
+                    if (memberEntry.precinct) profile.precincts.add(memberEntry.precinct);
+                    if (sessionOrder >= profile.latestSessionOrder && memberEntry.precinct) {
+                        profile.latestSessionOrder = sessionOrder;
+                        profile.latestPrecinct = memberEntry.precinct;
+                    }
+                    profile.precinct = profile.latestPrecinct || summarizePrecinctSet(profile.precincts);
+                    profile.memberLabel = profile.name;
+                    profile.sessions.add(session.id);
+
+                    Object.entries(memberEntry.votesById || {}).forEach(([voteId, voteValue]) => {
+                        profile.votesById[voteId] = voteValue;
+                        if (voteMetaById[voteId]) profile.voteMetaById[voteId] = voteMetaById[voteId];
+                    });
+                });
+            });
+
+            memberNetworkProfilesCache = Array.from(profileMap.values());
+            memberNetworkProfileByKey = new Map(
+                memberNetworkProfilesCache.map(profile => [profile.canonicalKey, profile])
+            );
+        }
+
+        async function ensureMemberNetworkDataLoaded() {
+            if (memberNetworkProfilesCache && memberNetworkProfilesCache.length > 0) {
+                populateMemberNetworkDropdown();
+                if (getActiveModuleId() === 'member-networks') updateMemberNetworkResults();
+                return;
+            }
+            if (memberNetworkLoadPromise) {
+                await memberNetworkLoadPromise;
+                return;
+            }
+
+            if (clusteringSessionsCache) {
+                cacheMemberNetworkProfilesFromSessions(clusteringSessionsCache);
+                populateMemberNetworkDropdown();
+                if (getActiveModuleId() === 'member-networks') updateMemberNetworkResults();
+                return;
+            }
+            if (voteHistorySessionsCache) {
+                cacheMemberNetworkProfilesFromSessions(voteHistorySessionsCache);
+                populateMemberNetworkDropdown();
+                if (getActiveModuleId() === 'member-networks') updateMemberNetworkResults();
+                return;
+            }
+
+            if (clusteringLoadPromise) {
+                await clusteringLoadPromise;
+                if (clusteringSessionsCache) {
+                    cacheMemberNetworkProfilesFromSessions(clusteringSessionsCache);
+                    populateMemberNetworkDropdown();
+                    if (getActiveModuleId() === 'member-networks') updateMemberNetworkResults();
+                    return;
+                }
+            }
+            if (voteHistoryLoadPromise) {
+                await voteHistoryLoadPromise;
+                if (voteHistorySessionsCache) {
+                    cacheMemberNetworkProfilesFromSessions(voteHistorySessionsCache);
+                    populateMemberNetworkDropdown();
+                    if (getActiveModuleId() === 'member-networks') updateMemberNetworkResults();
+                    return;
+                }
+            }
+            if (precinctVotesLoadPromise) {
+                await precinctVotesLoadPromise;
+                if (voteHistorySessionsCache) {
+                    cacheMemberNetworkProfilesFromSessions(voteHistorySessionsCache);
+                    populateMemberNetworkDropdown();
+                    if (getActiveModuleId() === 'member-networks') updateMemberNetworkResults();
+                    return;
+                }
+            }
+
+            let loadedCount = 0;
+            const total = SESSION_FILES.length;
+            setMemberNetworkStatus(`Loading member network data (0 of ${total})...`);
+            setPanelMessage(memberNetworkNeighborsEl, 'Loading all sessions for member network analysis...');
+
+            memberNetworkLoadPromise = (async () => {
+                try {
+                    await ensureVoteGuideLoaded();
+                    const sessions = await Promise.all(
+                        SESSION_FILES.map(async session => {
+                            try {
+                                return await fetchAndParseSpreadsheet(session);
+                            } finally {
+                                loadedCount += 1;
+                                setMemberNetworkStatus(`Loading member network data (${loadedCount} of ${total})...`);
+                            }
+                        })
+                    );
+
+                    if (!voteHistorySessionsCache) voteHistorySessionsCache = sessions;
+                    if (!clusteringSessionsCache) clusteringSessionsCache = sessions;
+
+                    cacheMemberNetworkProfilesFromSessions(sessions);
+                    populateMemberNetworkDropdown();
+                    updateMemberNetworkResults();
+                } catch (err) {
+                    console.error(err);
+                    memberNetworkProfilesCache = null;
+                    memberNetworkProfileByKey = new Map();
+                    setMemberNetworkStatus(`Error loading member network data: ${err.message}`, true);
+                    setPanelMessage(memberNetworkNeighborsEl, 'Member network data failed to load.');
+                } finally {
+                    memberNetworkLoadPromise = null;
+                }
+            })();
+
+            await memberNetworkLoadPromise;
+        }
+
+        function populateMemberNetworkDropdown() {
+            const memberSelect = document.getElementById('member-network-select');
+            if (!memberSelect) return;
+            if (!Array.isArray(memberNetworkProfilesCache) || memberNetworkProfilesCache.length === 0) {
+                memberSelect.replaceChildren();
+                return;
+            }
+
+            const sortByPrecinctCheckbox = document.getElementById('sort-by-precinct-network');
+            const sortByPrecinct = sortByPrecinctCheckbox ? sortByPrecinctCheckbox.checked : true;
+            const currentValue = memberSelect.value;
+            const sortedMembers = [...memberNetworkProfilesCache];
+
+            sortedMembers.sort((a, b) => {
+                if (sortByPrecinct) {
+                    const pa = precinctSortValue(a.precinct);
+                    const pb = precinctSortValue(b.precinct);
+                    if (pa !== pb) return pa - pb;
+                }
+
+                const lastA = getLastNameForSort(a.name);
+                const lastB = getLastNameForSort(b.name);
+                if (lastA !== lastB) return lastA.localeCompare(lastB);
+                return a.name.localeCompare(b.name);
+            });
+
+            memberSelect.replaceChildren();
+            sortedMembers.forEach(memberProfile => {
+                const option = document.createElement('option');
+                option.value = memberProfile.canonicalKey;
+                const precinctLabel = memberProfile.precinct
+                    ? formatPrecinctLabel(memberProfile.precinct)
+                    : 'MULTI';
+                option.textContent =
+                    `${memberProfile.memberLabel} (${precinctLabel}) - ${memberProfile.sessions.size} sessions`;
+                memberSelect.appendChild(option);
+            });
+
+            if (currentValue && Array.from(memberSelect.options).some(opt => opt.value === currentValue)) {
+                memberSelect.value = currentValue;
+            } else if (memberSelect.options.length > 0) {
+                memberSelect.value = memberSelect.options[0].value;
+            }
+        }
+
+        function buildMemberNetworkData(selectedMemberKey, ignoreTerminateDebate, ignoreAbstainVotes = false) {
+            if (!selectedMemberKey || !memberNetworkProfileByKey.has(selectedMemberKey)) return null;
+            const selectedProfile = memberNetworkProfileByKey.get(selectedMemberKey);
+            const selectedSessionCount = selectedProfile.sessions ? selectedProfile.sessions.size : 0;
+
+            if (selectedSessionCount < 4) {
+                return {
+                    selectedProfile,
+                    selectedMemberKey,
+                    insufficientData: true,
+                    comparisons: [],
+                    eligibleVoteIds: [],
+                    eligibleVoteCount: 0
+                };
+            }
+
+            const eligibleVoteIds = Object.keys(selectedProfile.votesById).filter(voteId => {
+                const voteValue = selectedProfile.votesById[voteId];
+                if (!isComparableVoteValue(voteValue)) return false;
+                if (ignoreAbstainVotes && voteValue === 'ABSTAIN') return false;
+
+                if (ignoreTerminateDebate) {
+                    const meta = selectedProfile.voteMetaById[voteId];
+                    if (meta && meta.isTerminateDebate) return false;
+                }
+                return true;
+            });
+
+            const comparisons = [];
+            memberNetworkProfilesCache.forEach(candidateProfile => {
+                if (candidateProfile.canonicalKey === selectedMemberKey) return;
+                const sharedSessions = countSharedSessions(selectedProfile.sessions, candidateProfile.sessions);
+                if (sharedSessions < 4) return;
+
+                const similarityData = computeSimilarityOnVoteIds(
+                    selectedProfile.votesById,
+                    candidateProfile.votesById,
+                    eligibleVoteIds,
+                    ignoreAbstainVotes
+                );
+                if (!similarityData) return;
+
+                comparisons.push({
+                    profile: candidateProfile,
+                    overlap: similarityData.overlap,
+                    exactMatches: similarityData.exactMatches,
+                    similarity: similarityData.similarity,
+                    coverage: eligibleVoteIds.length > 0 ? similarityData.overlap / eligibleVoteIds.length : 0,
+                    sharedSessions
+                });
+            });
+
+            comparisons.sort((a, b) => {
+                if (b.similarity !== a.similarity) return b.similarity - a.similarity;
+                if (b.overlap !== a.overlap) return b.overlap - a.overlap;
+                if (b.sharedSessions !== a.sharedSessions) return b.sharedSessions - a.sharedSessions;
+                return a.profile.name.localeCompare(b.profile.name);
+            });
+
+            return {
+                selectedProfile,
+                selectedMemberKey,
+                insufficientData: false,
+                eligibleVoteIds,
+                eligibleVoteCount: eligibleVoteIds.length,
+                comparisons
+            };
+        }
+
+        function renderMemberNetworkNeighbors(networkData) {
+            if (!memberNetworkNeighborsEl) return;
+
+            if (!networkData || networkData.comparisons.length === 0) {
+                setPanelMessage(memberNetworkNeighborsEl, 'No members share at least 4 sessions with this member.');
+                return;
+            }
+
+            const sortedRows = sortMemberNetworkComparisons(networkData.comparisons);
+            const sortKey = memberNetworkSortState.key;
+            const sortDirection = memberNetworkSortState.direction;
+            const wrapper = document.createElement('div');
+            wrapper.className = 'member-network-table-wrap';
+
+            const table = document.createElement('table');
+            table.className = 'member-network-table';
+
+            const thead = document.createElement('thead');
+            const headRow = document.createElement('tr');
+            const headerDefs = [
+                { label: 'Rank', key: 'baseRank', className: 'rank-col' },
+                { label: 'Member', key: 'name', className: 'member-col' },
+                { label: 'Precinct', key: 'precinct', className: 'precinct-col' },
+                { label: 'Shared Sessions', key: 'sharedSessions', className: 'shared-col' },
+                { label: 'Similarity', key: 'similarity', className: 'sim-col' }
+            ];
+
+            headerDefs.forEach(def => {
+                const th = document.createElement('th');
+                th.className = def.className;
+
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = 'member-network-sort-btn';
+                const indicator = sortKey === def.key ? (sortDirection === 'asc' ? ' ▲' : ' ▼') : '';
+                button.textContent = `${def.label}${indicator}`;
+                button.addEventListener('click', () => setMemberNetworkSort(def.key));
+                th.appendChild(button);
+                headRow.appendChild(th);
+            });
+            thead.appendChild(headRow);
+            table.appendChild(thead);
+
+            const tbody = document.createElement('tbody');
+            sortedRows.forEach(entry => {
+                const row = document.createElement('tr');
+                const similarityPct = (entry.similarity * 100).toFixed(1);
+
+                const rankCell = document.createElement('td');
+                rankCell.className = 'rank-col';
+                rankCell.textContent = `${entry.baseRank}`;
+
+                const nameCell = document.createElement('td');
+                nameCell.className = 'member-col';
+                nameCell.textContent = entry.profile.name;
+
+                const precinctCell = document.createElement('td');
+                precinctCell.className = 'precinct-col';
+                precinctCell.textContent = formatPrecinctLabel(entry.profile.precinct);
+
+                const sharedSessionsCell = document.createElement('td');
+                sharedSessionsCell.className = 'shared-col';
+                sharedSessionsCell.textContent = String(entry.sharedSessions);
+
+                const similarityCell = document.createElement('td');
+                similarityCell.className = 'sim-col';
+                similarityCell.textContent = `${similarityPct}%`;
+
+                row.appendChild(rankCell);
+                row.appendChild(nameCell);
+                row.appendChild(precinctCell);
+                row.appendChild(sharedSessionsCell);
+                row.appendChild(similarityCell);
+                tbody.appendChild(row);
+            });
+
+            table.appendChild(tbody);
+            wrapper.appendChild(table);
+            memberNetworkNeighborsEl.replaceChildren(wrapper);
+        }
+
+        async function updateMemberNetworkResults() {
+            const memberSelect = document.getElementById('member-network-select');
+            const ignoreTerminateCheckbox = document.getElementById('member-network-ignore-terminate');
+            const ignoreAbstainCheckbox = document.getElementById('member-network-ignore-abstain');
+            if (!memberSelect || !ignoreTerminateCheckbox || !ignoreAbstainCheckbox) return;
+
+            if (!memberNetworkProfilesCache || memberNetworkProfilesCache.length === 0) {
+                await ensureMemberNetworkDataLoaded();
+                if (!memberNetworkProfilesCache || memberNetworkProfilesCache.length === 0) return;
+            }
+
+            if (memberSelect.options.length === 0) {
+                populateMemberNetworkDropdown();
+            }
+            if (memberSelect.options.length === 0) {
+                setMemberNetworkStatus('No members were found in the available Town Meeting sessions.', true);
+                setPanelMessage(memberNetworkNeighborsEl, 'No members were found in the available sessions.');
+                memberNetworkCurrentData = null;
+                return;
+            }
+
+            const selectedMemberKey = memberSelect.value;
+            if (!selectedMemberKey) {
+                setMemberNetworkStatus('Select a member to view nearest voting neighbors.');
+                setPanelMessage(memberNetworkNeighborsEl, 'Select a member to compute voting similarity.');
+                memberNetworkCurrentData = null;
+                return;
+            }
+
+            const networkData = buildMemberNetworkData(
+                selectedMemberKey,
+                ignoreTerminateCheckbox.checked,
+                ignoreAbstainCheckbox.checked
+            );
+            if (!networkData) {
+                setMemberNetworkStatus('Member comparison data is unavailable for the selected member.', true);
+                setPanelMessage(memberNetworkNeighborsEl, 'Member comparison data is unavailable.');
+                memberNetworkCurrentData = null;
+                return;
+            }
+
+            if (networkData.insufficientData) {
+                setMemberNetworkStatus('Not enough data to generate network.');
+                setPanelMessage(memberNetworkNeighborsEl, 'Not enough data to generate network.');
+                memberNetworkCurrentData = null;
+                return;
+            }
+
+            if (networkData.eligibleVoteCount === 0) {
+                setMemberNetworkStatus(
+                    'No YES/NO/ABSTAIN votes are available for the selected member after current filters.'
+                );
+                setPanelMessage(
+                    memberNetworkNeighborsEl,
+                    'Try a different member or disable one of the ignore filters.'
+                );
+                memberNetworkCurrentData = null;
+                return;
+            }
+
+            if (networkData.comparisons.length === 0) {
+                setMemberNetworkStatus('Not enough overlapping data to generate network.');
+                setPanelMessage(memberNetworkNeighborsEl, 'No members share at least 4 sessions with this member.');
+                memberNetworkCurrentData = null;
+                return;
+            }
+
+            const neighborCount = networkData.comparisons.length;
+            const averageSimilarity = neighborCount > 0
+                ? networkData.comparisons.reduce((sum, entry) => sum + entry.similarity, 0) / neighborCount
+                : 0;
+            setMemberNetworkStatus(
+                `${networkData.selectedProfile.name}: showing ${neighborCount} qualifying similar members ` +
+                `(minimum 4 shared sessions), average similarity <strong>${(averageSimilarity * 100).toFixed(1)}%</strong>.`,
+                false,
+                true
+            );
+            memberNetworkCurrentData = networkData;
+            renderMemberNetworkNeighbors(networkData);
         }
 
         /****************************************************
@@ -1917,9 +3998,30 @@
                 runClusteringAnalysis();
                 return;
             }
+            if (voteHistorySessionsCache) {
+                clusteringSessionsCache = voteHistorySessionsCache;
+                runClusteringAnalysis();
+                return;
+            }
             if (clusteringLoadPromise) {
                 await clusteringLoadPromise;
                 return;
+            }
+            if (precinctVotesLoadPromise) {
+                await precinctVotesLoadPromise;
+                if (voteHistorySessionsCache) {
+                    clusteringSessionsCache = voteHistorySessionsCache;
+                    runClusteringAnalysis();
+                    return;
+                }
+            }
+            if (voteHistoryLoadPromise) {
+                await voteHistoryLoadPromise;
+                if (voteHistorySessionsCache) {
+                    clusteringSessionsCache = voteHistorySessionsCache;
+                    runClusteringAnalysis();
+                    return;
+                }
             }
 
             const total = SESSION_FILES.length;
@@ -1942,6 +4044,7 @@
                 })
             ).then(results => {
                 clusteringSessionsCache = results;
+                if (!voteHistorySessionsCache) voteHistorySessionsCache = results;
                 setClusteringStatus(`Loaded ${total} sessions. Rendering clustering view...`);
                 runClusteringAnalysis();
             }).catch(err => {
@@ -1971,6 +4074,7 @@
             const profileMap = new Map();
 
             selectedSessions.forEach(session => {
+                const sessionOrder = getSessionOrderIndex(session.id);
                 session.votes.forEach(vote => allColumns.push(vote));
 
                 Object.entries(session.canonicalMembers).forEach(([canonicalKey, memberEntry]) => {
@@ -1979,14 +4083,22 @@
                             canonicalKey,
                             name: memberEntry.name,
                             precinct: memberEntry.precinct,
+                            precincts: new Set(),
+                            latestPrecinct: '',
+                            latestSessionOrder: -1,
                             sessions: new Set(),
                             rawVotesById: {}
                         });
                     }
 
                     const profile = profileMap.get(canonicalKey);
-                    profile.name = memberEntry.name;
-                    profile.precinct = memberEntry.precinct;
+                    profile.name = preferDisplayName(profile.name, memberEntry.name);
+                    if (memberEntry.precinct) profile.precincts.add(memberEntry.precinct);
+                    if (sessionOrder >= profile.latestSessionOrder && memberEntry.precinct) {
+                        profile.latestSessionOrder = sessionOrder;
+                        profile.latestPrecinct = memberEntry.precinct;
+                    }
+                    profile.precinct = profile.latestPrecinct || summarizePrecinctSet(profile.precincts);
                     profile.sessions.add(session.id);
 
                     Object.entries(memberEntry.votesById).forEach(([voteId, voteValue]) => {
@@ -2861,6 +4973,40 @@
          * TAB SWITCHING
          ****************************************************/
 
+        function getActiveModuleId() {
+            const activeTab = document.querySelector('.tab-content.active');
+            return activeTab ? activeTab.id : 'by-vote';
+        }
+
+        function updateModuleContextControls(activeModuleId = getActiveModuleId()) {
+            if (!moduleContextControlsEl) return;
+            moduleContextControlsEl.style.display = SINGLE_SESSION_MODULE_IDS.has(activeModuleId) ? 'block' : 'none';
+        }
+
+        function updateModuleInstruction(activeModuleId = getActiveModuleId()) {
+            if (!moduleInstructionEl) return;
+
+            if (activeModuleId === 'member-networks') {
+                moduleInstructionEl.textContent = 'Member Networks uses all Town Meeting sessions attended by the selected member.';
+                moduleInstructionEl.style.display = 'block';
+                return;
+            }
+
+            if (activeModuleId === 'vote-history') {
+                moduleInstructionEl.textContent = 'Click on a Town Meeting session to see the details about the votes in that session.';
+                moduleInstructionEl.style.display = 'block';
+                return;
+            }
+            
+            if (activeModuleId === 'precinct-votes') {
+                moduleInstructionEl.textContent = 'Click on a Town Meeting session to see how each precinct voted in that session.';
+                moduleInstructionEl.style.display = 'block';
+                return;
+            }
+            moduleInstructionEl.textContent = '';
+            moduleInstructionEl.style.display = 'none';
+        }
+
         function switchTab(evt, tabName) {
             document.querySelectorAll('.tab').forEach(tab => {
                 tab.classList.remove('active');
@@ -2872,9 +5018,28 @@
             });
             const targetTab = document.getElementById(tabName);
             if (targetTab) targetTab.classList.add('active');
+            updateModuleContextControls(tabName);
+            updateModuleInstruction(tabName);
 
+            // Lazy-load cross-session modules only when activated.
             if (tabName === 'by-member' && members.length > 0) {
                 updateMemberResults();
+            }
+
+            if (tabName === 'member-networks') {
+                ensureMemberNetworkDataLoaded();
+            }
+
+            if (tabName === 'vote-history') {
+                ensureVoteHistoryDataLoaded();
+            }
+
+            if (tabName === 'precinct-votes') {
+                ensurePrecinctVotesDataLoaded();
+            }
+
+            if (tabName === 'contentious-votes') {
+                ensureContentiousVotesDataLoaded();
             }
 
             if (tabName === 'voter-clustering') {
@@ -2894,17 +5059,25 @@
                 subtitleEl.textContent = 'Advanced clustering and cross-session voting pattern analysis.';
             }
 
-            const spreadsheetControls = document.querySelector('#main-content > .controls');
-            if (spreadsheetControls) spreadsheetControls.style.display = 'none';
+            updateModuleContextControls('voter-clustering');
+            updateModuleInstruction('voter-clustering');
 
-            const tabsBar = document.querySelector('.tabs');
+            const tabsBar = document.getElementById('module-menu');
             if (tabsBar) tabsBar.style.display = 'none';
 
             const byVoteEl = document.getElementById('by-vote');
             const byMemberEl = document.getElementById('by-member');
+            const memberNetworksEl = document.getElementById('member-networks');
+            const voteHistoryEl = document.getElementById('vote-history');
+            const precinctVotesEl = document.getElementById('precinct-votes');
+            const contentiousVotesEl = document.getElementById('contentious-votes');
             const clusteringEl = document.getElementById('voter-clustering');
             if (byVoteEl) byVoteEl.classList.remove('active');
             if (byMemberEl) byMemberEl.classList.remove('active');
+            if (memberNetworksEl) memberNetworksEl.classList.remove('active');
+            if (voteHistoryEl) voteHistoryEl.classList.remove('active');
+            if (precinctVotesEl) precinctVotesEl.classList.remove('active');
+            if (contentiousVotesEl) contentiousVotesEl.classList.remove('active');
             if (clusteringEl) clusteringEl.classList.add('active');
 
             ensureClusteringDataLoaded();
@@ -2920,6 +5093,7 @@
                 return;
             }
 
+            // Bind once at startup; subsequent data loads only repopulate controls.
             const voteSelect = document.getElementById('vote-select');
             if (voteSelect) voteSelect.addEventListener('change', updateVoteResults);
 
@@ -2935,6 +5109,7 @@
                     }
                     if (mainContentEl) mainContentEl.style.display = 'none';
 
+                    // Required full reset before loading a different meeting spreadsheet.
                     votingData = null;
                     votes = [];
                     members = [];
@@ -2943,6 +5118,8 @@
                 });
             }
 
+            updateModuleContextControls('by-vote');
+            updateModuleInstruction('by-vote');
             loadVotingDataFromExcel();
         });
     </script>
