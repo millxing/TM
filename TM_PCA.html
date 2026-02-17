@@ -1,0 +1,2024 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TM PCA Analyzer</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Varela+Round&display=swap">
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <style>
+        :root {
+            --tm-coral: #F63049;
+            --tm-rose: #D02752;
+            --tm-plum: #8A244B;
+            --tm-navy: #111F35;
+            --tm-bg: #f6f3f5;
+            --tm-line: #e5dde3;
+            --tm-soft-navy: rgba(17, 31, 53, 0.08);
+            --tm-soft-coral: rgba(246, 48, 73, 0.1);
+            --tm-soft-rose: rgba(208, 39, 82, 0.12);
+            --tm-soft-plum: rgba(138, 36, 75, 0.14);
+            --tm-focus: rgba(246, 48, 73, 0.18);
+        }
+
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: 'Varela Round', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: var(--tm-bg);
+            color: var(--tm-navy);
+        }
+
+        .page {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 18px;
+        }
+
+        h1 {
+            margin: 0 0 10px;
+            font-size: 1.9rem;
+        }
+
+        .subtitle {
+            margin: 0 0 16px;
+            color: var(--tm-plum);
+            font-size: 0.98rem;
+        }
+
+        .card {
+            background: #fff;
+            border: 1px solid var(--tm-line);
+            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 14px;
+        }
+
+        .controls-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 12px;
+            align-items: end;
+        }
+
+        .field label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 0.88rem;
+            color: var(--tm-plum);
+            font-weight: 600;
+        }
+
+        .field input[type="number"],
+        .field select,
+        .field input[type="text"] {
+            width: 100%;
+            padding: 7px 8px;
+            border: 2px solid var(--tm-line);
+            border-radius: 6px;
+            font-size: 0.95rem;
+            background: #fff;
+            color: var(--tm-navy);
+            font-family: inherit;
+        }
+
+        .field input[type="number"]:focus,
+        .field select:focus,
+        .field input[type="text"]:focus {
+            outline: none;
+            border-color: var(--tm-coral);
+            box-shadow: 0 0 0 3px var(--tm-focus);
+        }
+
+        .checks {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .checks label {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--tm-plum);
+            font-size: 0.92rem;
+        }
+
+        input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--tm-coral);
+            cursor: pointer;
+        }
+
+        .run-actions {
+            margin-top: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .view-actions {
+            margin-top: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .view-label {
+            color: var(--tm-plum);
+            font-size: 0.92rem;
+            font-weight: 600;
+        }
+
+        button {
+            border: 2px solid var(--tm-line);
+            background: #fff;
+            color: var(--tm-navy);
+            border-radius: 7px;
+            padding: 8px 11px;
+            font-size: 0.92rem;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        button.primary {
+            background: var(--tm-rose);
+            border-color: var(--tm-rose);
+            color: #fff;
+        }
+
+        button.primary:hover {
+            background: var(--tm-plum);
+            border-color: var(--tm-plum);
+        }
+
+        button.view-btn.active {
+            background: var(--tm-soft-coral);
+            border-color: rgba(246, 48, 73, 0.4);
+            color: var(--tm-navy);
+            font-weight: 600;
+        }
+
+        .status {
+            margin-top: 9px;
+            color: var(--tm-plum);
+            font-size: 0.92rem;
+            background-color: var(--tm-soft-navy);
+            border: 1px solid var(--tm-line);
+            border-radius: 8px;
+            padding: 10px 12px;
+            white-space: pre-line;
+        }
+
+        .status.error {
+            color: var(--tm-rose);
+            font-weight: 600;
+            background-color: var(--tm-soft-coral);
+            border-color: rgba(246, 48, 73, 0.4);
+        }
+
+        .subcontrols {
+            margin: 0 0 10px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+            gap: 10px;
+            align-items: end;
+        }
+
+        .table-wrap {
+            overflow: auto;
+            max-height: 67vh;
+            border: 1px solid var(--tm-line);
+            border-radius: 8px;
+        }
+
+        table {
+            border-collapse: separate;
+            border-spacing: 0;
+            width: 100%;
+            table-layout: fixed;
+            background: #fff;
+        }
+
+        th, td {
+            border-bottom: 1px solid var(--tm-line);
+            padding: 6px 7px;
+            font-size: 0.86rem;
+            text-align: left;
+            vertical-align: top;
+            line-height: 1.3;
+        }
+
+        thead th {
+            position: sticky;
+            top: 0;
+            z-index: 2;
+            background: #eef2f6;
+            color: var(--tm-navy);
+            box-shadow: inset 0 -1px 0 var(--tm-line);
+        }
+
+        td.num, th.num {
+            text-align: right;
+            font-variant-numeric: tabular-nums;
+        }
+
+        #scores-table th[data-score-component] {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        #scores-table th[data-score-component]:hover {
+            color: var(--tm-rose);
+        }
+
+        #coeff-table th[data-coeff-component] {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        #coeff-table th[data-coeff-component]:hover {
+            color: var(--tm-rose);
+        }
+
+        #variance-view, #scores-view, #plot-view {
+            display: none;
+        }
+
+        #variance-view.active, #scores-view.active, #plot-view.active {
+            display: block;
+        }
+
+        .plot-wrap {
+            width: 100%;
+            height: 620px;
+            border: 1px solid var(--tm-line);
+            border-radius: 8px;
+            background: #fff;
+        }
+
+        #pc-plot-status {
+            margin-bottom: 10px;
+        }
+
+        .note {
+            font-size: 0.86rem;
+            color: var(--tm-plum);
+            margin: 0 0 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <h1>TM PCA Analyzer</h1>
+        <p class="subtitle">Cross-session principal component analysis with top 5 components plus a residual component.</p>
+
+        <section class="card">
+            <div class="controls-grid">
+                <div class="field">
+                    <label for="first-session">First Session</label>
+                    <select id="first-session"></select>
+                </div>
+                <div class="field">
+                    <label for="last-session">Last Session</label>
+                    <select id="last-session"></select>
+                </div>
+                <div class="field">
+                    <label for="min-sessions">Minimum Sessions (member inclusion)</label>
+                    <select id="min-sessions"></select>
+                </div>
+                <div class="field">
+                    <label for="missing-strategy">NoVote / Missing Vote Treatment</label>
+                    <select id="missing-strategy">
+                        <option value="zero">Impute as neutral</option>
+                        <option value="column-mean" selected>Impute with vote-column mean</option>
+                    </select>
+                </div>
+            </div>
+            <div class="checks">
+                <label>
+                    <input id="ignore-abstain" type="checkbox" checked>
+                    Ignore abstain votes
+                </label>
+                <label>
+                    <input id="ignore-terminate" type="checkbox" checked>
+                    Ignore motions to terminate debate
+                </label>
+            </div>
+            <div class="run-actions">
+                <button id="run-analysis" class="primary" type="button">Run PCA</button>
+                <button id="export-pca" type="button">Export PCA</button>
+            </div>
+            <div class="view-actions">
+                <span class="view-label">View:</span>
+                <button id="view-variance-btn" class="view-btn active" type="button">Variance + Vote Coefficients</button>
+                <button id="view-scores-btn" class="view-btn" type="button">Member Scores</button>
+                <button id="view-plot-btn" class="view-btn" type="button">PC1 vs PC2 Plot</button>
+            </div>
+            <div id="status" class="status">Loading session data...</div>
+        </section>
+
+        <section id="variance-view" class="card active">
+            <p class="note">Residual is an aggregated remainder from components after PC5 and is reported as non-directional magnitude.</p>
+            <h3>Variance Explained</h3>
+            <div class="table-wrap" style="max-height: 260px;">
+                <table id="variance-table">
+                    <thead>
+                        <tr>
+                            <th>Component</th>
+                            <th class="num">Variance %</th>
+                            <th class="num">Cumulative %</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <h3 style="margin-top: 14px;">Vote Coefficients</h3>
+            <p class="note">Click a PC column header to sort by absolute value (descending).</p>
+            <div class="table-wrap">
+                <table id="coeff-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 120px;">Session</th>
+                            <th style="width: 280px;">Vote Title</th>
+                            <th>Vote Description</th>
+                            <th class="num" style="width: 95px;" data-coeff-component="0">PC1</th>
+                            <th class="num" style="width: 95px;" data-coeff-component="1">PC2</th>
+                            <th class="num" style="width: 95px;" data-coeff-component="2">PC3</th>
+                            <th class="num" style="width: 95px;" data-coeff-component="3">PC4</th>
+                            <th class="num" style="width: 95px;" data-coeff-component="4">PC5</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="scores-view" class="card">
+            <p class="note">Member scores are projections on PC1-PC5. Click a PC column header to sort.</p>
+            <div class="table-wrap">
+                <table id="scores-table">
+                    <thead>
+                        <tr>
+                            <th>Member</th>
+                            <th style="width: 70px;">Precinct</th>
+                            <th class="num" style="width: 80px;">Sessions</th>
+                            <th class="num" style="width: 95px;" data-score-component="0">PC1</th>
+                            <th class="num" style="width: 95px;" data-score-component="1">PC2</th>
+                            <th class="num" style="width: 95px;" data-score-component="2">PC3</th>
+                            <th class="num" style="width: 95px;" data-score-component="3">PC4</th>
+                            <th class="num" style="width: 95px;" data-score-component="4">PC5</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="plot-view" class="card">
+            <p class="note">Scatter plot of member scores on the first two principal components.</p>
+            <div id="pc-plot-status" class="note"></div>
+            <div id="pc-plot" class="plot-wrap"></div>
+        </section>
+    </div>
+
+    <script>
+        /****************************************************
+         * SPREADSHEET STRUCTURE CONFIG
+         ****************************************************/
+        const TITLE_ROW_INDEX = 2;
+        const DESCRIPTION_ROW_INDEX = 3;
+        const HEADER_ROW_INDEX = 4;
+        const FIRST_DATA_ROW_INDEX = 5;
+
+        const PRECINCT_COL_INDEX = 0;
+        const NAME_COL_INDEX = 1;
+        const FIRST_VOTE_COL_INDEX = 2;
+
+        const SPREADSHEET_BASE_URL = 'https://raw.githubusercontent.com/millxing/TM/main/';
+        const VOTE_GUIDE_FILE_NAMES = [
+            'VoteGuide.xlsx',
+            'Vote%20Guide.xlsx',
+            'voteguide.xlsx'
+        ];
+        const MEMBER_ALIASES_FILE_NAMES = [
+            'members_aliases.xlsx',
+            'members%20aliases.xlsx',
+            'member_aliases.xlsx',
+            'MemberAliases.xlsx'
+        ];
+        const DISALLOWED_MEMBER_NAMES = new Set(['YES', 'NO', 'ABSTAIN', 'NO VOTE', 'TOTAL', 'ARTICLE', 'MOTION']);
+        const DEFAULT_MEMBER_IDENTITY_ALIASES = new Map([
+            ['ingraham, katherine a', 'ingraham, katherine'],
+            ['warren, paul s', 'warren, paul']
+        ]);
+
+        const SESSION_FILES = [
+            { id: '2021-05', label: 'May 2021 Annual Town Meeting', file: 'Votes/May%202021%20Votes.xlsx' },
+            { id: '2021-10', label: 'October 2021 Special Town Meeting', file: 'Votes/October%202021%20Votes.xlsx' },
+            { id: '2021-11', label: 'November 2021 Special Town Meeting', file: 'Votes/November%202021%20Votes.xlsx' },
+            { id: '2022-05', label: 'May 2022 Annual Town Meeting', file: 'Votes/May%202022%20Votes.xlsx' },
+            { id: '2022-11', label: 'November 2022 Special Town Meeting', file: 'Votes/November%202022%20Votes.xlsx' },
+            { id: '2023-01', label: 'January 2023 Special Town Meeting', file: 'Votes/January%202023%20Votes.xlsx' },
+            { id: '2023-05', label: 'May 2023 Annual Town Meeting', file: 'Votes/May%202023%20Votes.xlsx' },
+            { id: '2023-11', label: 'November 2023 Special Town Meeting', file: 'Votes/November%202023%20Votes.xlsx' },
+            { id: '2024-05', label: 'May 2024 Annual Town Meeting', file: 'Votes/May%202024%20Votes.xlsx' },
+            { id: '2024-11', label: 'November 2024 Special Town Meeting', file: 'Votes/November%202024%20Votes.xlsx' },
+            { id: '2025-05', label: 'May 2025 Annual Town Meeting', file: 'Votes/May%202025%20Votes.xlsx' },
+            { id: '2025-11', label: 'November 2025 Special Town Meeting', file: 'Votes/November%202025%20Votes.xlsx' }
+        ];
+
+        /****************************************************
+         * GLOBAL STATE
+         ****************************************************/
+        let memberAliasesLoadPromise = null;
+        let memberAliasesLoadComplete = false;
+        let memberIdentityAliases = new Map(DEFAULT_MEMBER_IDENTITY_ALIASES);
+        let memberIdentityCanonicalDisplayNames = new Map();
+        let voteGuideLoadPromise = null;
+        let voteGuideLoadComplete = false;
+        let voteGuideBySessionAndVote = new Map();
+        let voteGuideBySessionAndLooseVote = new Map();
+
+        let allSessionsCache = null;
+        let analysisState = null;
+        let coeffSortState = { componentIndex: 0 };
+        let memberScoresSortState = { componentIndex: 0, direction: 'desc' };
+
+        /****************************************************
+         * BASIC HELPERS
+         ****************************************************/
+        function getSpreadsheetRawURL(file) {
+            return `${SPREADSHEET_BASE_URL}${file}`;
+        }
+
+        function isTerminateDebateVote(title) {
+            return String(title || '').toLowerCase().includes('terminate debate');
+        }
+
+        function extractArticleKeysFromTitle(title) {
+            const normalized = String(title || '')
+                .toLowerCase()
+                .replace(/\s+/g, ' ')
+                .trim();
+            const regex = /\barticle(?:s)?\s+([0-9]+[a-z]?)(?:\s*(?:and|,|&|-|to)\s*([0-9]+[a-z]?))?/ig;
+            const keys = [];
+            let match = regex.exec(normalized);
+            while (match) {
+                if (match[1]) keys.push(`article ${match[1]}`);
+                if (match[2]) keys.push(`article ${match[2]}`);
+                match = regex.exec(normalized);
+            }
+            return Array.from(new Set(keys));
+        }
+
+        function shouldInheritMainMotionDescription(title) {
+            const normalized = String(title || '').toLowerCase();
+            return (
+                normalized.includes('motion to refer') ||
+                normalized.includes('terminate debate') ||
+                normalized.includes('amendment')
+            );
+        }
+
+        function applyMainMotionDescriptionFallback(votes) {
+            if (!Array.isArray(votes) || votes.length === 0) return;
+
+            const mainDescriptionByArticle = new Map();
+            votes.forEach(vote => {
+                const title = String(vote && vote.title ? vote.title : '');
+                const description = String(vote && vote.description ? vote.description : '').trim();
+                if (!title || !description) return;
+                if (!title.toLowerCase().includes('main motion')) return;
+
+                const articleKeys = extractArticleKeysFromTitle(title);
+                articleKeys.forEach(articleKey => {
+                    if (!articleKey || mainDescriptionByArticle.has(articleKey)) return;
+                    mainDescriptionByArticle.set(articleKey, description);
+                });
+            });
+
+            votes.forEach(vote => {
+                if (!vote) return;
+                const existingDescription = String(vote.description || '').trim();
+                if (existingDescription) return;
+                if (!shouldInheritMainMotionDescription(vote.title)) return;
+
+                const articleKeys = extractArticleKeysFromTitle(vote.title);
+                if (articleKeys.length === 0) return;
+
+                const fallbackDescription = articleKeys
+                    .map(key => mainDescriptionByArticle.get(key))
+                    .find(value => !!value);
+                if (fallbackDescription) vote.description = fallbackDescription;
+            });
+        }
+
+        function normalizeVote(raw) {
+            const value = (raw == null ? '' : String(raw)).trim().toUpperCase();
+            if (!value) return 'NoVote';
+            if (value === 'Y') return 'YES';
+            if (value === 'N') return 'NO';
+            if (value === 'A') return 'ABSTAIN';
+            if (value === 'YES' || value === 'NO' || value === 'ABSTAIN') return value;
+            return 'NoVote';
+        }
+
+        function voteToNumeric(voteValue) {
+            if (voteValue === 'YES') return 1;
+            if (voteValue === 'NO') return -1;
+            if (voteValue === 'ABSTAIN') return 0;
+            return NaN;
+        }
+
+        function precinctSortValue(precinct) {
+            const n = parseInt(precinct, 10);
+            if (!Number.isNaN(n)) return n;
+            if (String(precinct).toUpperCase() === 'AL') return 999;
+            return 998;
+        }
+
+        function formatPrecinctLabel(precinct) {
+            const up = String(precinct || '').toUpperCase();
+            if (!up) return '';
+            if (up === 'AL') return 'AL';
+            return String(precinct);
+        }
+
+        function formatFloat(value, digits = 2) {
+            const num = Number(value);
+            if (!Number.isFinite(num)) return '';
+            return num.toFixed(digits);
+        }
+
+        function normalizeVoteTitleForMatch(title) {
+            return String(title || '')
+                .toLowerCase()
+                .replace(/\s+/g, ' ')
+                .trim();
+        }
+
+        function buildVoteGuideKey(sessionId, voteTitle) {
+            return `${String(sessionId || '').trim()}||${normalizeVoteTitleForMatch(voteTitle)}`;
+        }
+
+        function normalizeVoteTitleForLooseMatch(title) {
+            return normalizeVoteTitleForMatch(title)
+                .replace(/\barticles\b/g, 'article')
+                .replace(/\bmain motion\b/g, 'motion')
+                .replace(/\s+/g, ' ')
+                .trim();
+        }
+
+        function buildLooseVoteGuideKey(sessionId, voteTitle) {
+            return `${String(sessionId || '').trim()}||${normalizeVoteTitleForLooseMatch(voteTitle)}`;
+        }
+
+        function getSessionIdFromGuideLabel(sessionLabel) {
+            const normalized = String(sessionLabel || '').toLowerCase().trim();
+            if (!normalized) return null;
+
+            const direct = SESSION_FILES.find(session =>
+                normalized.includes(session.label.toLowerCase())
+            );
+            if (direct) return direct.id;
+
+            const match = normalized.match(/\b(january|may|october|november)\s+(20\d{2})\b/i);
+            if (!match) return null;
+            const monthMap = { january: '01', may: '05', october: '10', november: '11' };
+            const month = monthMap[match[1].toLowerCase()];
+            const year = match[2];
+            const candidate = `${year}-${month}`;
+            return SESSION_FILES.some(session => session.id === candidate) ? candidate : null;
+        }
+
+        function parseVoteGuideRows(rows) {
+            const index = new Map();
+            const looseIndex = new Map();
+            if (!Array.isArray(rows) || rows.length < 2) return { index, looseIndex };
+
+            const headers = (rows[0] || []).map(cell => String(cell || '').trim().toLowerCase());
+            const sessionCol = headers.findIndex(header => header === 'town meeting session');
+            const voteCol = headers.findIndex(header => header === 'vote');
+            const descriptionCol = headers.findIndex(header => header === 'description');
+            if (sessionCol < 0 || voteCol < 0 || descriptionCol < 0) return { index, looseIndex };
+
+            for (let r = 1; r < rows.length; r++) {
+                const row = rows[r] || [];
+                const sessionLabel = String(row[sessionCol] || '').trim();
+                const voteTitle = String(row[voteCol] || '').trim();
+                const description = String(row[descriptionCol] || '').trim();
+                if (!sessionLabel || !voteTitle || !description) continue;
+
+                const sessionId = getSessionIdFromGuideLabel(sessionLabel);
+                if (!sessionId) continue;
+
+                const key = buildVoteGuideKey(sessionId, voteTitle);
+                const looseKey = buildLooseVoteGuideKey(sessionId, voteTitle);
+                const prev = index.get(key) || '';
+                const prevLoose = looseIndex.get(looseKey) || '';
+                if (description.length > prev.length) index.set(key, description);
+                if (description.length > prevLoose.length) looseIndex.set(looseKey, description);
+            }
+
+            return { index, looseIndex };
+        }
+
+        function buildVoteGuideCandidateFiles() {
+            const candidateSet = new Set();
+            VOTE_GUIDE_FILE_NAMES.forEach(name => {
+                candidateSet.add(`Votes/${name}`);
+                candidateSet.add(`Vote/${name}`);
+                candidateSet.add(name);
+            });
+            return Array.from(candidateSet);
+        }
+
+        function getVoteGuideDescription(sessionId, voteTitle) {
+            if (!sessionId || voteGuideBySessionAndVote.size === 0) return '';
+            return (
+                voteGuideBySessionAndVote.get(buildVoteGuideKey(sessionId, voteTitle)) ||
+                voteGuideBySessionAndLooseVote.get(buildLooseVoteGuideKey(sessionId, voteTitle)) ||
+                ''
+            );
+        }
+
+        async function ensureVoteGuideLoaded() {
+            if (voteGuideLoadComplete) return;
+            if (voteGuideLoadPromise) {
+                await voteGuideLoadPromise;
+                return;
+            }
+
+            voteGuideLoadPromise = (async () => {
+                const candidateFiles = buildVoteGuideCandidateFiles();
+                for (const guideFile of candidateFiles) {
+                    try {
+                        const response = await fetch(getSpreadsheetRawURL(guideFile));
+                        if (!response.ok) continue;
+                        const arrayBuffer = await response.arrayBuffer();
+                        const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+                        const sheetName = workbook.SheetNames[0];
+                        const sheet = workbook.Sheets[sheetName];
+                        const rows = XLSX.utils.sheet_to_json(sheet, {
+                            header: 1,
+                            blankrows: false,
+                            defval: ''
+                        });
+                        const parsed = parseVoteGuideRows(rows);
+                        if (parsed.index.size === 0) continue;
+                        voteGuideBySessionAndVote = parsed.index;
+                        voteGuideBySessionAndLooseVote = parsed.looseIndex;
+                        voteGuideLoadComplete = true;
+                        return;
+                    } catch (err) {
+                        void err;
+                    }
+                }
+                voteGuideLoadComplete = true;
+            })();
+
+            try {
+                await voteGuideLoadPromise;
+            } finally {
+                voteGuideLoadPromise = null;
+            }
+        }
+
+        /****************************************************
+         * NAME NORMALIZATION (CROSS-SESSION MEMBER IDENTITY)
+         ****************************************************/
+        function normalizeMemberName(name) {
+            return String(name || '').trim().toLowerCase().replace(/\s+/g, ' ');
+        }
+
+        function normalizeMemberAliasToken(name) {
+            return normalizeMemberName(name)
+                .replace(/\./g, '')
+                .replace(/\s*,\s*/g, ', ')
+                .replace(/\s+/g, ' ')
+                .trim();
+        }
+
+        function reorderNameIfLikelyFirstLast(normalizedName) {
+            if (!normalizedName || normalizedName.includes(',')) return '';
+            const tokens = normalizedName.split(/\s+/).filter(Boolean);
+            if (tokens.length < 2) return '';
+
+            const suffixPattern = /^(jr|sr|ii|iii|iv|v|vi)$/i;
+            let suffix = '';
+            if (tokens.length > 2 && suffixPattern.test(tokens[tokens.length - 1])) {
+                suffix = tokens.pop();
+            }
+
+            const last = tokens.pop();
+            if (!last || tokens.length === 0) return '';
+            const given = suffix ? [...tokens, suffix] : tokens;
+            return `${last}, ${given.join(' ')}`.replace(/\s+/g, ' ').trim();
+        }
+
+        function stripLikelyMiddleInitials(normalizedName) {
+            if (!normalizedName) return '';
+            if (normalizedName.includes(',')) {
+                const parts = normalizedName.split(',');
+                const last = (parts[0] || '').trim();
+                const given = (parts.slice(1).join(',') || '').trim();
+                if (!given) return last;
+
+                const tokens = given
+                    .replace(/\./g, '')
+                    .split(/\s+/)
+                    .filter(Boolean);
+
+                if (tokens.length > 1 && /^[a-z]$/.test(tokens[tokens.length - 1])) {
+                    tokens.pop();
+                }
+                return `${last}, ${tokens.join(' ')}`.replace(/\s+/g, ' ').trim();
+            }
+
+            const tokens = normalizedName
+                .replace(/\./g, '')
+                .split(/\s+/)
+                .filter(Boolean);
+
+            if (tokens.length > 1 && /^[a-z]$/.test(tokens[tokens.length - 1])) {
+                tokens.pop();
+            } else if (tokens.length === 3 && /^[a-z]$/.test(tokens[1])) {
+                tokens.splice(1, 1);
+            }
+            return tokens.join(' ');
+        }
+
+        function canonicalMemberIdentityName(name) {
+            const normalized = normalizeMemberAliasToken(name);
+            if (!normalized) return '';
+
+            const candidates = [];
+            const pushCandidate = value => {
+                const token = normalizeMemberAliasToken(value);
+                if (token && !candidates.includes(token)) candidates.push(token);
+            };
+
+            pushCandidate(normalized);
+            pushCandidate(stripLikelyMiddleInitials(normalized));
+
+            const reordered = reorderNameIfLikelyFirstLast(normalized);
+            if (reordered) {
+                pushCandidate(reordered);
+                pushCandidate(stripLikelyMiddleInitials(reordered));
+            }
+
+            for (const candidate of candidates) {
+                const mapped = memberIdentityAliases.get(candidate);
+                if (mapped) return mapped;
+            }
+            return candidates[1] || candidates[0];
+        }
+
+        function preferDisplayName(existingName, incomingName) {
+            const existing = String(existingName || '').trim();
+            const incoming = String(incomingName || '').trim();
+            if (!existing) return incoming;
+            if (!incoming) return existing;
+            if (incoming.length < existing.length) return incoming;
+            return existing;
+        }
+
+        function summarizePrecinctSet(precinctSet) {
+            const items = Array.from(precinctSet || []).filter(Boolean);
+            if (items.length === 0) return '';
+            if (items.length === 1) return items[0];
+            if (items.includes('AL')) return 'AL';
+
+            const numeric = items
+                .map(value => parseInt(value, 10))
+                .filter(value => !Number.isNaN(value))
+                .sort((a, b) => a - b);
+            if (numeric.length > 0) return String(numeric[0]);
+            return items[0];
+        }
+
+        function canonicalMemberKey(name, precinct) {
+            void precinct;
+            return canonicalMemberIdentityName(name);
+        }
+
+        /****************************************************
+         * ALIAS FILE LOAD
+         ****************************************************/
+        function parseMemberAliasesRows(rows) {
+            const aliasMap = new Map();
+            const canonicalDisplayNames = new Map();
+            if (!Array.isArray(rows) || rows.length === 0) {
+                return { aliasMap, canonicalDisplayNames };
+            }
+
+            const firstCol = String(((rows[0] || [])[0]) || '').trim().toLowerCase();
+            const secondCol = String(((rows[0] || [])[1]) || '').trim().toLowerCase();
+            const hasHeaderRow =
+                (firstCol.includes('canonical') || firstCol === 'name') &&
+                secondCol.includes('alias');
+            const startRow = hasHeaderRow ? 1 : 0;
+
+            for (let r = startRow; r < rows.length; r++) {
+                const row = rows[r] || [];
+                const canonicalRaw = String(row[0] || '').trim();
+                const aliasesRaw = String(row[1] || '').trim();
+                if (!canonicalRaw) continue;
+
+                const canonical = normalizeMemberAliasToken(canonicalRaw);
+                if (!canonical) continue;
+                if (!canonicalDisplayNames.has(canonical)) {
+                    canonicalDisplayNames.set(canonical, canonicalRaw);
+                }
+
+                aliasMap.set(canonical, canonical);
+                if (!aliasesRaw) continue;
+
+                aliasesRaw
+                    .split('::')
+                    .map(token => normalizeMemberAliasToken(token))
+                    .filter(Boolean)
+                    .forEach(alias => aliasMap.set(alias, canonical));
+            }
+
+            return { aliasMap, canonicalDisplayNames };
+        }
+
+        function buildMemberAliasesCandidateFiles() {
+            const candidateSet = new Set();
+            MEMBER_ALIASES_FILE_NAMES.forEach(name => {
+                candidateSet.add(`Votes/${name}`);
+                candidateSet.add(`Vote/${name}`);
+                candidateSet.add(name);
+            });
+            return Array.from(candidateSet);
+        }
+
+        async function ensureMemberAliasesLoaded() {
+            if (memberAliasesLoadComplete) return;
+            if (memberAliasesLoadPromise) {
+                await memberAliasesLoadPromise;
+                return;
+            }
+
+            memberAliasesLoadPromise = (async () => {
+                const candidateFiles = buildMemberAliasesCandidateFiles();
+                for (const aliasFile of candidateFiles) {
+                    try {
+                        const response = await fetch(getSpreadsheetRawURL(aliasFile));
+                        if (!response.ok) continue;
+                        const arrayBuffer = await response.arrayBuffer();
+                        const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+                        const sheetName = workbook.SheetNames[0];
+                        const sheet = workbook.Sheets[sheetName];
+                        const rows = XLSX.utils.sheet_to_json(sheet, {
+                            header: 1,
+                            blankrows: false,
+                            defval: ''
+                        });
+                        const parsedAliases = parseMemberAliasesRows(rows);
+                        if (parsedAliases.aliasMap.size === 0) continue;
+
+                        const mergedAliases = new Map(DEFAULT_MEMBER_IDENTITY_ALIASES);
+                        parsedAliases.aliasMap.forEach((canonical, alias) => mergedAliases.set(alias, canonical));
+                        memberIdentityAliases = mergedAliases;
+                        memberIdentityCanonicalDisplayNames = parsedAliases.canonicalDisplayNames;
+                        memberAliasesLoadComplete = true;
+                        return;
+                    } catch (err) {
+                        void err;
+                    }
+                }
+
+                memberAliasesLoadComplete = true;
+            })();
+
+            try {
+                await memberAliasesLoadPromise;
+            } finally {
+                memberAliasesLoadPromise = null;
+            }
+        }
+
+        /****************************************************
+         * SPREADSHEET PARSING
+         ****************************************************/
+        function parseRowsToSession(rows, sessionMeta) {
+            if (!rows || rows.length <= HEADER_ROW_INDEX) {
+                throw new Error(`${sessionMeta.label}: spreadsheet missing expected rows.`);
+            }
+
+            const titleRow = rows[TITLE_ROW_INDEX] || [];
+            const descriptionRow = rows[DESCRIPTION_ROW_INDEX] || [];
+            const defaultHeaderRow = rows[HEADER_ROW_INDEX] || [];
+            const possibleAltHeaderRow = rows[DESCRIPTION_ROW_INDEX] || [];
+
+            const hasHeaderLabels = row =>
+                String(row[PRECINCT_COL_INDEX] || '').trim().toUpperCase() === 'PRECINCT' &&
+                String(row[NAME_COL_INDEX] || '').trim().toUpperCase() === 'NAME';
+            const looksLikeDataRow = row => {
+                const precinct = String(row[PRECINCT_COL_INDEX] || '').trim();
+                const name = String(row[NAME_COL_INDEX] || '').trim();
+                const upperPrecinct = precinct.toUpperCase();
+                const precinctNum = parseInt(precinct, 10);
+                const isNumericPrecinct = !Number.isNaN(precinctNum);
+                const isAL = upperPrecinct === 'AL';
+                return !!name && (isNumericPrecinct || isAL);
+            };
+
+            let effectiveHeaderRowIndex = HEADER_ROW_INDEX;
+            let effectiveFirstDataRowIndex = FIRST_DATA_ROW_INDEX;
+            if (
+                !hasHeaderLabels(defaultHeaderRow) &&
+                hasHeaderLabels(possibleAltHeaderRow) &&
+                looksLikeDataRow(defaultHeaderRow)
+            ) {
+                effectiveHeaderRowIndex = DESCRIPTION_ROW_INDEX;
+                effectiveFirstDataRowIndex = HEADER_ROW_INDEX;
+            }
+
+            const headerRow = rows[effectiveHeaderRowIndex] || [];
+            const maxPossibleCol = Math.max(titleRow.length, headerRow.length);
+            let lastVoteColIndex = FIRST_VOTE_COL_INDEX;
+            for (let col = FIRST_VOTE_COL_INDEX; col < maxPossibleCol; col++) {
+                const possibleTitle = String(titleRow[col] || headerRow[col] || '').trim();
+                if (possibleTitle) lastVoteColIndex = col;
+            }
+
+            const parsedVotes = [];
+            for (let col = FIRST_VOTE_COL_INDEX; col <= lastVoteColIndex; col++) {
+                const title = String(titleRow[col] || headerRow[col] || '').trim();
+                if (!title) continue;
+                const descriptionFromSheet = effectiveHeaderRowIndex === DESCRIPTION_ROW_INDEX
+                    ? ''
+                    : String(descriptionRow[col] || '').trim();
+                const descriptionFromGuide = getVoteGuideDescription(sessionMeta.id, title);
+                parsedVotes.push({
+                    id: `${sessionMeta.id}::${col}`,
+                    sessionId: sessionMeta.id,
+                    sessionLabel: sessionMeta.label,
+                    title,
+                    description: descriptionFromGuide || descriptionFromSheet,
+                    colIndex: col,
+                    isTerminateDebate: isTerminateDebateVote(title)
+                });
+            }
+
+            // Keep motion variants interpretable: if refer/terminate/amendment rows have no
+            // description, inherit the same article's main-motion description.
+            applyMainMotionDescriptionFallback(parsedVotes);
+
+            const canonicalMembers = {};
+            for (let r = effectiveFirstDataRowIndex; r < rows.length; r++) {
+                const row = rows[r] || [];
+                const name = String(row[NAME_COL_INDEX] || '').trim();
+                const precinct = String(row[PRECINCT_COL_INDEX] || '').trim();
+
+                if (!name && !precinct) continue;
+                if (!name) continue;
+
+                const upperName = name.toUpperCase();
+                if (DISALLOWED_MEMBER_NAMES.has(upperName) || upperName.startsWith('TOTAL')) continue;
+
+                const upperPrecinct = precinct.toUpperCase();
+                const precinctNum = parseInt(precinct, 10);
+                const isNumericPrecinct = !Number.isNaN(precinctNum);
+                const isAL = upperPrecinct === 'AL';
+                if (!isNumericPrecinct && !isAL) continue;
+
+                const canonicalKey = canonicalMemberKey(name, precinct);
+                const voteMapById = {};
+                parsedVotes.forEach(vote => {
+                    voteMapById[vote.id] = normalizeVote(row[vote.colIndex]);
+                });
+
+                const canonicalDisplayName = memberIdentityCanonicalDisplayNames.get(canonicalKey) || name;
+                if (!canonicalMembers[canonicalKey]) {
+                    canonicalMembers[canonicalKey] = {
+                        name: canonicalDisplayName,
+                        precinct,
+                        votesById: voteMapById
+                    };
+                } else {
+                    const existing = canonicalMembers[canonicalKey];
+                    existing.name = memberIdentityCanonicalDisplayNames.get(canonicalKey) ||
+                        preferDisplayName(existing.name, name);
+                    if (String(existing.precinct || '').toUpperCase() !== 'AL' && upperPrecinct === 'AL') {
+                        existing.precinct = precinct;
+                    } else if (!existing.precinct && precinct) {
+                        existing.precinct = precinct;
+                    }
+                    Object.entries(voteMapById).forEach(([voteId, voteValue]) => {
+                        const existingVote = existing.votesById[voteId];
+                        if (existingVote === undefined || existingVote === 'NoVote') {
+                            existing.votesById[voteId] = voteValue;
+                        }
+                    });
+                }
+            }
+
+            return {
+                id: sessionMeta.id,
+                label: sessionMeta.label,
+                file: sessionMeta.file,
+                votes: parsedVotes,
+                canonicalMembers
+            };
+        }
+
+        function parseWorkbookArrayBuffer(arrayBuffer, sessionMeta) {
+            const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+            const sheetName = workbook.SheetNames[0];
+            const sheet = workbook.Sheets[sheetName];
+            const rows = XLSX.utils.sheet_to_json(sheet, {
+                header: 1,
+                blankrows: false,
+                defval: ''
+            });
+            return parseRowsToSession(rows, sessionMeta);
+        }
+
+        async function fetchAndParseSession(sessionMeta) {
+            const response = await fetch(getSpreadsheetRawURL(sessionMeta.file));
+            if (!response.ok) {
+                throw new Error(`${sessionMeta.label}: HTTP ${response.status} ${response.statusText}`);
+            }
+            const arrayBuffer = await response.arrayBuffer();
+            return parseWorkbookArrayBuffer(arrayBuffer, sessionMeta);
+        }
+
+        async function ensureAllSessionsLoaded() {
+            if (allSessionsCache) return allSessionsCache;
+            await ensureMemberAliasesLoaded();
+            await ensureVoteGuideLoaded();
+
+            const statusEl = document.getElementById('status');
+            const total = SESSION_FILES.length;
+            let loaded = 0;
+            if (statusEl) statusEl.textContent = `Loading sessions (0 of ${total})...`;
+
+            const results = [];
+            for (const session of SESSION_FILES) {
+                const parsed = await fetchAndParseSession(session);
+                results.push(parsed);
+                loaded += 1;
+                if (statusEl) statusEl.textContent = `Loading sessions (${loaded} of ${total})...`;
+            }
+            allSessionsCache = results;
+            return allSessionsCache;
+        }
+
+        /****************************************************
+         * PCA MATH
+         ****************************************************/
+        function dotProduct(a, b) {
+            let sum = 0;
+            for (let i = 0; i < a.length; i++) sum += a[i] * b[i];
+            return sum;
+        }
+
+        function vectorNorm(vector) {
+            return Math.sqrt(dotProduct(vector, vector));
+        }
+
+        function normalizeVector(vector) {
+            const norm = vectorNorm(vector);
+            if (norm < 1e-12) return null;
+            return vector.map(value => value / norm);
+        }
+
+        function multiplyMatrixVector(matrix, vector) {
+            const out = Array(matrix.length).fill(0);
+            for (let i = 0; i < matrix.length; i++) {
+                let sum = 0;
+                const row = matrix[i];
+                for (let j = 0; j < row.length; j++) sum += row[j] * vector[j];
+                out[i] = sum;
+            }
+            return out;
+        }
+
+        function rayleighQuotient(matrix, vector) {
+            const multiplied = multiplyMatrixVector(matrix, vector);
+            return dotProduct(vector, multiplied);
+        }
+
+        function powerIteration(matrix, maxIterations = 300, tolerance = 1e-9) {
+            const n = matrix.length;
+            if (n === 0) return null;
+
+            const candidateSeeds = [];
+            // Start with a dense seed to avoid getting stuck on a zero-variance basis column.
+            candidateSeeds.push(Array.from({ length: n }, () => 1));
+            // Then try basis vectors deterministically.
+            for (let i = 0; i < n; i++) {
+                candidateSeeds.push(Array.from({ length: n }, (_, idx) => (idx === i ? 1 : 0)));
+            }
+
+            for (let s = 0; s < candidateSeeds.length; s++) {
+                let vector = normalizeVector(candidateSeeds[s]);
+                if (!vector) continue;
+
+                let failed = false;
+                for (let iter = 0; iter < maxIterations; iter++) {
+                    const multiplied = multiplyMatrixVector(matrix, vector);
+                    const normalized = normalizeVector(multiplied);
+                    if (!normalized) {
+                        failed = true;
+                        break;
+                    }
+
+                    let delta = 0;
+                    for (let i = 0; i < normalized.length; i++) {
+                        delta += Math.abs(normalized[i] - vector[i]);
+                    }
+                    vector = normalized;
+                    if (delta < tolerance) break;
+                }
+
+                if (!failed) {
+                    return {
+                        vector,
+                        eigenvalue: rayleighQuotient(matrix, vector)
+                    };
+                }
+            }
+
+            return null;
+        }
+
+        function deflateMatrix(matrix, vector, eigenvalue) {
+            const n = matrix.length;
+            const out = Array.from({ length: n }, () => Array(n).fill(0));
+            for (let i = 0; i < n; i++) {
+                for (let j = 0; j < n; j++) {
+                    out[i][j] = matrix[i][j] - (eigenvalue * vector[i] * vector[j]);
+                }
+            }
+            return out;
+        }
+
+        function buildCovarianceMatrix(centeredMatrix) {
+            const rowCount = centeredMatrix.length;
+            const colCount = centeredMatrix[0].length;
+            const covariance = Array.from({ length: colCount }, () => Array(colCount).fill(0));
+            const denom = rowCount > 1 ? rowCount - 1 : 1;
+
+            for (let r = 0; r < rowCount; r++) {
+                const row = centeredMatrix[r];
+                for (let i = 0; i < colCount; i++) {
+                    const xi = row[i];
+                    for (let j = i; j < colCount; j++) {
+                        covariance[i][j] += xi * row[j];
+                    }
+                }
+            }
+
+            for (let i = 0; i < colCount; i++) {
+                for (let j = i; j < colCount; j++) {
+                    const value = covariance[i][j] / denom;
+                    covariance[i][j] = value;
+                    covariance[j][i] = value;
+                }
+            }
+            return covariance;
+        }
+
+        function computeTopComponents(matrix, topK = 5) {
+            const rowCount = matrix.length;
+            const colCount = rowCount > 0 ? matrix[0].length : 0;
+            if (rowCount === 0 || colCount === 0) return { error: 'Not enough data to run PCA.' };
+
+            const colMeans = Array(colCount).fill(0);
+            for (let c = 0; c < colCount; c++) {
+                let sum = 0;
+                for (let r = 0; r < rowCount; r++) sum += matrix[r][c];
+                colMeans[c] = sum / rowCount;
+            }
+
+            const centered = matrix.map(row => row.map((value, idx) => value - colMeans[idx]));
+            const covariance = buildCovarianceMatrix(centered);
+            const totalVariance = covariance.reduce((sum, row, idx) => sum + row[idx], 0);
+
+            const components = [];
+            let working = covariance;
+            const maxComponents = Math.min(topK, colCount);
+
+            for (let k = 0; k < maxComponents; k++) {
+                const iter = powerIteration(working);
+                if (!iter || !Number.isFinite(iter.eigenvalue)) break;
+                const eigenvalue = Math.max(0, iter.eigenvalue);
+                if (eigenvalue < 1e-12) break;
+
+                components.push({
+                    vector: iter.vector,
+                    eigenvalue
+                });
+                working = deflateMatrix(working, iter.vector, eigenvalue);
+            }
+
+            const vectors = [];
+            const eigenvalues = [];
+            for (let i = 0; i < topK; i++) {
+                if (i < components.length) {
+                    vectors.push(components[i].vector);
+                    eigenvalues.push(components[i].eigenvalue);
+                } else {
+                    vectors.push(Array(colCount).fill(0));
+                    eigenvalues.push(0);
+                }
+            }
+
+            const scoresTopK = centered.map(row => vectors.map(vec => dotProduct(row, vec)));
+            const usedVariance = eigenvalues.reduce((sum, v) => sum + Math.max(0, v), 0);
+            const remainderVariance = Math.max(0, totalVariance - usedVariance);
+
+            // Aggregate the remainder as a magnitude-based pseudo-component.
+            const remainderLoading = Array(colCount).fill(0);
+            if (remainderVariance > 1e-12) {
+                for (let j = 0; j < colCount; j++) {
+                    const residualDiag = Math.max(0, working[j][j]);
+                    remainderLoading[j] = Math.sqrt(residualDiag / remainderVariance);
+                }
+            }
+
+            const scoresRemainder = centered.map((row, rowIndex) => {
+                const reconstruction = Array(colCount).fill(0);
+                for (let k = 0; k < vectors.length; k++) {
+                    const score = scoresTopK[rowIndex][k];
+                    const vec = vectors[k];
+                    for (let j = 0; j < colCount; j++) {
+                        reconstruction[j] += score * vec[j];
+                    }
+                }
+                let residualNormSq = 0;
+                for (let j = 0; j < colCount; j++) {
+                    const diff = row[j] - reconstruction[j];
+                    residualNormSq += diff * diff;
+                }
+                return Math.sqrt(Math.max(0, residualNormSq));
+            });
+
+            const variancePercents = eigenvalues.map(v =>
+                totalVariance > 0 ? (Math.max(0, v) / totalVariance) * 100 : 0
+            );
+            variancePercents.push(totalVariance > 0 ? (remainderVariance / totalVariance) * 100 : 0);
+
+            const cumulativePercents = [];
+            let running = 0;
+            for (let i = 0; i < variancePercents.length; i++) {
+                running += variancePercents[i];
+                cumulativePercents.push(running);
+            }
+
+            return {
+                centeredMatrix: centered,
+                topVectors: vectors,
+                topEigenvalues: eigenvalues,
+                remainderLoading,
+                topScores: scoresTopK,
+                remainderScores: scoresRemainder,
+                variancePercents,
+                cumulativePercents
+            };
+        }
+
+        /****************************************************
+         * ANALYSIS BUILD
+         ****************************************************/
+        function buildAnalysis(settings) {
+            if (!allSessionsCache || allSessionsCache.length === 0) {
+                return { error: 'No session data loaded.' };
+            }
+
+            const firstIdx = settings.firstSessionIndex;
+            const lastIdx = settings.lastSessionIndex;
+            const selectedSessions = allSessionsCache.filter((_, idx) => idx >= firstIdx && idx <= lastIdx);
+            if (selectedSessions.length === 0) {
+                return { error: 'Select a valid first/last session range.' };
+            }
+
+            const allColumns = [];
+            const profileMap = new Map();
+
+            selectedSessions.forEach(session => {
+                session.votes.forEach(vote => {
+                    if (settings.ignoreTerminate && vote.isTerminateDebate) return;
+                    allColumns.push(vote);
+                });
+
+                Object.entries(session.canonicalMembers).forEach(([canonicalKey, memberEntry]) => {
+                    if (!profileMap.has(canonicalKey)) {
+                        profileMap.set(canonicalKey, {
+                            canonicalKey,
+                            name: memberEntry.name,
+                            precinct: memberEntry.precinct,
+                            precincts: new Set(),
+                            sessions: new Set(),
+                            rawVotesById: {}
+                        });
+                    }
+
+                    const profile = profileMap.get(canonicalKey);
+                    profile.name = preferDisplayName(profile.name, memberEntry.name);
+                    if (memberEntry.precinct) profile.precincts.add(memberEntry.precinct);
+                    profile.precinct = summarizePrecinctSet(profile.precincts) || memberEntry.precinct;
+                    profile.sessions.add(session.id);
+                    Object.entries(memberEntry.votesById || {}).forEach(([voteId, voteValue]) => {
+                        profile.rawVotesById[voteId] = voteValue;
+                    });
+                });
+            });
+
+            const includedProfiles = Array.from(profileMap.values())
+                .filter(profile => profile.sessions.size >= settings.minSessions)
+                .sort((a, b) => {
+                    const pa = precinctSortValue(a.precinct);
+                    const pb = precinctSortValue(b.precinct);
+                    if (pa !== pb) return pa - pb;
+                    return a.name.localeCompare(b.name);
+                });
+
+            if (includedProfiles.length === 0) {
+                return { error: 'No members match the minimum sessions requirement.' };
+            }
+            if (allColumns.length === 0) {
+                return { error: 'No votes remain after current filters.' };
+            }
+
+            const matrixWithNaN = [];
+            includedProfiles.forEach(profile => {
+                const row = allColumns.map(column => {
+                    let voteValue = profile.rawVotesById[column.id] || 'NoVote';
+                    if (settings.ignoreAbstain && voteValue === 'ABSTAIN') voteValue = 'NoVote';
+                    if (voteValue === 'NoVote') return NaN;
+                    return voteToNumeric(voteValue);
+                });
+                matrixWithNaN.push(row);
+            });
+
+            const rowCount = matrixWithNaN.length;
+            const colCount = matrixWithNaN[0].length;
+            if (rowCount === 0 || colCount === 0) {
+                return { error: 'Not enough rows or columns to run PCA.' };
+            }
+
+            const selectedSessionOrder = new Map(selectedSessions.map((session, idx) => [session.id, idx]));
+
+            const imputedMatrix = matrixWithNaN.map(row => [...row]);
+            const columnMeans = Array(colCount).fill(0);
+            for (let c = 0; c < colCount; c++) {
+                let sum = 0;
+                let count = 0;
+                for (let r = 0; r < rowCount; r++) {
+                    const value = matrixWithNaN[r][c];
+                    if (Number.isFinite(value)) {
+                        sum += value;
+                        count += 1;
+                    }
+                }
+                columnMeans[c] = count > 0 ? sum / count : 0;
+            }
+
+            for (let r = 0; r < rowCount; r++) {
+                for (let c = 0; c < colCount; c++) {
+                    if (Number.isFinite(imputedMatrix[r][c])) continue;
+                    if (settings.missingStrategy === 'column-mean') {
+                        imputedMatrix[r][c] = columnMeans[c];
+                    } else {
+                        imputedMatrix[r][c] = 0;
+                    }
+                }
+            }
+
+            const pca = computeTopComponents(imputedMatrix, 5);
+            if (pca.error) return { error: pca.error };
+
+            const voteCoefficients = allColumns.map((column, columnIndex) => {
+                const coeffs = [];
+                for (let k = 0; k < 5; k++) coeffs.push(pca.topVectors[k][columnIndex] || 0);
+                coeffs.push(pca.remainderLoading[columnIndex] || 0);
+                return {
+                    sessionLabel: column.sessionLabel,
+                    voteId: column.id,
+                    title: column.title,
+                    description: String(column.description || '').trim(),
+                    coefficients: coeffs
+                };
+            });
+
+            const memberScores = includedProfiles.map((profile, rowIndex) => {
+                const scores = [];
+                for (let k = 0; k < 5; k++) scores.push(pca.topScores[rowIndex][k] || 0);
+                scores.push(pca.remainderScores[rowIndex] || 0);
+                const sessionIds = Array.from(profile.sessions).sort((a, b) => {
+                    const oa = selectedSessionOrder.has(a) ? selectedSessionOrder.get(a) : Number.MAX_SAFE_INTEGER;
+                    const ob = selectedSessionOrder.has(b) ? selectedSessionOrder.get(b) : Number.MAX_SAFE_INTEGER;
+                    if (oa !== ob) return oa - ob;
+                    return String(a).localeCompare(String(b));
+                });
+                return {
+                    canonicalKey: profile.canonicalKey,
+                    name: profile.name,
+                    precinct: profile.precinct,
+                    sessionsAttended: profile.sessions.size,
+                    sessionIds,
+                    scores
+                };
+            });
+
+            return {
+                settings,
+                selectedSessions,
+                memberCount: includedProfiles.length,
+                voteCount: allColumns.length,
+                variancePercents: pca.variancePercents,
+                cumulativePercents: pca.cumulativePercents,
+                voteCoefficients,
+                memberScores
+            };
+        }
+
+        /****************************************************
+         * RENDERING
+         ****************************************************/
+        function setStatus(message, isError = false) {
+            const statusEl = document.getElementById('status');
+            if (!statusEl) return;
+            statusEl.textContent = message;
+            statusEl.classList.toggle('error', isError);
+        }
+
+        function setActiveView(viewName) {
+            const varianceView = document.getElementById('variance-view');
+            const scoresView = document.getElementById('scores-view');
+            const plotView = document.getElementById('plot-view');
+            const varianceBtn = document.getElementById('view-variance-btn');
+            const scoresBtn = document.getElementById('view-scores-btn');
+            const plotBtn = document.getElementById('view-plot-btn');
+            if (!varianceView || !scoresView || !plotView || !varianceBtn || !scoresBtn || !plotBtn) return;
+
+            const isVariance = viewName === 'variance';
+            const isScores = viewName === 'scores';
+            const isPlot = viewName === 'plot';
+            varianceView.classList.toggle('active', isVariance);
+            scoresView.classList.toggle('active', isScores);
+            plotView.classList.toggle('active', isPlot);
+            varianceBtn.classList.toggle('active', isVariance);
+            scoresBtn.classList.toggle('active', isScores);
+            plotBtn.classList.toggle('active', isPlot);
+
+            if (isPlot) renderScoresPlot();
+        }
+
+        function clearTableBody(tableId) {
+            const table = document.getElementById(tableId);
+            if (!table) return null;
+            const tbody = table.querySelector('tbody');
+            if (!tbody) return null;
+            tbody.replaceChildren();
+            return tbody;
+        }
+
+        function appendTextCell(row, text, className = '') {
+            const td = document.createElement('td');
+            td.textContent = String(text);
+            if (className) td.className = className;
+            row.appendChild(td);
+        }
+
+        function buildSettingsSummaryLine(settings) {
+            const abstainRule = settings.ignoreAbstain ? 'abstain: ignored' : 'abstain: included as neutral';
+            const terminateRule = settings.ignoreTerminate ? 'term-debate: ignored' : 'term-debate: included';
+            const missingRule = settings.missingStrategy === 'column-mean'
+                ? 'missing votes: column mean'
+                : 'missing votes: neutral';
+            return `Parameters -> min sessions: ${settings.minSessions} | ${abstainRule} | ${terminateRule} | ${missingRule}`;
+        }
+
+        function downloadJsonFile(filename, payloadObject) {
+            const jsonText = JSON.stringify(payloadObject, null, 2);
+            const blob = new Blob([jsonText], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
+        function buildPcaExportPayload() {
+            if (!analysisState) return null;
+
+            const componentLabels = ['PC1', 'PC2', 'PC3', 'PC4', 'PC5', 'Residual'];
+            const varianceByComponent = componentLabels.map((component, idx) => ({
+                component,
+                variance_percent: Number(formatFloat(analysisState.variancePercents[idx])),
+                cumulative_percent: Number(formatFloat(analysisState.cumulativePercents[idx]))
+            }));
+
+            const sessionFileById = new Map(SESSION_FILES.map(session => [session.id, session.file]));
+            const includedSessions = analysisState.selectedSessions.map((session, index) => ({
+                order: index + 1,
+                session_id: session.id,
+                session_label: session.label,
+                source_file: session.file || sessionFileById.get(session.id) || ''
+            }));
+
+            const votes = analysisState.voteCoefficients.map((vote, index) => {
+                const sessionId = String(vote.voteId || '').split('::')[0] || '';
+                return {
+                    vote_index: index + 1,
+                    vote_id: vote.voteId,
+                    session_id: sessionId,
+                    session_label: vote.sessionLabel,
+                    title: vote.title,
+                    description: vote.description || '',
+                    coefficients: {
+                        pc1: Number(formatFloat(vote.coefficients[0])),
+                        pc2: Number(formatFloat(vote.coefficients[1])),
+                        pc3: Number(formatFloat(vote.coefficients[2])),
+                        pc4: Number(formatFloat(vote.coefficients[3])),
+                        pc5: Number(formatFloat(vote.coefficients[4])),
+                        residual_loading: Number(formatFloat(vote.coefficients[5]))
+                    }
+                };
+            });
+
+            const members = analysisState.memberScores.map((member, index) => ({
+                member_index: index + 1,
+                canonical_key: member.canonicalKey,
+                name: member.name,
+                precinct: member.precinct,
+                sessions_attended: member.sessionsAttended,
+                session_ids: member.sessionIds || [],
+                scores: {
+                    pc1: Number(formatFloat(member.scores[0])),
+                    pc2: Number(formatFloat(member.scores[1])),
+                    pc3: Number(formatFloat(member.scores[2])),
+                    pc4: Number(formatFloat(member.scores[3])),
+                    pc5: Number(formatFloat(member.scores[4])),
+                    residual: Number(formatFloat(member.scores[5]))
+                }
+            }));
+
+            const settings = analysisState.settings;
+            const settingsForExport = {
+                first_session_id: includedSessions.length ? includedSessions[0].session_id : '',
+                last_session_id: includedSessions.length ? includedSessions[includedSessions.length - 1].session_id : '',
+                selected_session_count: includedSessions.length,
+                min_sessions_required: settings.minSessions,
+                ignore_abstain_votes: settings.ignoreAbstain,
+                ignore_terminate_debate_votes: settings.ignoreTerminate,
+                missing_vote_imputation: settings.missingStrategy === 'column-mean' ? 'column_mean' : 'neutral'
+            };
+
+            return {
+                export_info: {
+                    exported_at_utc: new Date().toISOString(),
+                    source_app: 'TM_PCA.html',
+                    purpose: 'PCA export for LLM interpretation of Town Meeting voting patterns.'
+                },
+                assumptions: [
+                    'Vote encoding is YES=+1, NO=-1, ABSTAIN=0.',
+                    'If "ignore abstain" is enabled, abstain is treated as missing before imputation.',
+                    'If "ignore motions to terminate debate" is enabled, those vote columns are removed.',
+                    'Missing values are imputed per selected strategy: neutral or vote-column mean.',
+                    'Members with sessions attended below minimum are excluded.',
+                    'Principal components are computed for top 5 components; residual captures remaining variance magnitude.'
+                ],
+                parameters: settingsForExport,
+                instructions: {
+                    readme_text:
+                        'This file exports PCA results for Town Meeting voting data. ' +
+                        'First review parameters and assumptions, then variance_explained, then vote coefficients and member scores. ' +
+                        'Votes with larger absolute coefficients are more influential for a component; members with larger absolute scores are more strongly aligned to that component.',
+                    how_to_read: [
+                        'Use variance_explained to assess component importance.',
+                        'Use votes[].coefficients to understand which motions load strongly onto each component.',
+                        'Use members[].scores to locate members on each component axis (positive vs negative direction).',
+                        'PC signs are relative and can flip; interpret relative magnitude and group separation.',
+                        'Residual score summarizes unexplained member variation after PC1-PC5.'
+                    ],
+                    analyst_notes: [
+                        'Large absolute vote coefficient means that vote is influential for that component.',
+                        'Large absolute member score means that member is strongly associated with that component.',
+                        'Compare member score distributions by precinct or session participation when interpreting clusters.'
+                    ]
+                },
+                summary: {
+                    member_count: analysisState.memberCount,
+                    vote_count: analysisState.voteCount,
+                    session_count: includedSessions.length,
+                    parameter_summary_line: buildSettingsSummaryLine(settings)
+                },
+                data: {
+                    sessions: includedSessions,
+                    variance_explained: varianceByComponent,
+                    votes,
+                    members
+                }
+            };
+        }
+
+        function exportPcaAnalysis() {
+            if (!analysisState) {
+                setStatus('Run PCA before exporting.', true);
+                return;
+            }
+
+            const payload = buildPcaExportPayload();
+            if (!payload) {
+                setStatus('Unable to build export payload.', true);
+                return;
+            }
+
+            const sessions = payload.data.sessions || [];
+            const firstSessionId = sessions.length ? sessions[0].session_id : 'start';
+            const lastSessionId = sessions.length ? sessions[sessions.length - 1].session_id : 'end';
+            const stamp = new Date().toISOString().replace(/[:.]/g, '-');
+            const fileName = `tm_pca_export_${firstSessionId}_to_${lastSessionId}_${stamp}.json`;
+            downloadJsonFile(fileName, payload);
+            setStatus(`Exported PCA JSON: ${fileName}`);
+        }
+
+        function renderVarianceTable() {
+            if (!analysisState) return;
+            const tbody = clearTableBody('variance-table');
+            if (!tbody) return;
+
+            const labels = ['PC1', 'PC2', 'PC3', 'PC4', 'PC5', 'Residual'];
+            for (let i = 0; i < labels.length; i++) {
+                const row = document.createElement('tr');
+                appendTextCell(row, labels[i]);
+                appendTextCell(row, formatFloat(analysisState.variancePercents[i]), 'num');
+                appendTextCell(row, formatFloat(analysisState.cumulativePercents[i]), 'num');
+                tbody.appendChild(row);
+            }
+        }
+
+        function renderCoefficientsTable() {
+            if (!analysisState) return;
+            const tbody = clearTableBody('coeff-table');
+            if (!tbody) return;
+
+            const componentIndex = coeffSortState.componentIndex;
+
+            const rows = [...analysisState.voteCoefficients].sort((a, b) => {
+                const av = Math.abs(a.coefficients[componentIndex] || 0);
+                const bv = Math.abs(b.coefficients[componentIndex] || 0);
+                if (bv !== av) return bv - av;
+                return a.title.localeCompare(b.title);
+            });
+
+            rows.forEach(entry => {
+                const row = document.createElement('tr');
+                appendTextCell(row, entry.sessionLabel);
+                appendTextCell(row, entry.title);
+                appendTextCell(row, entry.description || '');
+                for (let i = 0; i < 5; i++) {
+                    appendTextCell(row, formatFloat(entry.coefficients[i]), 'num');
+                }
+                tbody.appendChild(row);
+            });
+
+            updateCoefficientsSortHeaderIndicators();
+        }
+
+        function updateCoefficientsSortHeaderIndicators() {
+            const headers = document.querySelectorAll('#coeff-table th[data-coeff-component]');
+            headers.forEach(header => {
+                const componentIndex = Number.parseInt(header.getAttribute('data-coeff-component'), 10);
+                const label = `PC${componentIndex + 1}`;
+                if (componentIndex === coeffSortState.componentIndex) {
+                    header.textContent = `${label} ▼`;
+                } else {
+                    header.textContent = label;
+                }
+            });
+        }
+
+        function handleCoefficientsSortHeaderClick(event) {
+            const header = event.currentTarget;
+            const clickedComponent = Number.parseInt(header.getAttribute('data-coeff-component'), 10);
+            if (!Number.isFinite(clickedComponent)) return;
+            coeffSortState.componentIndex = clickedComponent;
+            renderCoefficientsTable();
+        }
+
+        function renderScoresTable() {
+            if (!analysisState) return;
+            const tbody = clearTableBody('scores-table');
+            if (!tbody) return;
+
+            const componentIndex = memberScoresSortState.componentIndex;
+            const direction = memberScoresSortState.direction;
+            const directionFactor = direction === 'asc' ? 1 : -1;
+            const rows = [...analysisState.memberScores].sort((a, b) => {
+                const av = a.scores[componentIndex] || 0;
+                const bv = b.scores[componentIndex] || 0;
+                if (av !== bv) return directionFactor * (av - bv);
+
+                const pa = precinctSortValue(a.precinct);
+                const pb = precinctSortValue(b.precinct);
+                if (pa !== pb) return pa - pb;
+                return a.name.localeCompare(b.name);
+            });
+
+            rows.forEach(entry => {
+                const row = document.createElement('tr');
+                appendTextCell(row, entry.name);
+                appendTextCell(row, formatPrecinctLabel(entry.precinct));
+                appendTextCell(row, String(entry.sessionsAttended), 'num');
+                for (let i = 0; i < 5; i++) {
+                    appendTextCell(row, formatFloat(entry.scores[i]), 'num');
+                }
+                tbody.appendChild(row);
+            });
+
+            updateScoresSortHeaderIndicators();
+        }
+
+        function updateScoresSortHeaderIndicators() {
+            const headers = document.querySelectorAll('#scores-table th[data-score-component]');
+            headers.forEach(header => {
+                const componentIndex = Number.parseInt(header.getAttribute('data-score-component'), 10);
+                const label = `PC${componentIndex + 1}`;
+                if (componentIndex === memberScoresSortState.componentIndex) {
+                    const arrow = memberScoresSortState.direction === 'desc' ? ' ▼' : ' ▲';
+                    header.textContent = `${label}${arrow}`;
+                } else {
+                    header.textContent = label;
+                }
+            });
+        }
+
+        function handleScoresSortHeaderClick(event) {
+            const header = event.currentTarget;
+            const clickedComponent = Number.parseInt(header.getAttribute('data-score-component'), 10);
+            if (!Number.isFinite(clickedComponent)) return;
+
+            if (memberScoresSortState.componentIndex === clickedComponent) {
+                memberScoresSortState.direction = memberScoresSortState.direction === 'desc' ? 'asc' : 'desc';
+            } else {
+                memberScoresSortState.componentIndex = clickedComponent;
+                memberScoresSortState.direction = 'desc';
+            }
+
+            renderScoresTable();
+        }
+
+        function renderScoresPlot() {
+            const plotEl = document.getElementById('pc-plot');
+            const statusEl = document.getElementById('pc-plot-status');
+            if (!plotEl || !statusEl) return;
+
+            if (!analysisState || !Array.isArray(analysisState.memberScores)) {
+                statusEl.textContent = 'Run PCA to render the PC1 vs PC2 plot.';
+                if (typeof Plotly !== 'undefined') Plotly.purge(plotEl);
+                return;
+            }
+
+            if (typeof Plotly === 'undefined') {
+                statusEl.textContent = 'Plotly is unavailable; unable to render chart.';
+                return;
+            }
+
+            const members = analysisState.memberScores;
+            const traces = [{
+                type: 'scattergl',
+                mode: 'markers',
+                showlegend: false,
+                x: members.map(member => member.scores[0] || 0),
+                y: members.map(member => member.scores[1] || 0),
+                text: members.map(member => member.name),
+                customdata: members.map(member => [
+                    formatPrecinctLabel(member.precinct),
+                    member.sessionsAttended
+                ]),
+                hovertemplate:
+                    '<b>%{text}</b><br>' +
+                    'Precinct: %{customdata[0]}<br>' +
+                    'Sessions: %{customdata[1]}<br>' +
+                    'PC1: %{x:.2f}<br>' +
+                    'PC2: %{y:.2f}<extra></extra>',
+                marker: {
+                    size: 9,
+                    opacity: 0.85,
+                    color: '#1f77b4'
+                }
+            }];
+
+            const layout = {
+                margin: { l: 60, r: 20, t: 20, b: 55 },
+                plot_bgcolor: '#ffffff',
+                paper_bgcolor: '#ffffff',
+                xaxis: {
+                    title: 'PC1',
+                    gridcolor: '#e9ecef',
+                    zeroline: true,
+                    zerolinecolor: '#ced4da'
+                },
+                yaxis: {
+                    title: 'PC2',
+                    gridcolor: '#e9ecef',
+                    zeroline: true,
+                    zerolinecolor: '#ced4da'
+                }
+            };
+
+            Plotly.react(plotEl, traces, layout, {
+                responsive: true,
+                displayModeBar: true,
+                displaylogo: false
+            });
+
+            statusEl.textContent =
+                `Showing ${analysisState.memberScores.length} members from ${analysisState.selectedSessions.length} sessions.`;
+        }
+
+        /****************************************************
+         * UI CONTROL HELPERS
+         ****************************************************/
+        function populateSessionControls() {
+            const firstSessionEl = document.getElementById('first-session');
+            const lastSessionEl = document.getElementById('last-session');
+            if (!firstSessionEl || !lastSessionEl) return;
+
+            firstSessionEl.replaceChildren();
+            lastSessionEl.replaceChildren();
+
+            SESSION_FILES.forEach((session, idx) => {
+                const firstOption = document.createElement('option');
+                firstOption.value = String(idx);
+                firstOption.textContent = session.label;
+                firstSessionEl.appendChild(firstOption);
+
+                const lastOption = document.createElement('option');
+                lastOption.value = String(idx);
+                lastOption.textContent = session.label;
+                lastSessionEl.appendChild(lastOption);
+            });
+
+            const defaultFirstSessionIndex = SESSION_FILES.findIndex(session => session.id === '2023-05');
+            firstSessionEl.value = String(defaultFirstSessionIndex >= 0 ? defaultFirstSessionIndex : 0);
+            lastSessionEl.value = String(SESSION_FILES.length - 1);
+            syncMinSessionsOptions();
+        }
+
+        function getSelectedRangeCount() {
+            const firstSessionEl = document.getElementById('first-session');
+            const lastSessionEl = document.getElementById('last-session');
+            if (!firstSessionEl || !lastSessionEl) return 1;
+            const first = Number.parseInt(firstSessionEl.value, 10) || 0;
+            const last = Number.parseInt(lastSessionEl.value, 10) || 0;
+            return Math.max(1, last - first + 1);
+        }
+
+        function syncRangeOrder(changedField) {
+            const firstSessionEl = document.getElementById('first-session');
+            const lastSessionEl = document.getElementById('last-session');
+            if (!firstSessionEl || !lastSessionEl) return;
+
+            let first = Number.parseInt(firstSessionEl.value, 10) || 0;
+            let last = Number.parseInt(lastSessionEl.value, 10) || 0;
+            if (first <= last) return;
+
+            if (changedField === 'first') {
+                last = first;
+                lastSessionEl.value = String(last);
+            } else {
+                first = last;
+                firstSessionEl.value = String(first);
+            }
+        }
+
+        function syncMinSessionsOptions() {
+            const minSessionsEl = document.getElementById('min-sessions');
+            if (!minSessionsEl) return;
+            const count = getSelectedRangeCount();
+            const current = Number.parseInt(minSessionsEl.value, 10) || Math.min(4, count);
+
+            minSessionsEl.replaceChildren();
+            for (let i = 1; i <= count; i++) {
+                const option = document.createElement('option');
+                option.value = String(i);
+                option.textContent = String(i);
+                if (i === Math.min(current, count)) option.selected = true;
+                minSessionsEl.appendChild(option);
+            }
+        }
+
+        function collectSettings() {
+            const firstSessionEl = document.getElementById('first-session');
+            const lastSessionEl = document.getElementById('last-session');
+            const minSessionsEl = document.getElementById('min-sessions');
+            const ignoreAbstainEl = document.getElementById('ignore-abstain');
+            const ignoreTerminateEl = document.getElementById('ignore-terminate');
+            const missingStrategyEl = document.getElementById('missing-strategy');
+
+            return {
+                firstSessionIndex: Number.parseInt(firstSessionEl.value, 10),
+                lastSessionIndex: Number.parseInt(lastSessionEl.value, 10),
+                minSessions: Number.parseInt(minSessionsEl.value, 10),
+                ignoreAbstain: !!ignoreAbstainEl.checked,
+                ignoreTerminate: !!ignoreTerminateEl.checked,
+                missingStrategy: missingStrategyEl.value === 'column-mean' ? 'column-mean' : 'zero'
+            };
+        }
+
+        function runAnalysis() {
+            setStatus('Running PCA...');
+            const settings = collectSettings();
+            const analysis = buildAnalysis(settings);
+            if (analysis.error) {
+                analysisState = null;
+                setStatus(analysis.error, true);
+                clearTableBody('variance-table');
+                clearTableBody('coeff-table');
+                clearTableBody('scores-table');
+                const plotStatusEl = document.getElementById('pc-plot-status');
+                const plotEl = document.getElementById('pc-plot');
+                if (plotStatusEl) plotStatusEl.textContent = analysis.error;
+                if (plotEl && typeof Plotly !== 'undefined') Plotly.purge(plotEl);
+                return;
+            }
+
+            analysisState = analysis;
+            renderVarianceTable();
+            renderCoefficientsTable();
+            renderScoresTable();
+            const plotView = document.getElementById('plot-view');
+            if (plotView && plotView.classList.contains('active')) {
+                renderScoresPlot();
+            }
+            setStatus(
+                `PCA complete. ${analysis.memberCount} members, ${analysis.voteCount} vote columns, ${analysis.selectedSessions.length} sessions.\n` +
+                `${buildSettingsSummaryLine(analysis.settings)}`
+            );
+        }
+
+        /****************************************************
+         * BOOTSTRAP
+         ****************************************************/
+        function bindEvents() {
+            const firstSessionEl = document.getElementById('first-session');
+            const lastSessionEl = document.getElementById('last-session');
+            const runBtn = document.getElementById('run-analysis');
+            const exportBtn = document.getElementById('export-pca');
+            const varianceBtn = document.getElementById('view-variance-btn');
+            const scoresBtn = document.getElementById('view-scores-btn');
+            const plotBtn = document.getElementById('view-plot-btn');
+            const coeffSortHeaders = document.querySelectorAll('#coeff-table th[data-coeff-component]');
+            const scoreSortHeaders = document.querySelectorAll('#scores-table th[data-score-component]');
+
+            firstSessionEl.addEventListener('change', () => {
+                syncRangeOrder('first');
+                syncMinSessionsOptions();
+            });
+            lastSessionEl.addEventListener('change', () => {
+                syncRangeOrder('last');
+                syncMinSessionsOptions();
+            });
+
+            runBtn.addEventListener('click', runAnalysis);
+            if (exportBtn) exportBtn.addEventListener('click', exportPcaAnalysis);
+            varianceBtn.addEventListener('click', () => setActiveView('variance'));
+            scoresBtn.addEventListener('click', () => setActiveView('scores'));
+            if (plotBtn) plotBtn.addEventListener('click', () => setActiveView('plot'));
+            coeffSortHeaders.forEach(header => header.addEventListener('click', handleCoefficientsSortHeaderClick));
+            scoreSortHeaders.forEach(header => header.addEventListener('click', handleScoresSortHeaderClick));
+
+            window.addEventListener('resize', () => {
+                const plotEl = document.getElementById('pc-plot');
+                const plotView = document.getElementById('plot-view');
+                if (!plotEl || !plotView || !plotView.classList.contains('active')) return;
+                if (typeof Plotly !== 'undefined') Plotly.Plots.resize(plotEl);
+            });
+        }
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            try {
+                populateSessionControls();
+                bindEvents();
+                await ensureAllSessionsLoaded();
+                setStatus('Session data loaded. Ready to run PCA.');
+                runAnalysis();
+            } catch (err) {
+                console.error(err);
+                setStatus(`Error loading session data: ${err.message}`, true);
+            }
+        });
+    </script>
+</body>
+</html>
