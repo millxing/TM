@@ -6,6 +6,7 @@
     <!-- Make layout responsive on mobile -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Brookline Town Meeting Voting Analysis</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Varela+Round&display=swap">
 
     <!-- XLSX library for reading Excel files directly in the browser -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -20,12 +21,26 @@
             padding: 0;
         }
 
+        :root {
+            --tm-coral: #F63049;
+            --tm-rose: #D02752;
+            --tm-plum: #8A244B;
+            --tm-navy: #111F35;
+            --tm-bg: #f6f3f5;
+            --tm-line: #e5dde3;
+            --tm-soft-navy: rgba(17, 31, 53, 0.08);
+            --tm-soft-coral: rgba(246, 48, 73, 0.1);
+            --tm-soft-rose: rgba(208, 39, 82, 0.12);
+            --tm-soft-plum: rgba(138, 36, 75, 0.14);
+            --tm-focus: rgba(246, 48, 73, 0.18);
+        }
+
         /* Overall page styling */
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background-color: #f5f5f5;
+            font-family: 'Varela Round', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: var(--tm-bg);
             padding: 20px;
-            color: #333;
+            color: var(--tm-navy);
         }
 
         /* Main centered card container */
@@ -40,14 +55,14 @@
 
         /* Main title */
         h1 {
-            color: #2c3e50;
+            color: var(--tm-navy);
             margin-bottom: 10px;
             font-size: 28px;
         }
 
         /* Subtitle text under title */
         .subtitle {
-            color: #7f8c8d;
+            color: var(--tm-plum);
             margin-bottom: 30px;
             font-size: 16px;
         }
@@ -55,7 +70,7 @@
         /* Tab bar container */
         .tabs {
             display: flex;
-            border-bottom: 2px solid #e0e0e0;
+            border-bottom: 2px solid var(--tm-line);
             margin-bottom: 16px;
         }
 
@@ -65,28 +80,29 @@
             cursor: pointer;
             border: none;
             background: none;
+            font-family: inherit;
             font-size: 16px;
-            color: #666;
+            color: var(--tm-plum);
             transition: all 0.3s ease;
             border-bottom: 3px solid transparent;
             margin-bottom: -2px;
         }
 
         .tab:hover {
-            color: #333;
+            color: var(--tm-rose);
         }
 
         /* Active tab styling */
         .tab.active {
-            color: #2c3e50;
-            border-bottom-color: #3498db;
+            color: var(--tm-navy);
+            border-bottom-color: var(--tm-coral);
             font-weight: 600;
         }
 
         .module-instruction {
             display: none;
             margin-bottom: 12px;
-            color: #4a5b6b;
+            color: var(--tm-plum);
             font-size: 14px;
             font-weight: 600;
         }
@@ -116,15 +132,16 @@
 
         label {
             font-weight: 600;
-            color: #555;
+            color: var(--tm-navy);
             font-size: 14px;
         }
 
         /* Styling for all <select> dropdowns */
         select {
             padding: 10px 15px;
-            border: 2px solid #e0e0e0;
+            border: 2px solid var(--tm-line);
             border-radius: 8px;
+            font-family: inherit;
             font-size: 15px;
             background-color: white;
             cursor: pointer;
@@ -132,14 +149,19 @@
             min-width: 300px;
         }
 
+        option,
+        optgroup {
+            font-family: inherit;
+        }
+
         select:hover {
-            border-color: #3498db;
+            border-color: var(--tm-coral);
         }
 
         select:focus {
             outline: none;
-            border-color: #3498db;
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+            border-color: var(--tm-coral);
+            box-shadow: 0 0 0 3px var(--tm-focus);
         }
 
         /* Checkbox + label container */
@@ -169,10 +191,10 @@
 
         /* Base styling for each vote column (Yes/No/Abstain/No Vote) */
         .vote-column {
-            background-color: #f8f9fa;
+            background-color: #fbf8fa;
             border-radius: 10px;
             padding: 20px;
-            border: 1px solid #e9ecef;
+            border: 1px solid var(--tm-line);
         }
 
         .vote-column h3 {
@@ -186,8 +208,8 @@
 
         /* Article description box shown above vote results when in View by Vote */
         .article-description {
-            background-color: #e8f4f8;
-            border: 1px solid #b8e0e8;
+            background-color: var(--tm-soft-coral);
+            border: 1px solid rgba(208, 39, 82, 0.35);
             padding: 12px 16px;
             border-radius: 8px;
             margin-bottom: 20px;
@@ -197,14 +219,14 @@
 
         .article-description h4 {
             margin-bottom: 6px;
-            color: #2c3e50;
+            color: var(--tm-navy);
             font-size: 14px;
             font-weight: 600;
         }
 
         .article-meta {
             margin-bottom: 8px;
-            color: #4a5b6b;
+            color: var(--tm-plum);
             font-size: 13px;
             font-weight: 600;
         }
@@ -215,18 +237,18 @@
             flex-wrap: wrap;
             gap: 8px;
             margin-bottom: 8px;
-            color: #4a5b6b;
+            color: var(--tm-plum);
             font-size: 13px;
             font-weight: 600;
         }
 
         .article-summary-primary {
-            color: #2c3e50;
+            color: var(--tm-navy);
             font-size: 14px;
         }
 
         .article-summary-separator {
-            color: #8a99a5;
+            color: var(--tm-rose);
         }
 
         /* Wrapper used in View by Member for title+description pairs */
@@ -239,25 +261,25 @@
             background-color: white;
             border-radius: 6px;
             font-size: 14px;
-            border: 1px solid #e9ecef;
+            border: 1px solid var(--tm-line);
             font-weight: 600;
-            color: #2c3e50;
+            color: var(--tm-navy);
         }
 
         .article-desc {
             padding: 6px 12px;
             margin-top: 4px;
             margin-left: 12px;
-            background-color: #f8f9fa;
+            background-color: var(--tm-soft-navy);
             border-radius: 4px;
             font-size: 13px;
-            color: #666;
+            color: var(--tm-navy);
             font-style: italic;
-            border-left: 3px solid #dee2e6;
+            border-left: 3px solid var(--tm-plum);
         }
 
         .article-detail {
-            border: 1px solid #e9ecef;
+            border: 1px solid var(--tm-line);
             border-radius: 6px;
             background-color: white;
         }
@@ -276,7 +298,7 @@
 
         .article-title-toggle::after {
             content: '+';
-            color: #1f78b4;
+            color: var(--tm-rose);
             font-size: 16px;
             font-weight: 700;
             line-height: 1;
@@ -295,7 +317,7 @@
             margin-left: 12px;
             margin-top: 4px;
             margin-bottom: 6px;
-            color: #4a5b6b;
+            color: var(--tm-plum);
             font-size: 13px;
             font-weight: 600;
         }
@@ -322,11 +344,11 @@
         .article-links li:not(:last-child)::after {
             content: '•';
             margin-left: 8px;
-            color: #8a99a5;
+            color: var(--tm-rose);
         }
 
         .article-links a {
-            color: #1f78b4;
+            color: var(--tm-rose);
             text-decoration: underline;
         }
 
@@ -335,28 +357,28 @@
             margin-left: 12px;
             font-size: 13px;
             font-weight: 700;
-            color: #2c3e50;
+            color: var(--tm-navy);
         }
 
         /* Color theming for the four vote types */
         .vote-column.yes h3 {
-            background-color: #d4edda;
-            color: #155724;
+            background-color: var(--tm-soft-coral);
+            color: var(--tm-navy);
         }
 
         .vote-column.no h3 {
-            background-color: #f8d7da;
-            color: #721c24;
+            background-color: var(--tm-soft-rose);
+            color: var(--tm-navy);
         }
 
         .vote-column.abstain h3 {
-            background-color: #fff3cd;
-            color: #856404;
+            background-color: var(--tm-soft-plum);
+            color: var(--tm-navy);
         }
 
         .vote-column.novote h3 {
-            background-color: #e2e3e5;
-            color: #383d41;
+            background-color: var(--tm-soft-navy);
+            color: var(--tm-navy);
         }
 
         /* Scrollable list of members or articles */
@@ -376,43 +398,43 @@
             border-radius: 6px;
             font-size: 14px;
             line-height: 1.4;
-            border: 1px solid #e9ecef;
+            border: 1px solid var(--tm-line);
             transition: all 0.2s ease;
         }
 
         .member-item:hover,
         .article-item:hover {
-            background-color: #f1f3f5;
+            background-color: var(--tm-soft-coral);
             transform: translateX(2px);
         }
 
         /* Styling for the precinct label prefix inside member rows */
         .precinct-label {
             font-weight: 600;
-            color: #666;
+            color: var(--tm-plum);
         }
 
         /* Centered loading / error text */
         .loading {
             text-align: center;
             padding: 40px;
-            color: #666;
+            color: var(--tm-plum);
         }
 
         .cluster-status {
             margin-bottom: 16px;
             padding: 12px 16px;
-            background-color: #f8f9fa;
-            border: 1px solid #e9ecef;
+            background-color: var(--tm-soft-navy);
+            border: 1px solid var(--tm-line);
             border-radius: 8px;
             font-size: 14px;
-            color: #555;
+            color: var(--tm-navy);
         }
 
         .cluster-status.error {
-            background-color: #f8d7da;
-            border-color: #f5c6cb;
-            color: #721c24;
+            background-color: var(--tm-soft-coral);
+            border-color: rgba(246, 48, 73, 0.4);
+            color: var(--tm-rose);
         }
 
         .cluster-controls {
@@ -457,7 +479,7 @@
         .cluster-search-input {
             min-width: 260px;
             padding: 10px 15px;
-            border: 2px solid #e0e0e0;
+            border: 2px solid var(--tm-line);
             border-radius: 8px;
             font-size: 15px;
             background-color: white;
@@ -465,20 +487,20 @@
         }
 
         .cluster-search-input:hover {
-            border-color: #3498db;
+            border-color: var(--tm-coral);
         }
 
         .cluster-search-input:focus {
             outline: none;
-            border-color: #3498db;
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+            border-color: var(--tm-coral);
+            box-shadow: 0 0 0 3px var(--tm-focus);
         }
 
         .cluster-action-btn {
             padding: 10px 14px;
-            border: 2px solid #3498db;
+            border: 2px solid var(--tm-rose);
             border-radius: 8px;
-            background-color: #3498db;
+            background-color: var(--tm-rose);
             color: white;
             font-size: 14px;
             font-weight: 600;
@@ -487,8 +509,8 @@
         }
 
         .cluster-action-btn:hover {
-            background-color: #2d87c6;
-            border-color: #2d87c6;
+            background-color: var(--tm-plum);
+            border-color: var(--tm-plum);
         }
 
         .session-checkboxes {
@@ -502,11 +524,11 @@
             align-items: center;
             gap: 6px;
             padding: 6px 10px;
-            border: 1px solid #e9ecef;
+            border: 1px solid var(--tm-line);
             border-radius: 6px;
-            background-color: #f8f9fa;
+            background-color: var(--tm-soft-navy);
             font-size: 13px;
-            color: #2c3e50;
+            color: var(--tm-navy);
         }
 
         .session-option input[type="checkbox"] {
@@ -518,28 +540,28 @@
             display: inline-flex;
             align-items: center;
             gap: 10px;
-            background-color: #f8f9fa;
-            border: 1px solid #e9ecef;
+            background-color: var(--tm-soft-navy);
+            border: 1px solid var(--tm-line);
             border-radius: 8px;
             padding: 8px 12px;
         }
 
         .cluster-slider-group input[type="range"] {
             width: 180px;
-            accent-color: #3498db;
+            accent-color: var(--tm-coral);
         }
 
         .cluster-slider-value {
             min-width: 36px;
             font-weight: 600;
-            color: #2c3e50;
+            color: var(--tm-navy);
             text-align: right;
         }
 
         .cluster-plot {
             width: 100%;
             height: 600px;
-            border: 1px solid #e9ecef;
+            border: 1px solid var(--tm-line);
             border-radius: 10px;
             background-color: #fff;
         }
@@ -552,8 +574,8 @@
         }
 
         .cluster-panel {
-            background-color: #f8f9fa;
-            border: 1px solid #e9ecef;
+            background-color: var(--tm-soft-navy);
+            border: 1px solid var(--tm-line);
             border-radius: 10px;
             padding: 16px;
         }
@@ -564,7 +586,7 @@
 
         .cluster-panel h3 {
             margin-bottom: 12px;
-            color: #2c3e50;
+            color: var(--tm-navy);
             font-size: 17px;
         }
 
@@ -612,7 +634,7 @@
 
         .member-network-table th,
         .member-network-table td {
-            border: 1px solid #e9ecef;
+            border: 1px solid var(--tm-line);
             padding: 8px 10px;
             text-align: center;
             font-size: 14px;
@@ -621,8 +643,8 @@
         }
 
         .member-network-table th {
-            background-color: #f1f5f8;
-            color: #2c3e50;
+            background-color: var(--tm-soft-navy);
+            color: var(--tm-navy);
             font-weight: 600;
         }
 
@@ -640,7 +662,7 @@
         }
 
         .member-network-sort-btn:hover {
-            color: #1d6fa5;
+            color: var(--tm-rose);
         }
 
         .member-network-table .rank-col {
@@ -677,14 +699,14 @@
         .axis-component {
             margin-bottom: 16px;
             background-color: #fff;
-            border: 1px solid #e9ecef;
+            border: 1px solid var(--tm-line);
             border-radius: 8px;
             padding: 10px 12px;
         }
 
         .axis-component h4 {
             margin-bottom: 8px;
-            color: #2c3e50;
+            color: var(--tm-navy);
             font-size: 14px;
         }
 
@@ -695,7 +717,7 @@
         }
 
         .axis-direction strong {
-            color: #2c3e50;
+            color: var(--tm-navy);
         }
 
         .vote-history-list {
@@ -705,9 +727,9 @@
         }
 
         .vote-history-session {
-            border: 1px solid #dce5ed;
+            border: 1px solid var(--tm-line);
             border-radius: 8px;
-            background-color: #f8fbfd;
+            background-color: #fbf8fa;
             overflow: hidden;
         }
 
@@ -715,8 +737,8 @@
             cursor: pointer;
             padding: 10px 14px;
             font-weight: 600;
-            color: #2c3e50;
-            background-color: #eef6fb;
+            color: var(--tm-navy);
+            background-color: var(--tm-soft-navy);
             list-style: none;
         }
 
@@ -725,7 +747,7 @@
         }
 
         .vote-history-session[open] summary {
-            border-bottom: 1px solid #dce5ed;
+            border-bottom: 1px solid var(--tm-line);
         }
 
         .vote-history-table-wrap {
@@ -741,7 +763,7 @@
 
         .vote-history-table th,
         .vote-history-table td {
-            border: 1px solid #e9ecef;
+            border: 1px solid var(--tm-line);
             padding: 8px 10px;
             text-align: left;
             vertical-align: top;
@@ -750,8 +772,8 @@
         }
 
         .vote-history-table th {
-            background-color: #f1f5f8;
-            color: #2c3e50;
+            background-color: var(--tm-soft-navy);
+            color: var(--tm-navy);
             font-weight: 600;
             position: sticky;
             top: 0;
@@ -932,7 +954,7 @@
 
         .precinct-votes-table th,
         .precinct-votes-table td {
-            border: 1px solid #e9ecef;
+            border: 1px solid var(--tm-line);
             padding: 8px 10px;
             text-align: left;
             vertical-align: top;
@@ -942,8 +964,8 @@
         }
 
         .precinct-votes-table th {
-            background-color: #f1f5f8;
-            color: #2c3e50;
+            background-color: var(--tm-soft-navy);
+            color: var(--tm-navy);
             font-weight: 600;
             position: sticky;
             top: 0;
@@ -4897,7 +4919,7 @@
                     ]),
                     marker: {
                         size: 10,
-                        color: '#3498db'
+                        color: '#D02752'
                     },
                     hovertemplate: hoverTemplate
                 });
