@@ -57,45 +57,50 @@
         h1 {
             color: var(--tm-navy);
             margin-bottom: 10px;
-            font-size: 28px;
+            font-size: 34px;
+            font-weight: 800;
         }
 
         /* Subtitle text under title */
         .subtitle {
             color: var(--tm-plum);
             margin-bottom: 30px;
-            font-size: 16px;
+            font-size: 20px;
+            font-weight: 700;
         }
 
         /* Tab bar container */
         .tabs {
             display: flex;
-            border-bottom: 2px solid var(--tm-line);
+            flex-wrap: wrap;
+            gap: 10px;
             margin-bottom: 16px;
         }
 
         /* Individual tab button */
         .tab {
-            padding: 12px 24px;
+            padding: 10px 16px;
             cursor: pointer;
-            border: none;
-            background: none;
+            border: 2px solid var(--tm-line);
+            border-radius: 999px;
+            background: #fff;
             font-family: inherit;
-            font-size: 16px;
+            font-size: 15px;
             color: var(--tm-plum);
             transition: all 0.3s ease;
-            border-bottom: 3px solid transparent;
-            margin-bottom: -2px;
         }
 
         .tab:hover {
             color: var(--tm-rose);
+            border-color: rgba(246, 48, 73, 0.4);
+            background-color: var(--tm-soft-coral);
         }
 
         /* Active tab styling */
         .tab.active {
             color: var(--tm-navy);
-            border-bottom-color: var(--tm-coral);
+            border-color: rgba(246, 48, 73, 0.4);
+            background-color: var(--tm-soft-coral);
             font-weight: 600;
         }
 
@@ -1129,7 +1134,7 @@
 <body>
     <div class="container">
         <h1>Brookline Town Meeting Voting Analysis</h1>
-        <p class="subtitle">Choose a module below, then select a Town Meeting session when needed.</p>
+        <p class="subtitle">Research voting patterns at Brookline's Town Meeting</p>
 
         <!-- Shown initially while spreadsheet data is being fetched and parsed -->
         <div class="loading" id="loading">
@@ -1238,6 +1243,7 @@
                             <input
                                 type="checkbox"
                                 id="member-network-ignore-abstain"
+                                checked
                                 onchange="updateMemberNetworkResults()">
                             <label for="member-network-ignore-abstain">Ignore abstain votes</label>
                         </div>
@@ -3364,6 +3370,10 @@
             return voteValue === 'YES' || voteValue === 'NO' || voteValue === 'ABSTAIN';
         }
 
+        function memberCastRecordedVote(votesById) {
+            return Object.values(votesById || {}).some(voteValue => isComparableVoteValue(voteValue));
+        }
+
         function countSharedSessions(aSessions, bSessions) {
             if (!aSessions || !bSessions) return 0;
             const first = aSessions.size <= bSessions.size ? aSessions : bSessions;
@@ -3493,7 +3503,9 @@
                     }
                     profile.precinct = profile.latestPrecinct || summarizePrecinctSet(profile.precincts);
                     profile.memberLabel = profile.name;
-                    profile.sessions.add(session.id);
+                    if (memberCastRecordedVote(memberEntry.votesById)) {
+                        profile.sessions.add(session.id);
+                    }
 
                     Object.entries(memberEntry.votesById || {}).forEach(([voteId, voteValue]) => {
                         profile.votesById[voteId] = voteValue;
@@ -4122,7 +4134,9 @@
                         profile.latestPrecinct = memberEntry.precinct;
                     }
                     profile.precinct = profile.latestPrecinct || summarizePrecinctSet(profile.precincts);
-                    profile.sessions.add(session.id);
+                    if (memberCastRecordedVote(memberEntry.votesById)) {
+                        profile.sessions.add(session.id);
+                    }
 
                     Object.entries(memberEntry.votesById).forEach(([voteId, voteValue]) => {
                         profile.rawVotesById[voteId] = voteValue;
