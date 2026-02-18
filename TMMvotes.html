@@ -414,6 +414,10 @@
             transform: translateX(2px);
         }
 
+        .member-item.member-nav-target {
+            cursor: pointer;
+        }
+
         /* Styling for the precinct label prefix inside member rows */
         .precinct-label {
             font-weight: 600;
@@ -1146,12 +1150,12 @@
 
             <!-- Module selector buttons -->
             <div class="tabs" id="module-menu">
-                <button class="tab active" onclick="switchTab(event, 'by-vote')">View by Vote</button>
-                <button class="tab" onclick="switchTab(event, 'by-member')">View by Member</button>
-                <button class="tab" onclick="switchTab(event, 'member-networks')">Member Networks</button>
-                <button class="tab" onclick="switchTab(event, 'vote-history')">Vote History</button>
-                <button class="tab" onclick="switchTab(event, 'precinct-votes')">Precinct Votes</button>
-                <button class="tab" onclick="switchTab(event, 'contentious-votes')">Closest Votes</button>
+                <button class="tab active" data-tab="by-vote" onclick="switchTab(event, 'by-vote')">View by Vote</button>
+                <button class="tab" data-tab="by-member" onclick="switchTab(event, 'by-member')">View by Member</button>
+                <button class="tab" data-tab="member-networks" onclick="switchTab(event, 'member-networks')">Member Networks</button>
+                <button class="tab" data-tab="vote-history" onclick="switchTab(event, 'vote-history')">Vote History</button>
+                <button class="tab" data-tab="precinct-votes" onclick="switchTab(event, 'precinct-votes')">Precinct Votes</button>
+                <button class="tab" data-tab="contentious-votes" onclick="switchTab(event, 'contentious-votes')">Closest Votes</button>
             </div>
             <div id="module-instruction" class="module-instruction"></div>
 
@@ -1284,13 +1288,6 @@
                             checked
                             onchange="renderContentiousVotes()">
                         <label for="contentious-ignore-terminate">Ignore motions to terminate debate</label>
-                    </div>
-                    <div class="checkbox-group">
-                        <input
-                            type="checkbox"
-                            id="contentious-ignore-abstain"
-                            onchange="renderContentiousVotes()">
-                        <label for="contentious-ignore-abstain">Ignore abstain votes</label>
                     </div>
                 </div>
                 <div id="contentious-votes-results" class="vote-history-message">Open this module to load all sessions.</div>
@@ -2371,9 +2368,8 @@
             }
 
             const ignoreTerminateCheckbox = document.getElementById('contentious-ignore-terminate');
-            const ignoreAbstainCheckbox = document.getElementById('contentious-ignore-abstain');
             const ignoreTerminate = ignoreTerminateCheckbox ? ignoreTerminateCheckbox.checked : true;
-            const ignoreAbstain = ignoreAbstainCheckbox ? ignoreAbstainCheckbox.checked : false;
+            const ignoreAbstain = true;
 
             const flattenedVotes = [];
             voteHistorySessionsCache.forEach(session => {
@@ -3067,6 +3063,28 @@
             populateMemberDropdown();
         }
 
+        function setSelectValueIfPresent(selectEl, value) {
+            if (!selectEl) return false;
+            const hasMatch = Array.from(selectEl.options).some(option => option.value === value);
+            if (!hasMatch) return false;
+            selectEl.value = value;
+            return true;
+        }
+
+        function openMemberFromVoteView(memberKey) {
+            const memberSelect = document.getElementById('member-select');
+            if (!setSelectValueIfPresent(memberSelect, memberKey)) return;
+            switchTab(null, 'by-member');
+            updateMemberResults();
+        }
+
+        function openVoteFromMemberView(voteTitle) {
+            const voteSelect = document.getElementById('vote-select');
+            if (!setSelectValueIfPresent(voteSelect, voteTitle)) return;
+            switchTab(null, 'by-vote');
+            updateVoteResults();
+        }
+
         /****************************************************
          * VIEW BY VOTE
          ****************************************************/
@@ -3206,7 +3224,19 @@
 
                 memberList.forEach(member => {
                     const itemEl = document.createElement('div');
-                    itemEl.className = 'member-item';
+                    itemEl.className = 'member-item member-nav-target';
+                    itemEl.setAttribute('role', 'button');
+                    itemEl.tabIndex = 0;
+                    itemEl.title = 'Open this member in View by Member';
+                    itemEl.addEventListener('click', event => {
+                        if (event.button !== 0) return;
+                        openMemberFromVoteView(member.key);
+                    });
+                    itemEl.addEventListener('keydown', event => {
+                        if (event.key !== 'Enter' && event.key !== ' ') return;
+                        event.preventDefault();
+                        openMemberFromVoteView(member.key);
+                    });
 
                     const precinctEl = document.createElement('span');
                     precinctEl.className = 'precinct-label';
@@ -3312,6 +3342,13 @@
                     const titleEl = document.createElement('summary');
                     titleEl.className = 'article-title article-title-toggle';
                     titleEl.textContent = vote.title;
+                    titleEl.title = 'Open this vote in View by Vote';
+                    titleEl.addEventListener('click', event => {
+                        if (event.button !== 0) return;
+                        if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+                        event.preventDefault();
+                        openVoteFromMemberView(vote.title);
+                    });
                     detailsEl.appendChild(titleEl);
 
                     const detailBodyEl = document.createElement('div');
@@ -5044,11 +5081,23 @@
             moduleInstructionEl.style.display = 'none';
         }
 
-        function switchTab(evt, tabName) {
-            document.querySelectorAll('.tab').forEach(tab => {
+        function setActiveTabButton(evt, tabName) {
+            const tabs = Array.from(document.querySelectorAll('.tab'));
+            tabs.forEach(tab => {
                 tab.classList.remove('active');
             });
-            if (evt && evt.target) evt.target.classList.add('active');
+
+            if (evt && evt.target && evt.target.classList && evt.target.classList.contains('tab')) {
+                evt.target.classList.add('active');
+                return;
+            }
+
+            const tabButton = tabs.find(tab => tab.dataset.tab === tabName);
+            if (tabButton) tabButton.classList.add('active');
+        }
+
+        function switchTab(evt, tabName) {
+            setActiveTabButton(evt, tabName);
 
             document.querySelectorAll('.tab-content').forEach(content => {
                 content.classList.remove('active');
