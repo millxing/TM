@@ -329,6 +329,24 @@
             font-weight: 600;
         }
 
+        .article-open-vote-button {
+            margin-left: 12px;
+            margin-top: 4px;
+            margin-bottom: 4px;
+            padding: 4px 8px;
+            border: 1px solid var(--tm-line);
+            border-radius: 4px;
+            background-color: var(--tm-soft-coral);
+            color: var(--tm-navy);
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .article-open-vote-button:hover {
+            background-color: rgba(246, 48, 73, 0.18);
+        }
+
         .article-links {
             margin-top: 6px;
             margin-left: 12px;
@@ -1863,7 +1881,7 @@
             const raw = String(nightAndDateText || '').trim();
             if (!raw) return { night: '', date: '' };
 
-            let match = raw.match(/^(Night\s*\d+)\s*\(([^)]+)\)$/i);
+            let match = raw.match(/^(.*?\bNight\s*\d+)\s*\(([^)]+)\)$/i);
             if (match) {
                 return {
                     night: match[1].trim(),
@@ -1871,11 +1889,37 @@
                 };
             }
 
-            match = raw.match(/^(Night\s*\d+)\s*[-–:]\s*(.+)$/i);
+            match = raw.match(/^(.*?\bNight\s*\d+)\s*[-–:,]\s*(.+)$/i);
             if (match) {
                 return {
                     night: match[1].trim(),
                     date: match[2].trim()
+                };
+            }
+
+            const monthDateMatch = raw.match(/\b(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2},\s+\d{4}\b/i);
+            if (monthDateMatch) {
+                const date = monthDateMatch[0].trim();
+                const night = raw
+                    .replace(monthDateMatch[0], '')
+                    .replace(/[\s,–\-:]+$/, '')
+                    .trim();
+                return {
+                    night: night || raw,
+                    date
+                };
+            }
+
+            const numericDateMatch = raw.match(/\b\d{1,2}[/-]\d{1,2}[/-]\d{2,4}\b/);
+            if (numericDateMatch) {
+                const date = numericDateMatch[0].trim();
+                const night = raw
+                    .replace(numericDateMatch[0], '')
+                    .replace(/[\s,–\-:]+$/, '')
+                    .trim();
+                return {
+                    night: night || raw,
+                    date
                 };
             }
 
@@ -3407,10 +3451,9 @@
                     const titleEl = document.createElement('summary');
                     titleEl.className = 'article-title article-title-toggle';
                     titleEl.textContent = vote.title;
-                    titleEl.title = 'Open this vote in View by Vote';
+                    titleEl.title = 'Click to expand details. Cmd/Ctrl+click opens this vote in View by Vote.';
                     titleEl.addEventListener('click', event => {
-                        if (event.button !== 0) return;
-                        if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+                        if (!event.metaKey && !event.ctrlKey) return;
                         event.preventDefault();
                         openVoteFromMemberView(vote.title);
                     });
@@ -3418,6 +3461,13 @@
 
                     const detailBodyEl = document.createElement('div');
                     detailBodyEl.className = 'article-detail-body';
+
+                    const openVoteButtonEl = document.createElement('button');
+                    openVoteButtonEl.type = 'button';
+                    openVoteButtonEl.className = 'article-open-vote-button';
+                    openVoteButtonEl.textContent = 'Open in View by Vote';
+                    openVoteButtonEl.addEventListener('click', () => openVoteFromMemberView(vote.title));
+                    detailBodyEl.appendChild(openVoteButtonEl);
 
                     if (vote.result) {
                         const resultEl = document.createElement('div');
