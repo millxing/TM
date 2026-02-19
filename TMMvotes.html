@@ -728,6 +728,58 @@
             font-variant-numeric: tabular-nums;
         }
 
+        .nav-bubble-btn {
+            display: inline-block;
+            max-width: 100%;
+            border: 1px solid rgba(138, 36, 75, 0.3);
+            border-radius: 10px;
+            background-color: var(--tm-soft-coral);
+            color: var(--tm-navy);
+            padding: 4px 10px;
+            font-family: inherit;
+            font-size: 12px;
+            font-weight: 700;
+            line-height: 1.3;
+            cursor: pointer;
+            text-align: left;
+            white-space: normal;
+            word-break: normal;
+            overflow-wrap: break-word;
+        }
+
+        .nav-bubble-btn:hover {
+            background-color: rgba(246, 48, 73, 0.18);
+            border-color: rgba(246, 48, 73, 0.45);
+        }
+
+        .nav-bubble-btn:focus-visible {
+            outline: 2px solid var(--tm-rose);
+            outline-offset: 2px;
+        }
+
+        .member-network-nav-bubble {
+            font-size: 13px;
+        }
+
+        .vote-title-nav-bubble {
+            display: block;
+            width: 100%;
+        }
+
+        .vote-history-table .vote-title-col,
+        .precinct-votes-table .vote-title-col {
+            text-align: center;
+        }
+
+        .vote-history-table .vote-title-col .vote-title-nav-bubble,
+        .precinct-votes-table .vote-title-col .vote-title-nav-bubble {
+            width: auto;
+            max-width: 100%;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+        }
+
         .axis-component {
             margin-bottom: 16px;
             background-color: #fff;
@@ -2120,7 +2172,21 @@
 
                     addTextCell(nightDate.night || '—');
                     addTextCell(nightDate.date || '—');
-                    addTextCell(vote.title || '');
+                    const titleCell = document.createElement('td');
+                    titleCell.className = 'vote-title-col';
+                    const voteTitle = String(vote.title || '').trim();
+                    if (voteTitle) {
+                        const titleButton = createNavigationBubbleButton(
+                            voteTitle,
+                            () => { void openVoteFromCrossSession(session.id, voteTitle); },
+                            'Open this vote in View by Vote',
+                            'vote-title-nav-bubble'
+                        );
+                        titleCell.appendChild(titleButton);
+                    } else {
+                        titleCell.textContent = '—';
+                    }
+                    rowEl.appendChild(titleCell);
                     addTextCell(vote.description || '—', 'description-col');
                     addTextCell(String(counts.YES), 'num-col');
                     addTextCell(String(counts.NO), 'num-col');
@@ -2296,7 +2362,21 @@
                         rowEl.appendChild(td);
                     };
 
-                    addCell(vote.title || '');
+                    const titleCell = document.createElement('td');
+                    titleCell.className = 'vote-title-col';
+                    const voteTitle = String(vote.title || '').trim();
+                    if (voteTitle) {
+                        const titleButton = createNavigationBubbleButton(
+                            voteTitle,
+                            () => { void openVoteFromCrossSession(session.id, voteTitle); },
+                            'Open this vote in View by Vote',
+                            'vote-title-nav-bubble'
+                        );
+                        titleCell.appendChild(titleButton);
+                    } else {
+                        titleCell.textContent = '—';
+                    }
+                    rowEl.appendChild(titleCell);
                     addCell(vote.description || '—', 'description-col');
                     addCell(vote.result || '—');
                     addCell(getAggregateYesPercentForVote(session, vote, counts), 'aggregate-col');
@@ -2443,6 +2523,7 @@
                     if (!Number.isFinite(yesFraction)) return;
 
                     flattenedVotes.push({
+                        sessionId: session.id,
                         sessionLabel: session.label || 'Unknown Session',
                         sessionOrder,
                         voteIndex,
@@ -2522,7 +2603,20 @@
                 };
 
                 addTextCell(entry.sessionLabel);
-                addTextCell(entry.voteTitle);
+                const titleCell = document.createElement('td');
+                const voteTitle = String(entry.voteTitle || '').trim();
+                if (voteTitle) {
+                    const titleButton = createNavigationBubbleButton(
+                        voteTitle,
+                        () => { void openVoteFromCrossSession(entry.sessionId, voteTitle); },
+                        'Open this vote in View by Vote',
+                        'vote-title-nav-bubble'
+                    );
+                    titleCell.appendChild(titleButton);
+                } else {
+                    titleCell.textContent = '—';
+                }
+                rowEl.appendChild(titleCell);
                 addTextCell(entry.voteDescription, 'description-col');
                 addTextCell(String(entry.yes), 'num-col');
                 addTextCell(String(entry.no), 'num-col');
@@ -3184,6 +3278,102 @@
             if (!hasMatch) return false;
             selectEl.value = value;
             return true;
+        }
+
+        function createNavigationBubbleButton(label, onClick, titleText = '', extraClass = '') {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'nav-bubble-btn';
+            if (extraClass) button.classList.add(extraClass);
+            button.textContent = String(label || '').trim() || 'Open';
+            if (titleText) button.title = titleText;
+            button.addEventListener('click', onClick);
+            return button;
+        }
+
+        function getSessionMetaById(sessionId) {
+            return SESSION_FILES.find(session => session.id === sessionId) || null;
+        }
+
+        async function loadSessionByIdIfNeeded(sessionId) {
+            const targetSession = getSessionMetaById(sessionId);
+            if (!targetSession) return false;
+            const currentSession = getCurrentSpreadsheetMeta();
+            if (currentSession.id === targetSession.id) return true;
+
+            const spreadsheetSelect = document.getElementById('spreadsheet-select');
+            if (!spreadsheetSelect) return false;
+            if (!setSelectValueIfPresent(spreadsheetSelect, targetSession.file)) return false;
+
+            if (loadingEl) {
+                loadingEl.style.display = 'block';
+                loadingEl.textContent = 'Loading voting data...';
+            }
+            if (mainContentEl) mainContentEl.style.display = 'none';
+
+            // Required full reset before loading a different meeting spreadsheet.
+            votingData = null;
+            votes = [];
+            members = [];
+
+            await loadVotingDataFromExcel();
+            return true;
+        }
+
+        function findMemberKeyForCanonicalKey(canonicalKey, preferredPrecinct = '') {
+            const targetCanonicalKey = String(canonicalKey || '').trim();
+            if (!targetCanonicalKey || !Array.isArray(members) || members.length === 0) return '';
+
+            const matches = members.filter(member =>
+                canonicalMemberKey(member.name, member.precinct) === targetCanonicalKey
+            );
+            if (matches.length === 0) return '';
+
+            const preferred = String(preferredPrecinct || '').trim().toUpperCase();
+            if (preferred) {
+                const preferredMatch = matches.find(member =>
+                    String(member.precinct || '').trim().toUpperCase() === preferred
+                );
+                if (preferredMatch) return preferredMatch.key;
+            }
+
+            return matches[0].key;
+        }
+
+        async function openMemberFromNetworkView(canonicalKey, preferredPrecinct = '') {
+            if (!canonicalKey) return;
+
+            let memberKey = findMemberKeyForCanonicalKey(canonicalKey, preferredPrecinct);
+            if (memberKey) {
+                openMemberFromVoteView(memberKey);
+                return;
+            }
+
+            const profile = memberNetworkProfileByKey.get(canonicalKey);
+            if (!profile) return;
+
+            const candidateSessionIds = Array.from(profile.sessions || []).sort((a, b) => {
+                return getSessionOrderIndex(b) - getSessionOrderIndex(a);
+            });
+
+            for (const sessionId of candidateSessionIds) {
+                const loaded = await loadSessionByIdIfNeeded(sessionId);
+                if (!loaded) continue;
+
+                memberKey = findMemberKeyForCanonicalKey(canonicalKey, preferredPrecinct);
+                if (memberKey) {
+                    openMemberFromVoteView(memberKey);
+                    return;
+                }
+            }
+
+            setMemberNetworkStatus('Unable to open this member in View by Member.', true);
+        }
+
+        async function openVoteFromCrossSession(sessionId, voteTitle) {
+            if (!voteTitle) return;
+            await loadSessionByIdIfNeeded(sessionId);
+            openVoteFromMemberView(voteTitle);
         }
 
         function openMemberFromVoteView(memberKey) {
@@ -3937,7 +4127,13 @@
 
                 const nameCell = document.createElement('td');
                 nameCell.className = 'member-col';
-                nameCell.textContent = entry.profile.name;
+                const memberButton = createNavigationBubbleButton(
+                    entry.profile.name,
+                    () => { void openMemberFromNetworkView(entry.profile.canonicalKey, entry.profile.precinct); },
+                    'Open this member in View by Member',
+                    'member-network-nav-bubble'
+                );
+                nameCell.appendChild(memberButton);
 
                 const precinctCell = document.createElement('td');
                 precinctCell.className = 'precinct-col';
