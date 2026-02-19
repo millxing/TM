@@ -6,6 +6,7 @@
     <!-- Make layout responsive on mobile -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Brookline Town Meeting Voting Analysis</title>
+    <link rel="icon" type="image/jpeg" href="https://raw.githubusercontent.com/millxing/TM/main/entangledParticlesLogo3.jpg">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Varela+Round&display=swap">
 
     <!-- XLSX library for reading Excel files directly in the browser -->
@@ -1383,6 +1384,9 @@
         const PRECINCT_COL_INDEX = 0;
         const NAME_COL_INDEX = 1;
         const FIRST_VOTE_COL_INDEX = 2;
+        const PRIMARY_VOTE_METADATA_FILE_NAMES = [
+            'AllVotes_categorized.xlsx'
+        ];
         const VOTE_GUIDE_FILE_NAMES = [
             'VoteGuide.xlsx',
             'Vote%20Guide.xlsx',
@@ -1514,7 +1518,7 @@
             };
         }
 
-        function buildVoteGuideCandidateFiles() {
+        function buildAuxiliarySpreadsheetCandidateFiles(fileNames) {
             const selectedMeta = getCurrentSpreadsheetMeta();
             const selectedFile = String(selectedMeta.file || '');
             const selectedDir = selectedFile.includes('/')
@@ -1524,7 +1528,7 @@
             const candidateSet = new Set();
 
             // Try sibling directory first, then legacy fallbacks used in earlier commits.
-            VOTE_GUIDE_FILE_NAMES.forEach(name => {
+            fileNames.forEach(name => {
                 if (selectedDir) candidateSet.add(`${selectedDir}${name}`);
                 candidateSet.add(`Votes/${name}`);
                 candidateSet.add(`Vote/${name}`);
@@ -1532,6 +1536,14 @@
             });
 
             return Array.from(candidateSet);
+        }
+
+        function buildPrimaryVoteMetadataCandidateFiles() {
+            return buildAuxiliarySpreadsheetCandidateFiles(PRIMARY_VOTE_METADATA_FILE_NAMES);
+        }
+
+        function buildVoteGuideCandidateFiles() {
+            return buildAuxiliarySpreadsheetCandidateFiles(VOTE_GUIDE_FILE_NAMES);
         }
 
         function buildMemberAliasesCandidateFiles() {
@@ -2649,6 +2661,48 @@
             }
         }
 
+        function mergeVoteGuideEntry(existing, incoming, preferExistingDescription = false) {
+            if (!existing && !incoming) {
+                return { description: '', night: '', links: [], sessionLabel: '', category: '', hashId: '' };
+            }
+            if (!existing) {
+                return {
+                    description: String(incoming.description || '').trim(),
+                    night: String(incoming.night || '').trim(),
+                    links: Array.isArray(incoming.links) ? incoming.links : [],
+                    sessionLabel: String(incoming.sessionLabel || '').trim(),
+                    category: String(incoming.category || '').trim(),
+                    hashId: String(incoming.hashId || '').trim()
+                };
+            }
+            if (!incoming) return existing;
+
+            const existingDescription = String(existing.description || '').trim();
+            const incomingDescription = String(incoming.description || '').trim();
+            const mergedLinks = Array.from(new Set([
+                ...(Array.isArray(existing.links) ? existing.links : []),
+                ...(Array.isArray(incoming.links) ? incoming.links : [])
+            ])).filter(link => /^https?:\/\//i.test(String(link || '').trim()));
+
+            return {
+                description: preferExistingDescription
+                    ? (existingDescription || incomingDescription)
+                    : (incomingDescription || existingDescription),
+                night: String(existing.night || '').trim() || String(incoming.night || '').trim(),
+                links: mergedLinks,
+                sessionLabel: String(existing.sessionLabel || '').trim() || String(incoming.sessionLabel || '').trim(),
+                category: String(existing.category || '').trim() || String(incoming.category || '').trim(),
+                hashId: String(existing.hashId || '').trim() || String(incoming.hashId || '').trim()
+            };
+        }
+
+        function mergeVoteGuideMapEntries(targetMap, incomingMap, preferExistingDescription = false) {
+            incomingMap.forEach((incomingValue, key) => {
+                const merged = mergeVoteGuideEntry(targetMap.get(key), incomingValue, preferExistingDescription);
+                targetMap.set(key, merged);
+            });
+        }
+
         function parseVoteGuideRows(rows) {
             const index = new Map();
             const looseIndex = new Map();
@@ -2657,9 +2711,11 @@
             // Header matching is case-insensitive to tolerate workbook formatting drift.
             const headers = (rows[0] || []).map(cell => String(cell || '').trim().toLowerCase());
             const sessionCol = headers.findIndex(header => header === 'town meeting session');
-            const nightCol = headers.findIndex(header => header.startsWith('night'));
-            const voteCol = headers.findIndex(header => header === 'vote');
+            const nightCol = headers.findIndex(header => header === 'session night' || header.startsWith('night'));
+            const voteCol = headers.findIndex(header => header === 'vote' || header === 'vote title');
             const descriptionCol = headers.findIndex(header => header === 'description');
+            const categoryCol = headers.findIndex(header => header === 'category');
+            const hashIdCol = headers.findIndex(header => header === 'id');
             const linkCols = headers
                 .map((header, idx) => ({ header, idx }))
                 .filter(entry => entry.header.startsWith('link'))
@@ -2678,30 +2734,18 @@
 
                 const description = descriptionCol >= 0 ? String(row[descriptionCol] || '').trim() : '';
                 const night = nightCol >= 0 ? String(row[nightCol] || '').trim() : '';
+                const category = categoryCol >= 0 ? String(row[categoryCol] || '').trim() : '';
+                const hashId = hashIdCol >= 0 ? String(row[hashIdCol] || '').trim() : '';
                 const links = linkCols
                     .map(colIndex => String(row[colIndex] || '').trim())
                     .filter(link => /^https?:\/\//i.test(link));
 
                 const key = buildVoteGuideKey(sessionId, voteTitle);
-                const mergeGuideEntry = (existing, incoming) => {
-                    if (!existing) return incoming;
-                    // Keep richer description and union links when guide has duplicate rows.
-                    const mergedLinks = Array.from(new Set([...(existing.links || []), ...(incoming.links || [])]));
-                    return {
-                        description: (incoming.description.length > (existing.description || '').length)
-                            ? incoming.description
-                            : existing.description,
-                        night: existing.night || incoming.night,
-                        links: mergedLinks,
-                        sessionLabel: existing.sessionLabel || incoming.sessionLabel
-                    };
-                };
-
-                const incoming = { description, night, links, sessionLabel };
-                index.set(key, mergeGuideEntry(index.get(key), incoming));
+                const incoming = { description, night, links, sessionLabel, category, hashId };
+                index.set(key, mergeVoteGuideEntry(index.get(key), incoming));
 
                 const looseKey = buildLooseVoteGuideKey(sessionId, voteTitle);
-                looseIndex.set(looseKey, mergeGuideEntry(looseIndex.get(looseKey), incoming));
+                looseIndex.set(looseKey, mergeVoteGuideEntry(looseIndex.get(looseKey), incoming));
             }
 
             return { index, looseIndex };
@@ -2716,50 +2760,71 @@
 
             voteGuideLoadPromise = (async () => {
                 try {
-                    let loadedFromFile = '';
+                    let loadedAnyFile = false;
                     const attemptErrors = [];
-                    const candidateFiles = buildVoteGuideCandidateFiles();
+                    const mergedIndex = new Map();
+                    const mergedLooseIndex = new Map();
+                    const loadPlans = [
+                        {
+                            label: 'AllVotes_categorized.xlsx',
+                            files: buildPrimaryVoteMetadataCandidateFiles(),
+                            preferExistingDescription: false
+                        },
+                        {
+                            label: 'VoteGuide.xlsx',
+                            files: buildVoteGuideCandidateFiles(),
+                            preferExistingDescription: true
+                        }
+                    ];
 
-                    // Try all candidate file paths; first valid parse wins.
-                    for (const guideFile of candidateFiles) {
-                        try {
-                            const response = await fetch(getSpreadsheetRawURL(guideFile));
-                            if (!response.ok) {
-                                attemptErrors.push(`${guideFile}: HTTP ${response.status} ${response.statusText}`);
-                                continue;
+                    for (const plan of loadPlans) {
+                        let loadedPlan = false;
+                        for (const guideFile of plan.files) {
+                            try {
+                                const response = await fetch(getSpreadsheetRawURL(guideFile));
+                                if (!response.ok) {
+                                    attemptErrors.push(`${guideFile}: HTTP ${response.status} ${response.statusText}`);
+                                    continue;
+                                }
+
+                                const arrayBuffer = await response.arrayBuffer();
+                                const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+                                const sheetName = workbook.SheetNames[0];
+                                const sheet = workbook.Sheets[sheetName];
+                                const rows = XLSX.utils.sheet_to_json(sheet, {
+                                    header: 1,
+                                    blankrows: false,
+                                    defval: ''
+                                });
+
+                                const parsedGuide = parseVoteGuideRows(rows);
+                                if (parsedGuide.index.size === 0) {
+                                    attemptErrors.push(`${guideFile}: loaded but no valid vote metadata rows were found`);
+                                    continue;
+                                }
+
+                                mergeVoteGuideMapEntries(mergedIndex, parsedGuide.index, plan.preferExistingDescription);
+                                mergeVoteGuideMapEntries(mergedLooseIndex, parsedGuide.looseIndex, plan.preferExistingDescription);
+                                loadedAnyFile = true;
+                                loadedPlan = true;
+                                break;
+                            } catch (err) {
+                                attemptErrors.push(`${guideFile}: ${err && err.message ? err.message : 'load error'}`);
                             }
-
-                            const arrayBuffer = await response.arrayBuffer();
-                            const workbook = XLSX.read(arrayBuffer, { type: 'array' });
-                            const sheetName = workbook.SheetNames[0];
-                            const sheet = workbook.Sheets[sheetName];
-                            const rows = XLSX.utils.sheet_to_json(sheet, {
-                                header: 1,
-                                blankrows: false,
-                                defval: ''
-                            });
-
-                            const parsedGuide = parseVoteGuideRows(rows);
-                            if (parsedGuide.index.size === 0) {
-                                attemptErrors.push(`${guideFile}: loaded but no valid VoteGuide rows were found`);
-                                continue;
-                            }
-
-                            voteGuideBySessionAndVote = parsedGuide.index;
-                            voteGuideBySessionAndLooseVote = parsedGuide.looseIndex;
-                            loadedFromFile = guideFile;
-                            break;
-                        } catch (err) {
-                            attemptErrors.push(`${guideFile}: ${err && err.message ? err.message : 'load error'}`);
+                        }
+                        if (!loadedPlan) {
+                            console.info(`Vote metadata source not loaded: ${plan.label}`);
                         }
                     }
 
-                    if (!loadedFromFile) {
-                        throw new Error(attemptErrors.join(' | ') || 'VoteGuide file not found');
+                    if (!loadedAnyFile) {
+                        throw new Error(attemptErrors.join(' | ') || 'Vote metadata files not found');
                     }
+                    voteGuideBySessionAndVote = mergedIndex;
+                    voteGuideBySessionAndLooseVote = mergedLooseIndex;
                 } catch (err) {
                     // Fail soft: app remains usable with base spreadsheet descriptions.
-                    console.warn('VoteGuide could not be loaded; using spreadsheet descriptions only.', err);
+                    console.warn('Vote metadata could not be loaded; using spreadsheet descriptions only.', err);
                     voteGuideBySessionAndVote = new Map();
                     voteGuideBySessionAndLooseVote = new Map();
                 } finally {
@@ -2826,7 +2891,7 @@
             for (let col = FIRST_VOTE_COL_INDEX; col <= LAST_VOTE_COL_INDEX; col++) {
                 const title = String(titleRow[col] || headerRow[col] || '').trim();
                 if (!title) continue;
-                // VoteGuide enriches description/night/links when available for this session+vote.
+                // Cross-session metadata enriches description/night/links when available for this session+vote.
                 const guideDetails = getVoteGuideDetails(sessionId, title);
                 const descriptionFromSheet = String(descRow[col] || '').trim();
                 parsedVotes.push({

@@ -5,6 +5,7 @@ This file provides repository-specific guidance for agents working on `/Users/ro
 ## Scope
 - Primary artifact: `/Users/robschoen/Dropbox/CC/TM/TMMvotes.html`
 - Supporting data: Excel files in `/Users/robschoen/Dropbox/CC/TM/Votes/*.xlsx`
+- Primary cross-session metadata: `/Users/robschoen/Dropbox/CC/TM/Votes/AllVotes_categorized.xlsx`
 - Runtime model: single static HTML page with inline CSS/JS, no build step
 
 ## Purpose Of The Page
@@ -28,15 +29,26 @@ The parser assumes a fixed worksheet structure.
 
 If spreadsheet shape changes, update constants first and then revalidate both tabs.
 
+## Cross-Session Metadata Workbook (Critical)
+`AllVotes_categorized.xlsx` now acts as the primary vote metadata source for descriptions.
+- Expected first-row headers include:
+- `ID` (unique hash), `Town Meeting Session`, `Vote Title`, `Description`, `Category`
+- Optional/used when present: `Session Night`
+- There should be one metadata row per vote (currently 449 data rows).
+- Key matching in apps is by normalized `(session, vote title)`; `ID` is loaded and retained as metadata but is not yet the runtime primary key.
+
 ## Behavioral Contracts To Preserve
 - Vote normalization must continue returning only:
 - `YES`, `NO`, `ABSTAIN`, `NoVote`
+- Vote descriptions should resolve in this order:
+- `AllVotes_categorized.xlsx` description first, then legacy `VoteGuide.xlsx` description, then source session spreadsheet description.
 - Member keys must remain stable as:
 - ```${name} (Precinct ${precinct})```
 - `precinctSortValue("AL")` must remain sorted after numeric precincts.
 - `View by Vote` percentages are based only on `YES + NO`.
 - `View by Member` percentages are based on total article count.
 - Spreadsheet change must fully reset and reload global state (`votingData`, `votes`, `members`).
+- Category values from `AllVotes_categorized.xlsx` are loaded for future use but may remain hidden in current UI.
 
 ## Safe Edit Guidelines
 - Prefer additive edits with small, isolated function changes.

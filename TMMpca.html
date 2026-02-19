@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TM PCA Analyzer</title>
+    <link rel="icon" type="image/jpeg" href="https://raw.githubusercontent.com/millxing/TM/main/entangledParticlesLogo3.jpg">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Varela+Round&display=swap">
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
@@ -449,6 +450,9 @@
         const FIRST_VOTE_COL_INDEX = 2;
 
         const SPREADSHEET_BASE_URL = 'https://raw.githubusercontent.com/millxing/TM/main/';
+        const PRIMARY_VOTE_METADATA_FILE_NAMES = [
+            'AllVotes_categorized.xlsx'
+        ];
         const VOTE_GUIDE_FILE_NAMES = [
             'VoteGuide.xlsx',
             'Vote%20Guide.xlsx',
@@ -660,7 +664,7 @@
 
             const headers = (rows[0] || []).map(cell => String(cell || '').trim().toLowerCase());
             const sessionCol = headers.findIndex(header => header === 'town meeting session');
-            const voteCol = headers.findIndex(header => header === 'vote');
+            const voteCol = headers.findIndex(header => header === 'vote' || header === 'vote title');
             const descriptionCol = headers.findIndex(header => header === 'description');
             if (sessionCol < 0 || voteCol < 0 || descriptionCol < 0) return { index, looseIndex };
 
@@ -685,14 +689,33 @@
             return { index, looseIndex };
         }
 
-        function buildVoteGuideCandidateFiles() {
+        function mergeVoteGuideDescriptionMaps(targetMap, incomingMap, preferExistingDescription = false) {
+            incomingMap.forEach((incomingValue, key) => {
+                const existingValue = String(targetMap.get(key) || '').trim();
+                const normalizedIncoming = String(incomingValue || '').trim();
+                const mergedValue = preferExistingDescription
+                    ? (existingValue || normalizedIncoming)
+                    : (normalizedIncoming || existingValue);
+                if (mergedValue) targetMap.set(key, mergedValue);
+            });
+        }
+
+        function buildAuxiliarySpreadsheetCandidateFiles(fileNames) {
             const candidateSet = new Set();
-            VOTE_GUIDE_FILE_NAMES.forEach(name => {
+            fileNames.forEach(name => {
                 candidateSet.add(`Votes/${name}`);
                 candidateSet.add(`Vote/${name}`);
                 candidateSet.add(name);
             });
             return Array.from(candidateSet);
+        }
+
+        function buildPrimaryVoteMetadataCandidateFiles() {
+            return buildAuxiliarySpreadsheetCandidateFiles(PRIMARY_VOTE_METADATA_FILE_NAMES);
+        }
+
+        function buildVoteGuideCandidateFiles() {
+            return buildAuxiliarySpreadsheetCandidateFiles(VOTE_GUIDE_FILE_NAMES);
         }
 
         function getVoteGuideDescription(sessionId, voteTitle) {
@@ -712,30 +735,49 @@
             }
 
             voteGuideLoadPromise = (async () => {
-                const candidateFiles = buildVoteGuideCandidateFiles();
-                for (const guideFile of candidateFiles) {
-                    try {
-                        const response = await fetch(getSpreadsheetRawURL(guideFile));
-                        if (!response.ok) continue;
-                        const arrayBuffer = await response.arrayBuffer();
-                        const workbook = XLSX.read(arrayBuffer, { type: 'array' });
-                        const sheetName = workbook.SheetNames[0];
-                        const sheet = workbook.Sheets[sheetName];
-                        const rows = XLSX.utils.sheet_to_json(sheet, {
-                            header: 1,
-                            blankrows: false,
-                            defval: ''
-                        });
-                        const parsed = parseVoteGuideRows(rows);
-                        if (parsed.index.size === 0) continue;
-                        voteGuideBySessionAndVote = parsed.index;
-                        voteGuideBySessionAndLooseVote = parsed.looseIndex;
-                        voteGuideLoadComplete = true;
-                        return;
-                    } catch (err) {
-                        void err;
+                const mergedIndex = new Map();
+                const mergedLooseIndex = new Map();
+                let loadedAnyFile = false;
+                const loadPlans = [
+                    {
+                        files: buildPrimaryVoteMetadataCandidateFiles(),
+                        preferExistingDescription: false
+                    },
+                    {
+                        files: buildVoteGuideCandidateFiles(),
+                        preferExistingDescription: true
+                    }
+                ];
+
+                for (const plan of loadPlans) {
+                    for (const guideFile of plan.files) {
+                        try {
+                            const response = await fetch(getSpreadsheetRawURL(guideFile));
+                            if (!response.ok) continue;
+                            const arrayBuffer = await response.arrayBuffer();
+                            const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+                            const sheetName = workbook.SheetNames[0];
+                            const sheet = workbook.Sheets[sheetName];
+                            const rows = XLSX.utils.sheet_to_json(sheet, {
+                                header: 1,
+                                blankrows: false,
+                                defval: ''
+                            });
+                            const parsed = parseVoteGuideRows(rows);
+                            if (parsed.index.size === 0) continue;
+
+                            mergeVoteGuideDescriptionMaps(mergedIndex, parsed.index, plan.preferExistingDescription);
+                            mergeVoteGuideDescriptionMaps(mergedLooseIndex, parsed.looseIndex, plan.preferExistingDescription);
+                            loadedAnyFile = true;
+                            break;
+                        } catch (err) {
+                            void err;
+                        }
                     }
                 }
+
+                voteGuideBySessionAndVote = loadedAnyFile ? mergedIndex : new Map();
+                voteGuideBySessionAndLooseVote = loadedAnyFile ? mergedLooseIndex : new Map();
                 voteGuideLoadComplete = true;
             })();
 
