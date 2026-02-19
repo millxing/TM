@@ -44,10 +44,13 @@
             color: var(--tm-navy);
         }
 
-        /* Main centered card container */
-        .container {
+        .page {
             max-width: 1400px;
             margin: 0 auto;
+        }
+
+        /* Main centered card container */
+        .container {
             background-color: white;
             border-radius: 12px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -57,16 +60,16 @@
         /* Main title */
         h1 {
             color: var(--tm-navy);
-            margin-bottom: 10px;
-            font-size: 34px;
+            margin: 0 0 10px;
+            font-size: 2.35rem;
             font-weight: 800;
         }
 
         /* Subtitle text under title */
         .subtitle {
             color: var(--tm-plum);
-            margin-bottom: 30px;
-            font-size: 20px;
+            margin: 0 0 16px;
+            font-size: 1.25rem;
             font-weight: 700;
         }
 
@@ -1155,10 +1158,11 @@
 </head>
 
 <body>
-    <div class="container">
+    <div class="page">
         <h1>Brookline Town Meeting Voting Analysis</h1>
         <p class="subtitle">Research voting patterns at Brookline's Town Meeting</p>
 
+        <div class="container">
         <!-- Shown initially while spreadsheet data is being fetched and parsed -->
         <div class="loading" id="loading">
             Loading voting data...
@@ -1175,6 +1179,7 @@
                 <button class="tab" data-tab="vote-history" onclick="switchTab(event, 'vote-history')">Vote History</button>
                 <button class="tab" data-tab="precinct-votes" onclick="switchTab(event, 'precinct-votes')">Precinct Votes</button>
                 <button class="tab" data-tab="contentious-votes" onclick="switchTab(event, 'contentious-votes')">Closest Votes</button>
+                <button class="tab" type="button" onclick="openPcaInNewTab()">Principal Component Analysis</button>
             </div>
             <div id="module-instruction" class="module-instruction"></div>
 
@@ -1386,6 +1391,7 @@
             </div>
             <img class="page-footer-logo" src="entangledParticlesLogo.jpg" alt="Entangled Particles logo">
         </footer>
+        </div>
     </div>
 
 
@@ -5248,11 +5254,18 @@
             }
         }
 
+        function openPcaInNewTab() {
+            const openedWindow = window.open('TMMpca.html', '_blank');
+            if (openedWindow) {
+                openedWindow.opener = null;
+            }
+        }
+
         function enterVoteAnalyzerMode() {
             if (loadingEl) loadingEl.style.display = 'none';
             if (mainContentEl) mainContentEl.style.display = 'block';
 
-            const titleEl = document.querySelector('.container h1');
+            const titleEl = document.querySelector('.page h1');
             if (titleEl) titleEl.textContent = 'Brookline Vote Analyzer';
 
             const subtitleEl = document.querySelector('.subtitle');
