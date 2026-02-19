@@ -394,13 +394,14 @@
                     <thead>
                         <tr>
                             <th style="width: 120px;">Session</th>
-                            <th style="width: 280px;">Vote Title</th>
-                            <th>Vote Description</th>
-                            <th class="num" style="width: 95px;" data-coeff-component="0">PC1</th>
-                            <th class="num" style="width: 95px;" data-coeff-component="1">PC2</th>
-                            <th class="num" style="width: 95px;" data-coeff-component="2">PC3</th>
-                            <th class="num" style="width: 95px;" data-coeff-component="3">PC4</th>
-                            <th class="num" style="width: 95px;" data-coeff-component="4">PC5</th>
+                            <th style="width: 224px;">Vote Title</th>
+                            <th style="width: 375px;">Vote Description</th>
+                            <th style="width: 115px;">Vote Category</th>
+                            <th class="num" style="width: 76px;" data-coeff-component="0">PC1</th>
+                            <th class="num" style="width: 76px;" data-coeff-component="1">PC2</th>
+                            <th class="num" style="width: 76px;" data-coeff-component="2">PC3</th>
+                            <th class="num" style="width: 76px;" data-coeff-component="3">PC4</th>
+                            <th class="num" style="width: 76px;" data-coeff-component="4">PC5</th>
                         </tr>
                     </thead>
                     <tbody></tbody>
@@ -666,37 +667,56 @@
             const sessionCol = headers.findIndex(header => header === 'town meeting session');
             const voteCol = headers.findIndex(header => header === 'vote' || header === 'vote title');
             const descriptionCol = headers.findIndex(header => header === 'description');
-            if (sessionCol < 0 || voteCol < 0 || descriptionCol < 0) return { index, looseIndex };
+            const categoryCol = headers.findIndex(header => header === 'category');
+            if (sessionCol < 0 || voteCol < 0) return { index, looseIndex };
+
+            const mergeWithinFile = (existing, incoming) => {
+                if (!existing) return incoming;
+                const existingDesc = String(existing.description || '').trim();
+                const incomingDesc = String(incoming.description || '').trim();
+                const description = incomingDesc.length > existingDesc.length ? incomingDesc : existingDesc;
+                const category = String(existing.category || '').trim() || String(incoming.category || '').trim();
+                return { description, category };
+            };
 
             for (let r = 1; r < rows.length; r++) {
                 const row = rows[r] || [];
                 const sessionLabel = String(row[sessionCol] || '').trim();
                 const voteTitle = String(row[voteCol] || '').trim();
-                const description = String(row[descriptionCol] || '').trim();
-                if (!sessionLabel || !voteTitle || !description) continue;
+                const description = descriptionCol >= 0 ? String(row[descriptionCol] || '').trim() : '';
+                const category = categoryCol >= 0 ? String(row[categoryCol] || '').trim() : '';
+                if (!sessionLabel || !voteTitle) continue;
+                if (!description && !category) continue;
 
                 const sessionId = getSessionIdFromGuideLabel(sessionLabel);
                 if (!sessionId) continue;
 
                 const key = buildVoteGuideKey(sessionId, voteTitle);
                 const looseKey = buildLooseVoteGuideKey(sessionId, voteTitle);
-                const prev = index.get(key) || '';
-                const prevLoose = looseIndex.get(looseKey) || '';
-                if (description.length > prev.length) index.set(key, description);
-                if (description.length > prevLoose.length) looseIndex.set(looseKey, description);
+                const incoming = { description, category };
+                index.set(key, mergeWithinFile(index.get(key), incoming));
+                looseIndex.set(looseKey, mergeWithinFile(looseIndex.get(looseKey), incoming));
             }
 
             return { index, looseIndex };
         }
 
-        function mergeVoteGuideDescriptionMaps(targetMap, incomingMap, preferExistingDescription = false) {
+        function mergeVoteGuideMetadataMaps(targetMap, incomingMap, preferExistingDescription = false) {
             incomingMap.forEach((incomingValue, key) => {
-                const existingValue = String(targetMap.get(key) || '').trim();
-                const normalizedIncoming = String(incomingValue || '').trim();
-                const mergedValue = preferExistingDescription
-                    ? (existingValue || normalizedIncoming)
-                    : (normalizedIncoming || existingValue);
-                if (mergedValue) targetMap.set(key, mergedValue);
+                const existing = targetMap.get(key) || { description: '', category: '' };
+                const incoming = incomingValue || { description: '', category: '' };
+                const existingDescription = String(existing.description || '').trim();
+                const incomingDescription = String(incoming.description || '').trim();
+                const mergedDescription = preferExistingDescription
+                    ? (existingDescription || incomingDescription)
+                    : (incomingDescription || existingDescription);
+                const mergedCategory = String(existing.category || '').trim() || String(incoming.category || '').trim();
+                if (mergedDescription || mergedCategory) {
+                    targetMap.set(key, {
+                        description: mergedDescription,
+                        category: mergedCategory
+                    });
+                }
             });
         }
 
@@ -718,12 +738,12 @@
             return buildAuxiliarySpreadsheetCandidateFiles(VOTE_GUIDE_FILE_NAMES);
         }
 
-        function getVoteGuideDescription(sessionId, voteTitle) {
-            if (!sessionId || voteGuideBySessionAndVote.size === 0) return '';
+        function getVoteGuideDetails(sessionId, voteTitle) {
+            if (!sessionId || voteGuideBySessionAndVote.size === 0) return null;
             return (
                 voteGuideBySessionAndVote.get(buildVoteGuideKey(sessionId, voteTitle)) ||
                 voteGuideBySessionAndLooseVote.get(buildLooseVoteGuideKey(sessionId, voteTitle)) ||
-                ''
+                null
             );
         }
 
@@ -766,8 +786,8 @@
                             const parsed = parseVoteGuideRows(rows);
                             if (parsed.index.size === 0) continue;
 
-                            mergeVoteGuideDescriptionMaps(mergedIndex, parsed.index, plan.preferExistingDescription);
-                            mergeVoteGuideDescriptionMaps(mergedLooseIndex, parsed.looseIndex, plan.preferExistingDescription);
+                            mergeVoteGuideMetadataMaps(mergedIndex, parsed.index, plan.preferExistingDescription);
+                            mergeVoteGuideMetadataMaps(mergedLooseIndex, parsed.looseIndex, plan.preferExistingDescription);
                             loadedAnyFile = true;
                             break;
                         } catch (err) {
@@ -1056,13 +1076,16 @@
                 const descriptionFromSheet = effectiveHeaderRowIndex === DESCRIPTION_ROW_INDEX
                     ? ''
                     : String(descriptionRow[col] || '').trim();
-                const descriptionFromGuide = getVoteGuideDescription(sessionMeta.id, title);
+                const guideDetails = getVoteGuideDetails(sessionMeta.id, title);
+                const descriptionFromGuide = guideDetails ? String(guideDetails.description || '').trim() : '';
+                const categoryFromGuide = guideDetails ? String(guideDetails.category || '').trim() : '';
                 parsedVotes.push({
                     id: `${sessionMeta.id}::${col}`,
                     sessionId: sessionMeta.id,
                     sessionLabel: sessionMeta.label,
                     title,
                     description: descriptionFromGuide || descriptionFromSheet,
+                    category: categoryFromGuide,
                     colIndex: col,
                     isTerminateDebate: isTerminateDebateVote(title)
                 });
@@ -1509,6 +1532,7 @@
                     voteId: column.id,
                     title: column.title,
                     description: String(column.description || '').trim(),
+                    category: String(column.category || '').trim(),
                     coefficients: coeffs
                 };
             });
@@ -1643,6 +1667,7 @@
                     session_label: vote.sessionLabel,
                     title: vote.title,
                     description: vote.description || '',
+                    vote_category: vote.category || '',
                     coefficients: {
                         pc1: Number(formatFloat(vote.coefficients[0], 3)),
                         pc2: Number(formatFloat(vote.coefficients[1], 3)),
@@ -1785,6 +1810,7 @@
                 appendTextCell(row, entry.sessionLabel);
                 appendTextCell(row, entry.title);
                 appendTextCell(row, entry.description || '');
+                appendTextCell(row, entry.category || '');
                 for (let i = 0; i < 5; i++) {
                     appendTextCell(row, formatFloat(entry.coefficients[i], 3), 'num');
                 }
