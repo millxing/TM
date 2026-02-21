@@ -73,6 +73,58 @@
             font-weight: 700;
         }
 
+        .disclaimer-hover-wrap {
+            position: fixed;
+            top: 16px;
+            right: max(20px, calc((100vw - 1400px) / 2));
+            z-index: 1200;
+        }
+
+        .disclaimer-button {
+            border: 2px solid rgba(246, 48, 73, 0.5);
+            border-radius: 999px;
+            background-color: #fff;
+            color: var(--tm-plum);
+            padding: 10px 14px;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(17, 31, 53, 0.12);
+        }
+
+        .disclaimer-overlay {
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            width: min(500px, calc(100vw - 32px));
+            padding: 18px 20px;
+            border: 1px solid rgba(138, 36, 75, 0.3);
+            border-radius: 10px;
+            background-color: #fff;
+            color: var(--tm-navy);
+            box-shadow: 0 10px 26px rgba(17, 31, 53, 0.24);
+            font-size: 14px;
+            line-height: 1.5;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-6px);
+            transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s ease;
+            pointer-events: none;
+        }
+
+        .disclaimer-overlay p+p {
+            margin-top: 12px;
+        }
+
+        .disclaimer-hover-wrap:hover .disclaimer-overlay,
+        .disclaimer-hover-wrap:focus-within .disclaimer-overlay {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
         /* Tab bar container */
         .tabs {
             display: flex;
@@ -1190,6 +1242,19 @@
                 min-width: 180px;
             }
 
+            .disclaimer-hover-wrap {
+                top: 10px;
+            }
+
+            .disclaimer-button {
+                font-size: 12px;
+                padding: 8px 12px;
+            }
+
+            .disclaimer-overlay {
+                width: min(420px, calc(100vw - 20px));
+            }
+
             .cluster-member-search-group {
                 width: 100%;
             }
@@ -1210,6 +1275,17 @@
 </head>
 
 <body>
+    <div class="disclaimer-hover-wrap">
+        <button type="button" class="disclaimer-button" aria-describedby="important-disclaimer">
+            IMPORTANT DISCLAIMER: Please read.
+        </button>
+        <div class="disclaimer-overlay" id="important-disclaimer" role="note">
+            <p>This project is intended to promote transparency by making Town Meeting voting records more accessible to the public. However, individual votes do not always tell the full story.</p>
+            <p>Town Meeting decisions are often shaped by discussion, amendments, procedural motions, and trade-offs that occur in real time. A representative may fully support the overall goal of a warrant article, yet vote against a particular motion because of specific language, funding details, timing, or other provisions attached to it.</p>
+            <p>If a vote by your precinct representative raises questions or concerns, consider reaching out to them directly. They can provide the context behind their decision and explain how they evaluated the issue. Transparency is most meaningful when paired with open communication.</p>
+        </div>
+    </div>
+
     <div class="page">
         <h1>Brookline Town Meeting Voting Analysis</h1>
         <p class="subtitle">Research voting patterns at Brookline's Town Meeting</p>
@@ -1232,6 +1308,7 @@
                 <button class="tab" data-tab="precinct-votes" onclick="switchTab(event, 'precinct-votes')">Precinct Votes</button>
                 <button class="tab" data-tab="contentious-votes" onclick="switchTab(event, 'contentious-votes')">Closest Votes</button>
                 <button class="tab" type="button" onclick="openPcaInNewTab()">Principal Component Analysis</button>
+                <button class="tab" type="button" onclick="openTmmEmailsInNewTab()">TMM emails</button>
             </div>
             <div id="module-instruction" class="module-instruction"></div>
 
@@ -5452,6 +5529,13 @@
 
         function openPcaInNewTab() {
             const openedWindow = window.open('TMMpca.html', '_blank');
+            if (openedWindow) {
+                openedWindow.opener = null;
+            }
+        }
+
+        function openTmmEmailsInNewTab() {
+            const openedWindow = window.open('https://www.brooklinema.gov/FormCenter/Town-Meeting-28/Download-List-142', '_blank');
             if (openedWindow) {
                 openedWindow.opener = null;
             }
