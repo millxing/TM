@@ -1715,7 +1715,7 @@
             const monthToken = AI_SUMMARY_MONTH_TOKEN_BY_NUMBER[match[2]] || '';
             if (!monthToken) return '';
 
-            return `Votes/AIsummaries/vote_summaries_${monthToken}${year}.docx`;
+            return `Votes/AIsummaries/vote_summaries_${monthToken}${year}.pdf`;
         }
 
         function getCurrentSpreadsheetMeta() {
@@ -2333,7 +2333,7 @@
                     aiSummaryButtonEl.className = 'meeting-ai-summary-button';
                     aiSummaryButtonEl.textContent = 'Show AI Summary of Meeting';
                     aiSummaryButtonEl.addEventListener('click', () => {
-                        window.open(getSpreadsheetRawURL(aiSummaryFile), '_blank', 'noopener');
+                        window.open(aiSummaryFile, '_blank', 'noopener');
                     });
                     actionsEl.appendChild(aiSummaryButtonEl);
                     detailsEl.appendChild(actionsEl);
