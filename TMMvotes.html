@@ -886,6 +886,39 @@
             border-bottom: 1px solid var(--tm-line);
         }
 
+        .vote-history-session .meeting-ai-summary-actions {
+            display: none;
+            justify-content: flex-start;
+            padding: 8px 14px;
+            background-color: var(--tm-soft-navy);
+            border-bottom: 1px solid var(--tm-line);
+        }
+
+        .vote-history-session[open] .meeting-ai-summary-actions {
+            display: flex;
+        }
+
+        .vote-history-session .meeting-ai-summary-button {
+            border: 1px solid var(--tm-line);
+            border-radius: 999px;
+            background-color: white;
+            color: var(--tm-navy);
+            font-family: inherit;
+            font-size: inherit;
+            font-weight: 600;
+            padding: 6px 12px;
+            cursor: pointer;
+        }
+
+        .vote-history-session .meeting-ai-summary-button:hover {
+            background-color: #f3f7fc;
+        }
+
+        .vote-history-session .meeting-ai-summary-button:focus-visible {
+            outline: 2px solid var(--tm-accent);
+            outline-offset: 1px;
+        }
+
         .vote-history-table-wrap {
             overflow-x: auto;
             background-color: white;
@@ -924,14 +957,27 @@
 
         .vote-history-table th:nth-child(1),
         .vote-history-table td:nth-child(1) {
-            min-width: 96px;
-            white-space: nowrap;
+            width: 84px;
+            min-width: 84px;
+            max-width: 84px;
+            white-space: normal;
+            word-break: normal;
+            overflow-wrap: normal;
         }
 
         .vote-history-table th:nth-child(2),
         .vote-history-table td:nth-child(2) {
-            min-width: 130px;
-            white-space: nowrap;
+            width: 108px;
+            min-width: 108px;
+            max-width: 108px;
+            white-space: normal;
+        }
+
+        .vote-history-table .night-col,
+        .vote-history-table .date-col {
+            white-space: pre-line;
+            word-break: normal;
+            overflow-wrap: normal;
         }
 
         .vote-history-table th:nth-child(5),
@@ -945,7 +991,7 @@
             width: 88px;
             min-width: 88px;
             max-width: 88px;
-            text-align: left;
+            text-align: center;
         }
 
         .vote-history-table .description-col {
@@ -1577,6 +1623,12 @@
             acc[session.id] = index;
             return acc;
         }, {});
+        const AI_SUMMARY_MONTH_TOKEN_BY_NUMBER = {
+            '01': 'jan',
+            '05': 'may',
+            '10': 'oct',
+            '11': 'nov'
+        };
         const COUNTED_VOTE_OVERRIDES = {
             '2025-11::article 19 main motion to table': {
                 counts: { YES: 146, NO: 78, ABSTAIN: 7, NoVote: 32 },
@@ -1653,6 +1705,17 @@
             const select = document.getElementById('spreadsheet-select');
             const file = select ? select.value : 'Votes/November%202025%20Votes.xlsx';
             return getSpreadsheetRawURL(file);
+        }
+
+        function getAISummaryFileForSession(sessionId) {
+            const match = String(sessionId || '').trim().match(/^(\d{4})-(\d{2})$/);
+            if (!match) return '';
+
+            const year = match[1];
+            const monthToken = AI_SUMMARY_MONTH_TOKEN_BY_NUMBER[match[2]] || '';
+            if (!monthToken) return '';
+
+            return `Votes/AIsummaries/vote_summaries_${monthToken}${year}.docx`;
         }
 
         function getCurrentSpreadsheetMeta() {
@@ -2069,6 +2132,51 @@
             return { night: raw, date: '' };
         }
 
+        function formatNightForHistoryCell(nightText) {
+            const raw = String(nightText || '').trim();
+            if (!raw) return '';
+            if (raw === '—') return raw;
+
+            const match = raw.match(/^(.*?)(\bNight\s*\d+\b.*)$/i);
+            if (!match) return raw;
+
+            const lead = String(match[1] || '')
+                .replace(/[\s,–\-:]+$/, '')
+                .trim();
+            const nightPart = String(match[2] || '').trim();
+            if (!lead) return nightPart || raw;
+            if (!nightPart) return lead;
+            return `${lead}\n${nightPart}`;
+        }
+
+        function formatDateForHistoryCell(dateText) {
+            const raw = String(dateText || '').trim();
+            if (!raw) return '';
+            if (raw === '—') return raw;
+
+            const monthDayYearMatch = raw.match(/^(January|February|March|April|May|June|July|August|September|October|November|December)\s+(\d{1,2}),\s*(\d{4})$/i);
+            if (monthDayYearMatch) {
+                return `${monthDayYearMatch[1]} ${monthDayYearMatch[2]},\n${monthDayYearMatch[3]}`;
+            }
+
+            const monthCommaDayYearMatch = raw.match(/^([A-Za-z]+),\s*(\d{1,2}),\s*(\d{4})$/);
+            if (monthCommaDayYearMatch) {
+                return `${monthCommaDayYearMatch[1]} ${monthCommaDayYearMatch[2]},\n${monthCommaDayYearMatch[3]}`;
+            }
+
+            const slashYearMatch = raw.match(/^(.*[/-])(\d{4})$/);
+            if (slashYearMatch) {
+                return `${slashYearMatch[1].trim()}\n${slashYearMatch[2]}`;
+            }
+
+            const trailingYearMatch = raw.match(/^(.*\S)\s+(\d{4})$/);
+            if (trailingYearMatch) {
+                return `${trailingYearMatch[1].trim()}\n${trailingYearMatch[2]}`;
+            }
+
+            return raw;
+        }
+
         function normalizeVoteTitleKey(title) {
             return String(title || '')
                 .trim()
@@ -2212,10 +2320,24 @@
             orderedSessions.forEach(session => {
                 const detailsEl = document.createElement('details');
                 detailsEl.className = 'vote-history-session';
-
                 const summaryEl = document.createElement('summary');
                 summaryEl.textContent = `${session.label} (${session.votes.length} votes)`;
                 detailsEl.appendChild(summaryEl);
+
+                const aiSummaryFile = getAISummaryFileForSession(session.id);
+                if (aiSummaryFile) {
+                    const actionsEl = document.createElement('div');
+                    actionsEl.className = 'meeting-ai-summary-actions';
+                    const aiSummaryButtonEl = document.createElement('button');
+                    aiSummaryButtonEl.type = 'button';
+                    aiSummaryButtonEl.className = 'meeting-ai-summary-button';
+                    aiSummaryButtonEl.textContent = 'Show AI Summary of Meeting';
+                    aiSummaryButtonEl.addEventListener('click', () => {
+                        window.open(getSpreadsheetRawURL(aiSummaryFile), '_blank', 'noopener');
+                    });
+                    actionsEl.appendChild(aiSummaryButtonEl);
+                    detailsEl.appendChild(actionsEl);
+                }
 
                 const tableWrapEl = document.createElement('div');
                 tableWrapEl.className = 'vote-history-table-wrap';
@@ -2247,8 +2369,8 @@
                         rowEl.appendChild(td);
                     };
 
-                    addTextCell(nightDate.night || '—');
-                    addTextCell(nightDate.date || '—');
+                    addTextCell(formatNightForHistoryCell(nightDate.night || '—'), 'night-col');
+                    addTextCell(formatDateForHistoryCell(nightDate.date || '—'), 'date-col');
                     const titleCell = document.createElement('td');
                     titleCell.className = 'vote-title-col';
                     const voteTitle = String(vote.title || '').trim();
@@ -2398,7 +2520,6 @@
             orderedSessions.forEach(session => {
                 const detailsEl = document.createElement('details');
                 detailsEl.className = 'vote-history-session';
-
                 const summaryEl = document.createElement('summary');
                 summaryEl.textContent = `${session.label} (${session.votes.length} votes)`;
                 detailsEl.appendChild(summaryEl);
