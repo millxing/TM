@@ -191,6 +191,32 @@
             flex-wrap: wrap;
         }
 
+        .module-ai-summary-actions {
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .module-ai-summary-button {
+            border: 1px solid var(--tm-line);
+            border-radius: 999px;
+            background-color: white;
+            color: var(--tm-navy);
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 700;
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+
+        .module-ai-summary-button:hover {
+            background-color: #f3f7fc;
+        }
+
+        .module-ai-summary-button:focus-visible {
+            outline: 2px solid var(--tm-coral);
+            outline-offset: 1px;
+        }
+
         label {
             font-weight: 600;
             color: var(--tm-navy);
@@ -1381,6 +1407,11 @@
                         <option value="Votes/October%202021%20Votes.xlsx">October 2021 Special Town Meeting (10 votes)</option>
                         <option value="Votes/May%202021%20Votes.xlsx">May 2021 Annual Town Meeting (68 votes)</option>
                     </select>
+                    <div id="single-session-ai-summary-actions" class="module-ai-summary-actions" style="display: none;">
+                        <button type="button" id="single-session-ai-summary-button" class="module-ai-summary-button">
+                            Show AI Summary of Meeting
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -1718,6 +1749,26 @@
             if (!monthToken) return '';
 
             return `Votes/AIsummaries/vote_summaries_${monthToken}${year}.pdf`;
+        }
+
+        function updateSingleSessionAISummaryButtons() {
+            const currentSessionMeta = getCurrentSpreadsheetMeta();
+            const aiSummaryFile = getAISummaryFileForSession(currentSessionMeta.id);
+            const actionIds = ['single-session-ai-summary-actions'];
+            const buttonIds = ['single-session-ai-summary-button'];
+
+            actionIds.forEach(actionId => {
+                const actionEl = document.getElementById(actionId);
+                if (!actionEl) return;
+                actionEl.style.display = aiSummaryFile ? 'inline-flex' : 'none';
+            });
+
+            buttonIds.forEach(buttonId => {
+                const buttonEl = document.getElementById(buttonId);
+                if (!buttonEl) return;
+                buttonEl.disabled = !aiSummaryFile;
+                buttonEl.dataset.aiSummaryFile = aiSummaryFile || '';
+            });
         }
 
         function getCurrentSpreadsheetMeta() {
@@ -2525,6 +2576,21 @@
                 const summaryEl = document.createElement('summary');
                 summaryEl.textContent = `${session.label} (${session.votes.length} votes)`;
                 detailsEl.appendChild(summaryEl);
+
+                const aiSummaryFile = getAISummaryFileForSession(session.id);
+                if (aiSummaryFile) {
+                    const actionsEl = document.createElement('div');
+                    actionsEl.className = 'meeting-ai-summary-actions';
+                    const aiSummaryButtonEl = document.createElement('button');
+                    aiSummaryButtonEl.type = 'button';
+                    aiSummaryButtonEl.className = 'meeting-ai-summary-button';
+                    aiSummaryButtonEl.textContent = 'Show AI Summary of Meeting';
+                    aiSummaryButtonEl.addEventListener('click', () => {
+                        window.open(aiSummaryFile, '_blank', 'noopener');
+                    });
+                    actionsEl.appendChild(aiSummaryButtonEl);
+                    detailsEl.appendChild(actionsEl);
+                }
 
                 const topScrollEl = document.createElement('div');
                 topScrollEl.className = 'precinct-votes-scroll-top';
@@ -3404,6 +3470,7 @@
             });
 
             populateDropdowns();
+            updateSingleSessionAISummaryButtons();
 
             if (loadingEl) loadingEl.style.display = 'none';
             if (mainContentEl) mainContentEl.style.display = 'block';
@@ -5734,6 +5801,18 @@
                     loadVotingDataFromExcel();
                 });
             }
+
+            const aiSummaryButtons = ['single-session-ai-summary-button'];
+            aiSummaryButtons.forEach(buttonId => {
+                const buttonEl = document.getElementById(buttonId);
+                if (!buttonEl) return;
+                buttonEl.addEventListener('click', () => {
+                    const summaryFile = String(buttonEl.dataset.aiSummaryFile || '').trim();
+                    if (!summaryFile) return;
+                    window.open(summaryFile, '_blank', 'noopener');
+                });
+            });
+            updateSingleSessionAISummaryButtons();
 
             updateModuleContextControls('by-vote');
             updateModuleInstruction('by-vote');
