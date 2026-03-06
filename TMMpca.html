@@ -362,14 +362,14 @@
             </div>
             <div class="view-actions">
                 <span class="view-label">View:</span>
-                <button id="view-variance-btn" class="view-btn active" type="button">Variance + Vote Coefficients</button>
+                <button id="view-variance-btn" class="view-btn" type="button">Variance + Vote Coefficients</button>
                 <button id="view-scores-btn" class="view-btn" type="button">Member Scores</button>
-                <button id="view-plot-btn" class="view-btn" type="button">PC1 vs PC2 Plot</button>
+                <button id="view-plot-btn" class="view-btn active" type="button">PC1 vs PC2 Plot</button>
             </div>
             <div id="status" class="status">Loading session data...</div>
         </section>
 
-        <section id="variance-view" class="card active">
+        <section id="variance-view" class="card">
             <h3>Variance Explained</h3>
             <div class="variance-summary-row">
                 <div class="table-wrap compact-centered" style="max-height: 260px; margin-left: 0; margin-right: 0;">
@@ -430,7 +430,7 @@
             </div>
         </section>
 
-        <section id="plot-view" class="card">
+        <section id="plot-view" class="card active">
             <p class="note">Scatter plot of member scores on the first two principal components.</p>
             <div id="pc-plot-status" class="note"></div>
             <div id="pc-plot" class="plot-wrap"></div>
