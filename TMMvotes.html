@@ -1187,7 +1187,7 @@
 
         .tmm-history-table {
             width: 100%;
-            min-width: 1080px;
+            min-width: 990px;
             border-collapse: separate;
             border-spacing: 0;
             table-layout: fixed;
@@ -1218,22 +1218,22 @@
 
         .tmm-history-table th:nth-child(1),
         .tmm-history-table td:nth-child(1) {
-            width: 220px;
+            width: 180px;
         }
 
         .tmm-history-table th:nth-child(2),
         .tmm-history-table td:nth-child(2) {
-            width: 120px;
+            width: 90px;
         }
 
         .tmm-history-table th:nth-child(3),
         .tmm-history-table td:nth-child(3) {
-            width: 150px;
+            width: 120px;
         }
 
         .tmm-history-table th:nth-child(n+4),
         .tmm-history-table td:nth-child(n+4) {
-            width: 108px;
+            width: 120px;
         }
 
         .contentious-votes-controls {
@@ -2679,7 +2679,7 @@
         }
 
         function createTmmHistoryColGroup() {
-            const widths = [220, 120, 150, 108, 108, 108, 108, 108];
+            const widths = [180, 90, 120, 120, 120, 120, 120, 120];
             const colGroup = document.createElement('colgroup');
             widths.forEach(width => {
                 const col = document.createElement('col');
