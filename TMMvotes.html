@@ -125,12 +125,49 @@
             pointer-events: auto;
         }
 
+        /* CSS tooltip (use data-tooltip attr on any element) */
+        [data-tooltip] {
+            position: relative;
+        }
+
+        [data-tooltip]::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%) translateY(4px);
+            padding: 8px 12px;
+            border-radius: 8px;
+            background-color: var(--tm-navy);
+            color: #fff;
+            font-size: 13px;
+            font-weight: 400;
+            line-height: 1.4;
+            white-space: normal;
+            width: max-content;
+            max-width: 280px;
+            text-align: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s ease;
+            pointer-events: none;
+            z-index: 1100;
+        }
+
+        [data-tooltip]:hover::after {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
+
         /* Tab bar container */
         .tabs {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
             margin-bottom: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--tm-line);
         }
 
         /* Individual tab button */
@@ -148,16 +185,22 @@
 
         .tab:hover {
             color: var(--tm-rose);
-            border-color: rgba(246, 48, 73, 0.4);
+            border-color: var(--tm-rose);
             background-color: var(--tm-soft-coral);
         }
 
         /* Active tab styling */
         .tab.active {
-            color: var(--tm-navy);
-            border-color: rgba(246, 48, 73, 0.4);
-            background-color: var(--tm-soft-coral);
+            color: #fff;
+            background-color: var(--tm-rose);
+            border-color: var(--tm-rose);
             font-weight: 600;
+        }
+
+        .tab.active:hover {
+            color: #fff;
+            background-color: var(--tm-plum);
+            border-color: var(--tm-plum);
         }
 
         .module-instruction {
@@ -1517,14 +1560,14 @@
 
             <!-- Module selector buttons -->
             <div class="tabs" id="module-menu">
-                <button class="tab active" data-tab="by-vote" onclick="switchTab(event, 'by-vote')">View by Vote</button>
-                <button class="tab" data-tab="by-member" onclick="switchTab(event, 'by-member')">View by Member</button>
-                <button class="tab" data-tab="member-networks" onclick="switchTab(event, 'member-networks')">Member Networks</button>
-                <button class="tab" data-tab="vote-history" onclick="switchTab(event, 'vote-history')">Vote History</button>
-                <button class="tab" data-tab="precinct-votes" onclick="switchTab(event, 'precinct-votes')">Precinct Votes</button>
-                <button class="tab" data-tab="contentious-votes" onclick="switchTab(event, 'contentious-votes')">Closest Votes</button>
-                <button class="tab" data-tab="tmm-history" onclick="switchTab(event, 'tmm-history')">TMM History</button>
-                <button class="tab" type="button" onclick="openPcaInNewTab()">Principal Component Analysis</button>
+                <button class="tab active" data-tab="by-vote" onclick="switchTab(event, 'by-vote')" data-tooltip="Select a Town Meeting session and a vote to see how members voted">View by Vote</button>
+                <button class="tab" data-tab="by-member" onclick="switchTab(event, 'by-member')" data-tooltip="Select a Town Meeting session and a member to see how they voted in that session">View by Member</button>
+                <button class="tab" data-tab="member-networks" onclick="switchTab(event, 'member-networks')" data-tooltip="Select a Town Meeting member to see which members they tend to vote with">Member Networks</button>
+                <button class="tab" data-tab="vote-history" onclick="switchTab(event, 'vote-history')" data-tooltip="See vote outcomes in each Town Meeting session and links to more information about each vote">Vote History</button>
+                <button class="tab" data-tab="precinct-votes" onclick="switchTab(event, 'precinct-votes')" data-tooltip="View how precincts voted in aggregate on each vote">Precinct Votes</button>
+                <button class="tab" data-tab="contentious-votes" onclick="switchTab(event, 'contentious-votes')" data-tooltip="See what the closest votes at Town Meeting were (since 2021)">Closest Votes</button>
+                <button class="tab" data-tab="tmm-history" onclick="switchTab(event, 'tmm-history')" data-tooltip="View all the members at Town Meeting (since 2021) and statistics on their votes">TMM History</button>
+                <button class="tab" type="button" onclick="openPcaInNewTab()" data-tooltip="View a principal component analysis of Town Meeting votes (opens in a new window)">PCA</button>
             </div>
             <div id="module-instruction" class="module-instruction"></div>
 
@@ -1552,7 +1595,7 @@
                         <option value="Votes/May%202021%20Votes.xlsx">May 2021 Annual Town Meeting (68 votes)</option>
                     </select>
                     <div id="single-session-ai-summary-actions" class="module-ai-summary-actions" style="display: none;">
-                        <button type="button" id="single-session-ai-summary-button" class="module-ai-summary-button">
+                        <button type="button" id="single-session-ai-summary-button" class="module-ai-summary-button" data-tooltip="View an AI-generated summary of this Town Meeting. AI can make mistakes, so verify any important information">
                             Show AI Summary of Meeting
                         </button>
                     </div>
@@ -1615,7 +1658,7 @@
                                 id="member-network-ignore-terminate"
                                 checked
                                 onchange="updateMemberNetworkResults()">
-                            <label for="member-network-ignore-terminate">Ignore motions to terminate debate</label>
+                            <label for="member-network-ignore-terminate" data-tooltip="Procedural motions to terminate debate are generally less consequential and not indicative of how the member will vote on the main issue">Ignore motions to terminate debate</label>
                         </div>
                         <div class="checkbox-group">
                             <input
@@ -1661,7 +1704,7 @@
                             id="contentious-ignore-terminate"
                             checked
                             onchange="renderContentiousVotes()">
-                        <label for="contentious-ignore-terminate">Ignore motions to terminate debate</label>
+                        <label for="contentious-ignore-terminate" data-tooltip="Procedural motions to terminate debate are generally less consequential and not indicative of how the member will vote on the main issue">Ignore motions to terminate debate</label>
                     </div>
                 </div>
                 <div id="contentious-votes-results" class="vote-history-message">Open this module to load all sessions.</div>
@@ -1676,7 +1719,7 @@
                             id="tmm-history-ignore-terminate"
                             checked
                             onchange="renderTmmHistory()">
-                        <label for="tmm-history-ignore-terminate">Ignore motions to terminate debate</label>
+                        <label for="tmm-history-ignore-terminate" data-tooltip="Procedural motions to terminate debate are generally less consequential and not indicative of how the member will vote on the main issue">Ignore motions to terminate debate</label>
                     </div>
                     <div class="checkbox-group">
                         <input
@@ -1696,7 +1739,7 @@
                         type="button"
                         class="tmm-history-action-btn"
                         onclick="openTmmEmailsInNewTab()"
-                        title="You will need to log in to the Town website in order to download TMM emails"
+                        data-tooltip="You will need to log in to the Town website in order to download TMM emails"
                         aria-label="TMM emails. You will need to log in to the Town website in order to download TMM emails">
                         TMM emails
                     </button>
@@ -2993,6 +3036,7 @@
                     aiSummaryButtonEl.type = 'button';
                     aiSummaryButtonEl.className = 'meeting-ai-summary-button';
                     aiSummaryButtonEl.textContent = 'Show AI Summary of Meeting';
+                    aiSummaryButtonEl.dataset.tooltip = 'View an AI-generated summary of this Town Meeting. AI can make mistakes, so verify any important information';
                     aiSummaryButtonEl.addEventListener('click', () => {
                         window.open(aiSummaryFile, '_blank', 'noopener');
                     });
@@ -3193,6 +3237,7 @@
                     aiSummaryButtonEl.type = 'button';
                     aiSummaryButtonEl.className = 'meeting-ai-summary-button';
                     aiSummaryButtonEl.textContent = 'Show AI Summary of Meeting';
+                    aiSummaryButtonEl.dataset.tooltip = 'View an AI-generated summary of this Town Meeting. AI can make mistakes, so verify any important information';
                     aiSummaryButtonEl.addEventListener('click', () => {
                         window.open(aiSummaryFile, '_blank', 'noopener');
                     });
