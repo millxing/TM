@@ -1089,6 +1089,22 @@
             background-color: #f3f7fc;
         }
 
+        .tmm-history-export-btn {
+            padding: 8px 12px;
+            border: 1px solid var(--tm-line);
+            border-radius: 999px;
+            background-color: white;
+            color: var(--tm-navy);
+            font-family: inherit;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .tmm-history-export-btn:hover {
+            background-color: #f3f7fc;
+        }
+
         .tmm-history-sort-btn {
             width: 100%;
             border: 0;
@@ -1670,6 +1686,12 @@
                             onchange="renderTmmHistory()">
                         <label for="tmm-history-show-percentages">Show votes as a percentage of total votes eligible</label>
                     </div>
+                    <button
+                        type="button"
+                        class="tmm-history-export-btn"
+                        onclick="void exportTmmHistoryToExcel()">
+                        Export to Excel
+                    </button>
                     <button
                         type="button"
                         class="tmm-history-action-btn"
@@ -2706,14 +2728,22 @@
             });
         }
 
-        function renderTmmHistory() {
-            const container = document.getElementById('tmm-history-results');
-            if (!container) return;
+        function getTmmHistoryHeaders() {
+            return [
+                { text: 'Name', className: '', key: 'name' },
+                { text: 'Precincts', className: '', key: 'precincts' },
+                { text: 'Years Active', className: '', key: 'years' },
+                { text: 'Total Votes Eligible', className: 'num-col', key: 'totalEligible' },
+                { text: 'Votes in the Majority', className: 'num-col', key: 'majorityVotes' },
+                { text: 'Votes in the Minority', className: 'num-col', key: 'minorityVotes' },
+                { text: 'Abstentions', className: 'num-col', key: 'abstentions' },
+                { text: 'Not Present', className: 'num-col', key: 'notPresent' }
+            ];
+        }
 
+        function getCurrentTmmHistoryViewState() {
             if (!Array.isArray(voteHistorySessionsCache) || voteHistorySessionsCache.length === 0) {
-                container.className = 'vote-history-message';
-                container.textContent = 'TMM History is unavailable.';
-                return;
+                return null;
             }
 
             const ignoreTerminateCheckbox = document.getElementById('tmm-history-ignore-terminate');
@@ -2721,12 +2751,6 @@
             const showPercentagesCheckbox = document.getElementById('tmm-history-show-percentages');
             const showPercentages = showPercentagesCheckbox ? showPercentagesCheckbox.checked : true;
             const rows = buildTmmHistoryRows(voteHistorySessionsCache, ignoreTerminate);
-
-            if (rows.length === 0) {
-                container.className = 'vote-history-message';
-                container.textContent = 'No Town Meeting members were found in the available sessions.';
-                return;
-            }
 
             const sortKey = tmmHistorySortState.key || 'name';
             const direction = tmmHistorySortState.direction === 'desc' ? -1 : 1;
@@ -2746,6 +2770,76 @@
                 return a.name.localeCompare(b.name);
             });
 
+            return {
+                rows,
+                showPercentages,
+                sortKey,
+                direction,
+                headers: getTmmHistoryHeaders()
+            };
+        }
+
+        async function exportTmmHistoryToExcel() {
+            if (typeof XLSX === 'undefined') {
+                window.alert('Excel export is unavailable because the XLSX library did not load.');
+                return;
+            }
+
+            if (!Array.isArray(voteHistorySessionsCache) || voteHistorySessionsCache.length === 0) {
+                await ensureTmmHistoryDataLoaded();
+            }
+
+            const viewState = getCurrentTmmHistoryViewState();
+            if (!viewState || !Array.isArray(viewState.rows) || viewState.rows.length === 0) {
+                window.alert('There is no TMM History data to export.');
+                return;
+            }
+
+            const headerRow = viewState.headers.map(header => header.text);
+            const dataRows = viewState.rows.map(row => {
+                const percentageBreakdown = viewState.showPercentages
+                    ? buildTmmHistoryPercentageBreakdown(row)
+                    : null;
+
+                return [
+                    row.name || '—',
+                    formatPrecinctHistoryList(row.precincts),
+                    formatYearList(row.years),
+                    row.totalEligible,
+                    viewState.showPercentages ? percentageBreakdown.majorityVotes : row.majorityVotes,
+                    viewState.showPercentages ? percentageBreakdown.minorityVotes : row.minorityVotes,
+                    viewState.showPercentages ? percentageBreakdown.abstentions : row.abstentions,
+                    viewState.showPercentages ? percentageBreakdown.notPresent : row.notPresent
+                ];
+            });
+
+            const worksheet = XLSX.utils.aoa_to_sheet([headerRow, ...dataRows]);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, 'TMM History');
+
+            const stamp = new Date().toISOString().slice(0, 10);
+            XLSX.writeFile(workbook, `tmm_history_${stamp}.xlsx`);
+        }
+
+        function renderTmmHistory() {
+            const container = document.getElementById('tmm-history-results');
+            if (!container) return;
+
+            const viewState = getCurrentTmmHistoryViewState();
+            if (!viewState) {
+                container.className = 'vote-history-message';
+                container.textContent = 'TMM History is unavailable.';
+                return;
+            }
+
+            const { rows, showPercentages, sortKey, direction, headers } = viewState;
+
+            if (rows.length === 0) {
+                container.className = 'vote-history-message';
+                container.textContent = 'No Town Meeting members were found in the available sessions.';
+                return;
+            }
+
             container.replaceChildren();
             container.className = '';
 
@@ -2760,17 +2854,6 @@
             tableHeaderEl.className = 'tmm-history-table-header';
             const tableScrollerEl = document.createElement('div');
             tableScrollerEl.className = 'tmm-history-table-scroller';
-
-            const headers = [
-                { text: 'Name', className: '', key: 'name' },
-                { text: 'Precincts', className: '', key: 'precincts' },
-                { text: 'Years Active', className: '', key: 'years' },
-                { text: 'Total Votes Eligible', className: 'num-col', key: 'totalEligible' },
-                { text: 'Votes in the Majority', className: 'num-col', key: 'majorityVotes' },
-                { text: 'Votes in the Minority', className: 'num-col', key: 'minorityVotes' },
-                { text: 'Abstentions', className: 'num-col', key: 'abstentions' },
-                { text: 'Not Present', className: 'num-col', key: 'notPresent' }
-            ];
 
             const headerTableEl = document.createElement('table');
             headerTableEl.className = 'tmm-history-table';
