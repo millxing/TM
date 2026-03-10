@@ -1004,13 +1004,16 @@
         }
 
         .vote-history-table-wrap {
-            overflow-x: auto;
+            overflow: auto;
+            max-height: min(68vh, 640px);
             background-color: white;
+            overscroll-behavior: contain;
         }
 
         .vote-history-table {
             width: 100%;
-            border-collapse: collapse;
+            border-collapse: separate;
+            border-spacing: 0;
             min-width: 1250px;
         }
 
@@ -1025,12 +1028,13 @@
         }
 
         .vote-history-table th {
-            background-color: var(--tm-soft-navy);
+            background-color: #f1f5f8;
             color: var(--tm-navy);
             font-weight: 600;
             position: sticky;
             top: 0;
-            z-index: 1;
+            z-index: 5;
+            box-shadow: 0 1px 0 var(--tm-line);
         }
 
         .vote-history-table .num-col {
@@ -1343,7 +1347,8 @@
             /* Width for "All" + precinct percentage columns (P1..P17). */
             --precinct-col-width: 50px;
             width: max-content;
-            border-collapse: collapse;
+            border-collapse: separate;
+            border-spacing: 0;
             table-layout: fixed;
         }
 
@@ -1359,13 +1364,14 @@
         }
 
         .precinct-votes-table th {
-            background-color: var(--tm-soft-navy);
+            background-color: #f1f5f8;
             color: var(--tm-navy);
             font-weight: 600;
             position: sticky;
             top: 0;
-            z-index: 1;
+            z-index: 5;
             white-space: nowrap;
+            box-shadow: 0 1px 0 var(--tm-line);
         }
 
         .precinct-votes-table th:nth-child(n+4) {
@@ -1422,7 +1428,7 @@
         .precinct-votes-table th:nth-child(1),
         .precinct-votes-table th:nth-child(2),
         .precinct-votes-table th:nth-child(3) {
-            z-index: 6;
+            z-index: 8;
             background-color: #f1f5f8;
         }
 
