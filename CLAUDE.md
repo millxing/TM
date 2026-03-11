@@ -6,6 +6,7 @@ Repository guidance for `/Users/robschoen/Dropbox/CC/TM`.
 - App files:
 - `/Users/robschoen/Dropbox/CC/TM/TMMvotes.html`
 - `/Users/robschoen/Dropbox/CC/TM/TMMpca.html`
+- `/Users/robschoen/Dropbox/CC/TM/tm-shared.js` (shared constants, utilities, PCA math)
 - Data files:
 - Session workbooks in `/Users/robschoen/Dropbox/CC/TM/Votes/*.xlsx`
 - Primary metadata workbook: `/Users/robschoen/Dropbox/CC/TM/Votes/AllVotes_categorized.xlsx`
