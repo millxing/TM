@@ -34,19 +34,59 @@
             --tm-soft-rose: rgba(208, 39, 82, 0.12);
             --tm-soft-plum: rgba(138, 36, 75, 0.14);
             --tm-focus: rgba(246, 48, 73, 0.18);
+            --page-max-width: 1400px;
+            --page-header-height: 120px;
+            --page-footer-height: 92px;
         }
 
         /* Overall page styling */
         body {
             font-family: 'Varela Round', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             background-color: var(--tm-bg);
-            padding: 20px;
+            padding: calc(var(--page-header-height) + 24px) 20px calc(var(--page-footer-height) + 28px);
             color: var(--tm-navy);
         }
 
         .page {
-            max-width: 1400px;
+            max-width: var(--page-max-width);
             margin: 0 auto;
+        }
+
+        .page-header-shell {
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: min(calc(100vw - 40px), var(--page-max-width));
+            z-index: 1200;
+        }
+
+        .page-header-card {
+            background: rgba(246, 243, 245, 0.96);
+            border: 1px solid rgba(229, 221, 227, 0.95);
+            border-radius: 12px;
+            box-shadow: 0 10px 26px rgba(17, 31, 53, 0.08);
+            backdrop-filter: blur(14px);
+            padding: 18px 22px 16px;
+        }
+
+        .page-header-main {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 18px;
+        }
+
+        .page-header-copy {
+            min-width: 0;
+        }
+
+        .page-header-nav {
+            display: none;
+            margin-top: 8px;
+            padding-top: 10px;
+            padding-bottom: 0;
+            border-top: 1px solid var(--tm-line);
         }
 
         /* Main centered card container */
@@ -74,10 +114,10 @@
         }
 
         .disclaimer-hover-wrap {
-            position: fixed;
-            top: 16px;
-            right: max(20px, calc((100vw - 1400px) / 2));
-            z-index: 1200;
+            position: relative;
+            z-index: 1201;
+            flex: 0 0 auto;
+            margin-left: auto;
         }
 
         .disclaimer-button {
@@ -170,6 +210,19 @@
             border-bottom: 1px solid var(--tm-line);
         }
 
+        #module-menu {
+            position: static;
+            z-index: auto;
+            background: transparent;
+            margin-bottom: 0;
+        }
+
+        #module-menu.even-tabs .tab {
+            flex: 1 1 0;
+            min-width: 0;
+            text-align: center;
+        }
+
         /* Individual tab button */
         .tab {
             padding: 10px 16px;
@@ -205,10 +258,12 @@
 
         .module-instruction {
             display: none;
-            margin-bottom: 12px;
+            margin-top: 12px;
+            margin-bottom: 2px;
             color: var(--tm-plum);
             font-size: 14px;
             font-weight: 600;
+            line-height: 1.45;
         }
 
         /* Base hidden state for tab content */
@@ -1311,6 +1366,223 @@
             min-width: 96px;
         }
 
+        .outlier-votes-controls {
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .outlier-votes-controls .control-group {
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .outlier-votes-summary {
+            margin-bottom: 12px;
+        }
+
+        .outlier-votes-table-wrap {
+            overflow: auto;
+            max-height: 560px;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            background-color: #fff;
+        }
+
+        .outlier-votes-table {
+            width: 100%;
+            min-width: 1180px;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+
+        .outlier-votes-table th,
+        .outlier-votes-table td {
+            border: 1px solid #e9ecef;
+            padding: 8px 10px;
+            text-align: left;
+            vertical-align: top;
+            font-size: 13px;
+            line-height: 1.35;
+        }
+
+        .outlier-votes-table th {
+            background-color: #f1f5f8;
+            color: #2c3e50;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        .outlier-votes-table tbody tr {
+            cursor: pointer;
+        }
+
+        .outlier-votes-table tbody tr:hover,
+        .outlier-votes-table tbody tr.selected {
+            background-color: #f8fbff;
+        }
+
+        .outlier-votes-table .num-col {
+            width: 88px;
+            min-width: 88px;
+            white-space: nowrap;
+            text-align: right;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .outlier-votes-table .member-col {
+            width: 190px;
+            min-width: 190px;
+        }
+
+        .outlier-votes-table .session-col {
+            width: 170px;
+            min-width: 170px;
+        }
+
+        .outlier-votes-table .score-col {
+            width: 96px;
+            min-width: 96px;
+            text-align: right;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .outlier-votes-table .vote-col {
+            width: 84px;
+            min-width: 84px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .outlier-votes-table .peer-split-col {
+            width: 110px;
+            min-width: 110px;
+            text-align: right;
+            white-space: nowrap;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .outlier-votes-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .outlier-votes-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 2px 7px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 600;
+            line-height: 1.2;
+            background: #eef3f8;
+            color: #2c3e50;
+        }
+
+        .outlier-votes-badge.precinct {
+            background: #e7f0fb;
+            color: #2456a6;
+        }
+
+        .outlier-votes-badge.meeting {
+            background: #edf7ea;
+            color: #2f6b2f;
+        }
+
+        .outlier-votes-badge.none {
+            background: #f4f6f8;
+            color: #66788a;
+        }
+
+        .outlier-votes-panel-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
+            gap: 14px;
+            margin-top: 14px;
+            align-items: start;
+        }
+
+        .outlier-votes-detail {
+            background-color: #fff;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 14px 16px;
+        }
+
+        .outlier-votes-detail h3 {
+            margin: 0 0 8px;
+            font-size: 16px;
+            color: #2c3e50;
+        }
+
+        .outlier-votes-meta {
+            margin: 0 0 12px;
+            color: #5f6c7b;
+            font-size: 13px;
+        }
+
+        .outlier-votes-detail-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .outlier-vote-card {
+            border: 1px solid #e3e9ef;
+            border-radius: 8px;
+            padding: 11px 12px;
+            background: #fbfdff;
+        }
+
+        .outlier-vote-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 10px;
+            margin-bottom: 6px;
+        }
+
+        .outlier-vote-card-title {
+            font-weight: 600;
+            color: #203040;
+        }
+
+        .outlier-vote-card-score {
+            flex-shrink: 0;
+            font-weight: 600;
+            color: #2456a6;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .outlier-vote-card-body {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            font-size: 13px;
+            color: #31465a;
+        }
+
+        .outlier-vote-card-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .outlier-vote-card-row .nav-bubble-btn {
+            flex-shrink: 0;
+        }
+
+        .outlier-votes-empty {
+            font-style: italic;
+            color: #66788a;
+        }
+
         .precinct-votes-list {
             display: flex;
             flex-direction: column;
@@ -1447,21 +1719,29 @@
         }
 
         .page-footer {
-            margin-top: 28px;
-            padding-top: 18px;
-            border-top: 1px solid #e3e8ed;
+            position: fixed;
+            left: 50%;
+            bottom: 0;
+            transform: translateX(-50%);
+            width: min(calc(100vw - 32px), var(--page-max-width));
+            padding: 10px 18px;
+            border: 1px solid #e3e8ed;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.97);
+            box-shadow: 0 -4px 18px rgba(17, 31, 53, 0.08);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            gap: 4px;
+            z-index: 1250;
         }
 
         .page-footer-text {
             text-align: center;
             color: #445566;
-            font-size: 16px;
-            line-height: 1.45;
+            font-size: 14px;
+            line-height: 1.35;
         }
 
         .page-footer-text a {
@@ -1471,13 +1751,6 @@
 
         .page-footer-credit {
             font-weight: 700;
-        }
-
-        .page-footer-logo {
-            width: 120px;
-            height: auto;
-            display: block;
-            flex: 0 0 auto;
         }
 
         @media (max-width: 900px) {
@@ -1493,8 +1766,13 @@
                 grid-template-columns: 1fr;
             }
 
-            .page-footer-logo {
-                width: 80px;
+            .page-header-main {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .disclaimer-hover-wrap {
+                margin-left: 0;
             }
 
             .results {
@@ -1507,10 +1785,6 @@
                 min-width: 180px;
             }
 
-            .disclaimer-hover-wrap {
-                top: 10px;
-            }
-
             .disclaimer-button {
                 font-size: 12px;
                 padding: 8px 12px;
@@ -1518,6 +1792,16 @@
 
             .disclaimer-overlay {
                 width: min(420px, calc(100vw - 20px));
+            }
+
+            .page-header-card {
+                padding: 16px 16px 14px;
+            }
+
+            .page-footer {
+                width: min(calc(100vw - 20px), var(--page-max-width));
+                bottom: 0;
+                padding: 10px 12px;
             }
 
             .cluster-member-search-group {
@@ -1540,20 +1824,42 @@
 </head>
 
 <body>
-    <div class="disclaimer-hover-wrap">
-        <button type="button" class="disclaimer-button" aria-describedby="important-disclaimer">
-            IMPORTANT DISCLAIMER: Please read.
-        </button>
-        <div class="disclaimer-overlay" id="important-disclaimer" role="note">
-            <p>This project is intended to promote transparency by making Town Meeting voting records more accessible to the public. However, individual votes do not always tell the full story.</p>
-            <p>Town Meeting decisions are often shaped by discussion, amendments, procedural motions, and trade-offs that occur in real time. A representative may fully support the overall goal of a warrant article, yet vote against a particular motion because of specific language, funding details, timing, or other provisions attached to it.</p>
-            <p>If a vote by your precinct representative raises questions or concerns, consider reaching out to them directly. They can provide the context behind their decision and explain how they evaluated the issue. Transparency is most meaningful when paired with open communication.</p>
-        </div>
-    </div>
-
     <div class="page">
-        <h1>Brookline Town Meeting Voting Analysis</h1>
-        <p class="subtitle">Research voting patterns at Brookline's Town Meeting</p>
+        <div class="page-header-shell" id="page-header-shell">
+            <div class="page-header-card">
+                <div class="page-header-main">
+                    <div class="page-header-copy">
+                        <h1>Brookline Town Meeting Voting Analysis</h1>
+                        <p class="subtitle">Research voting patterns at Brookline's Town Meeting</p>
+                    </div>
+                    <div class="disclaimer-hover-wrap">
+                        <button type="button" class="disclaimer-button" aria-describedby="important-disclaimer">
+                            IMPORTANT DISCLAIMER: Please read.
+                        </button>
+                        <div class="disclaimer-overlay" id="important-disclaimer" role="note">
+                            <p>This project is intended to promote transparency by making Town Meeting voting records more accessible to the public. However, individual votes do not always tell the full story.</p>
+                            <p>Town Meeting decisions are often shaped by discussion, amendments, procedural motions, and trade-offs that occur in real time. A representative may fully support the overall goal of a warrant article, yet vote against a particular motion because of specific language, funding details, timing, or other provisions attached to it.</p>
+                            <p>If a vote by your precinct representative raises questions or concerns, consider reaching out to them directly. They can provide the context behind their decision and explain how they evaluated the issue. Transparency is most meaningful when paired with open communication.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="page-header-nav" id="page-header-nav">
+                    <!-- Module selector buttons -->
+                    <div class="tabs" id="module-menu">
+                        <button class="tab active" data-tab="by-vote" onclick="switchTab(event, 'by-vote')" data-tooltip="Select a Town Meeting session and a vote to see how members voted">View by Vote</button>
+                        <button class="tab" data-tab="by-member" onclick="switchTab(event, 'by-member')" data-tooltip="Select a Town Meeting session and a member to see how they voted in that session">View by Member</button>
+                        <button class="tab" data-tab="member-networks" onclick="switchTab(event, 'member-networks')" data-tooltip="Select a Town Meeting member to see which members they tend to vote with">Member Networks</button>
+                        <button class="tab" data-tab="outlier-votes" onclick="switchTab(event, 'outlier-votes')" data-tooltip="See votes where members diverged from their closest voting peers across Town Meeting sessions">Outlier Votes</button>
+                        <button class="tab" data-tab="vote-history" onclick="switchTab(event, 'vote-history')" data-tooltip="See vote outcomes in each Town Meeting session and links to more information about each vote">Vote History</button>
+                        <button class="tab" data-tab="precinct-votes" onclick="switchTab(event, 'precinct-votes')" data-tooltip="View how precincts voted in aggregate on each vote">Precinct Votes</button>
+                        <button class="tab" data-tab="contentious-votes" onclick="switchTab(event, 'contentious-votes')" data-tooltip="See what the closest votes at Town Meeting were (since 2021)">Closest Votes</button>
+                        <button class="tab" data-tab="tmm-history" onclick="switchTab(event, 'tmm-history')" data-tooltip="View all the members at Town Meeting (since 2021) and statistics on their votes">TMM History</button>
+                        <button class="tab" type="button" onclick="openPcaInNewTab()" data-tooltip="View a principal component analysis of Town Meeting votes (opens in a new window)">PCA</button>
+                    </div>
+                    <div id="module-instruction" class="module-instruction"></div>
+                </div>
+            </div>
+        </div>
 
         <div class="container">
         <!-- Shown initially while spreadsheet data is being fetched and parsed -->
@@ -1563,19 +1869,6 @@
 
         <!-- All main content is hidden until data is successfully loaded -->
         <div id="main-content" style="display: none;">
-
-            <!-- Module selector buttons -->
-            <div class="tabs" id="module-menu">
-                <button class="tab active" data-tab="by-vote" onclick="switchTab(event, 'by-vote')" data-tooltip="Select a Town Meeting session and a vote to see how members voted">View by Vote</button>
-                <button class="tab" data-tab="by-member" onclick="switchTab(event, 'by-member')" data-tooltip="Select a Town Meeting session and a member to see how they voted in that session">View by Member</button>
-                <button class="tab" data-tab="member-networks" onclick="switchTab(event, 'member-networks')" data-tooltip="Select a Town Meeting member to see which members they tend to vote with">Member Networks</button>
-                <button class="tab" data-tab="vote-history" onclick="switchTab(event, 'vote-history')" data-tooltip="See vote outcomes in each Town Meeting session and links to more information about each vote">Vote History</button>
-                <button class="tab" data-tab="precinct-votes" onclick="switchTab(event, 'precinct-votes')" data-tooltip="View how precincts voted in aggregate on each vote">Precinct Votes</button>
-                <button class="tab" data-tab="contentious-votes" onclick="switchTab(event, 'contentious-votes')" data-tooltip="See what the closest votes at Town Meeting were (since 2021)">Closest Votes</button>
-                <button class="tab" data-tab="tmm-history" onclick="switchTab(event, 'tmm-history')" data-tooltip="View all the members at Town Meeting (since 2021) and statistics on their votes">TMM History</button>
-                <button class="tab" type="button" onclick="openPcaInNewTab()" data-tooltip="View a principal component analysis of Town Meeting votes (opens in a new window)">PCA</button>
-            </div>
-            <div id="module-instruction" class="module-instruction"></div>
 
             <!-- Context controls shown for modules that operate on a single session -->
             <div id="module-context-controls" class="controls" style="margin-bottom: 20px;">
@@ -1689,6 +1982,37 @@
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <!-- TAB: Outlier Votes -->
+            <div id="outlier-votes" class="tab-content">
+                <div class="controls outlier-votes-controls">
+                    <div class="control-group">
+                        <label for="outlier-member-select">Select Member:</label>
+                        <select id="outlier-member-select" onchange="renderOutlierVotes()"></select>
+                    </div>
+                    <div class="checkbox-group">
+                        <input
+                            type="checkbox"
+                            id="outlier-ignore-terminate"
+                            checked
+                            onchange="renderOutlierVotes()">
+                        <label for="outlier-ignore-terminate" data-tooltip="Procedural motions to terminate debate are generally less consequential and not indicative of how the member will vote on the main issue">Ignore motions to terminate debate</label>
+                    </div>
+                    <div class="control-group">
+                        <label for="outlier-peer-group-size">Peer group size:</label>
+                        <select id="outlier-peer-group-size" onchange="renderOutlierVotes()"></select>
+                    </div>
+                    <div class="control-group">
+                        <label for="outlier-min-comparable-peers">Minimum comparable peers:</label>
+                        <select id="outlier-min-comparable-peers" onchange="renderOutlierVotes()"></select>
+                    </div>
+                    <div class="control-group">
+                        <label for="outlier-min-shared-history">Minimum shared vote history:</label>
+                        <select id="outlier-min-shared-history" onchange="renderOutlierVotes()"></select>
+                    </div>
+                </div>
+                <div id="outlier-votes-results" class="vote-history-message">Open this module to load all sessions.</div>
             </div>
 
             <!-- TAB: Vote History -->
@@ -1825,9 +2149,6 @@
                 <p>If you find any bugs or errors, please report them to: robschoen.robschoen at gmail dot com</p>
                 <p class="page-footer-credit">created by Rob Schoen TMM P1 // <a href="https://entangledparticles.xyz/" target="_blank" rel="noopener noreferrer">Entangled Particles</a> // <a href="https://www.longwoodmall.org" target="_blank" rel="noopener noreferrer">www.longwoodmall.org</a></p>
             </div>
-            <a href="https://entangledparticles.xyz/" target="_blank" rel="noopener noreferrer">
-                <img class="page-footer-logo" src="entangledParticlesLogo.jpg" alt="Entangled Particles logo">
-            </a>
         </footer>
         </div>
     </div>
@@ -1925,6 +2246,7 @@
         let voteHistoryLoadPromise = null;
         let precinctVotesLoadPromise = null;
         let contentiousVotesLoadPromise = null;
+        let outlierVotesLoadPromise = null;
         let tmmHistoryLoadPromise = null;
         let tmmHistorySortState = { key: 'name', direction: 'asc' };
         let memberNetworkProfilesCache = null;
@@ -1932,6 +2254,9 @@
         let memberNetworkLoadPromise = null;
         let memberNetworkCurrentData = null;
         let memberNetworkSortState = { key: 'baseRank', direction: 'asc' };
+        let outlierVotesAnalysisState = null;
+        let outlierVotesControlsInitialized = false;
+        let selectedOutlierMemberKey = '';
 
         let clusteringSessionsCache = null;
         let clusteringLoadPromise = null;
@@ -1941,15 +2266,20 @@
         let selectedClusterMemberKey = null;
         const clusterMemberSearchLabelToKey = new Map();
         const clusterMemberSearchKeyToLabel = new Map();
+        const ENABLE_OUTLIER_VOTES = false;
         const APP_MODE = new URLSearchParams(window.location.search).get('app') === 'vote-analyzer'
             ? 'vote-analyzer'
             : 'tmmvotes';
         const SINGLE_SESSION_MODULE_IDS = new Set(['by-vote', 'by-member']);
 
+        const pageHeaderShellEl = document.getElementById('page-header-shell');
+        const pageHeaderNavEl = document.getElementById('page-header-nav');
+        const pageFooterEl = document.querySelector('.page-footer');
         const loadingEl = document.getElementById('loading');
         const mainContentEl = document.getElementById('main-content');
         const moduleInstructionEl = document.getElementById('module-instruction');
         const moduleContextControlsEl = document.getElementById('module-context-controls');
+        const outlierVotesResultsEl = document.getElementById('outlier-votes-results');
         const memberNetworkStatusEl = document.getElementById('member-network-status');
         const memberNetworkNeighborsEl = document.getElementById('member-network-neighbors');
         const clusterStatusEl = document.getElementById('cluster-status');
@@ -1957,6 +2287,21 @@
         const clusterMemberDetailEl = document.getElementById('cluster-member-detail');
         const clusterNeighborsEl = document.getElementById('cluster-neighbors');
         const clusterAxisInfoEl = document.getElementById('cluster-axis-info');
+
+        function syncPinnedLayoutOffsets() {
+            window.requestAnimationFrame(() => {
+                if (pageHeaderShellEl) {
+                    document.documentElement.style.setProperty('--page-header-height', `${pageHeaderShellEl.offsetHeight}px`);
+                }
+
+                if (pageFooterEl) {
+                    document.documentElement.style.setProperty('--page-footer-height', `${pageFooterEl.offsetHeight}px`);
+                }
+            });
+        }
+
+        window.addEventListener('resize', syncPinnedLayoutOffsets);
+        window.addEventListener('load', syncPinnedLayoutOffsets);
 
         /****************************************************
          * URL / FILE HELPERS
@@ -4224,7 +4569,9 @@
             updateSingleSessionAISummaryButtons();
 
             if (loadingEl) loadingEl.style.display = 'none';
+            if (pageHeaderNavEl) pageHeaderNavEl.style.display = 'block';
             if (mainContentEl) mainContentEl.style.display = 'block';
+            syncPinnedLayoutOffsets();
 
             if (votes.length > 0) {
                 const voteSelect = document.getElementById('vote-select');
@@ -4327,6 +4674,7 @@
                 loadingEl.style.display = 'block';
                 loadingEl.textContent = 'Loading voting data...';
             }
+            if (pageHeaderNavEl) pageHeaderNavEl.style.display = 'none';
             if (mainContentEl) mainContentEl.style.display = 'none';
 
             // Required full reset before loading a different meeting spreadsheet.
@@ -5286,6 +5634,779 @@
             );
             memberNetworkCurrentData = networkData;
             renderMemberNetworkNeighbors(networkData);
+        }
+
+        /****************************************************
+         * OUTLIER VOTES
+         ****************************************************/
+
+        function getOutlierVotesSessionData() {
+            if (Array.isArray(voteHistorySessionsCache) && voteHistorySessionsCache.length > 0) {
+                return voteHistorySessionsCache;
+            }
+            if (Array.isArray(clusteringSessionsCache) && clusteringSessionsCache.length > 0) {
+                return clusteringSessionsCache;
+            }
+            return null;
+        }
+
+        function setOutlierVotesStatus(message, isError = false) {
+            if (!outlierVotesResultsEl) return;
+            outlierVotesResultsEl.className = 'vote-history-message';
+            outlierVotesResultsEl.textContent = message;
+            outlierVotesResultsEl.classList.toggle('error', isError);
+        }
+
+        function initializeOutlierVotesControls() {
+            if (outlierVotesControlsInitialized) return;
+
+            const peerGroupSelect = document.getElementById('outlier-peer-group-size');
+            const minComparableSelect = document.getElementById('outlier-min-comparable-peers');
+            const minSharedHistorySelect = document.getElementById('outlier-min-shared-history');
+            if (!peerGroupSelect || !minComparableSelect || !minSharedHistorySelect) return;
+
+            [5, 6, 7, 8, 9, 10, 12].forEach(value => {
+                const option = document.createElement('option');
+                option.value = String(value);
+                option.textContent = String(value);
+                if (value === 8) option.selected = true;
+                peerGroupSelect.appendChild(option);
+            });
+
+            [3, 4, 5, 6, 7, 8, 9, 10, 12].forEach(value => {
+                const option = document.createElement('option');
+                option.value = String(value);
+                option.textContent = String(value);
+                if (value === 5) option.selected = true;
+                minComparableSelect.appendChild(option);
+            });
+
+            [8, 10, 12, 15, 18, 20, 24, 30].forEach(value => {
+                const option = document.createElement('option');
+                option.value = String(value);
+                option.textContent = String(value);
+                if (value === 12) option.selected = true;
+                minSharedHistorySelect.appendChild(option);
+            });
+
+            outlierVotesControlsInitialized = true;
+            syncOutlierVotesComparableOptions();
+        }
+
+        function syncOutlierVotesComparableOptions() {
+            const peerGroupSelect = document.getElementById('outlier-peer-group-size');
+            const minComparableSelect = document.getElementById('outlier-min-comparable-peers');
+            if (!peerGroupSelect || !minComparableSelect) return;
+
+            const peerGroupSize = Number(peerGroupSelect.value) || 8;
+            const currentValue = Number(minComparableSelect.value) || 5;
+
+            Array.from(minComparableSelect.options).forEach(option => {
+                option.disabled = Number(option.value) > peerGroupSize;
+            });
+
+            if (currentValue > peerGroupSize) {
+                minComparableSelect.value = String(peerGroupSize);
+            }
+        }
+
+        function getOutlierVotesOptions() {
+            initializeOutlierVotesControls();
+
+            const ignoreTerminateCheckbox = document.getElementById('outlier-ignore-terminate');
+            const peerGroupSelect = document.getElementById('outlier-peer-group-size');
+            const minComparableSelect = document.getElementById('outlier-min-comparable-peers');
+            const minSharedHistorySelect = document.getElementById('outlier-min-shared-history');
+
+            const peerGroupSize = Number(peerGroupSelect && peerGroupSelect.value) || 8;
+            const minComparablePeers = Math.min(
+                Number(minComparableSelect && minComparableSelect.value) || 5,
+                peerGroupSize
+            );
+
+            return {
+                ignoreTerminateDebate: ignoreTerminateCheckbox ? ignoreTerminateCheckbox.checked : true,
+                peerGroupSize,
+                minComparablePeers,
+                minSharedVoteHistory: Number(minSharedHistorySelect && minSharedHistorySelect.value) || 12
+            };
+        }
+
+        function buildOutlierVotesContext(sessionDataList) {
+            const voteMetaById = new Map();
+            const meetingMajorityByVoteId = new Map();
+            const precinctCountsByVoteId = new Map();
+
+            (sessionDataList || []).forEach(session => {
+                if (!session) return;
+
+                (session.votes || []).forEach(vote => {
+                    if (!vote) return;
+                    voteMetaById.set(vote.id, vote);
+                    meetingMajorityByVoteId.set(vote.id, getMajorityVoteValue(computeVoteBreakdownFromSession(session, vote)));
+                });
+
+                Object.values(session.canonicalMembers || {}).forEach(memberEntry => {
+                    const precinctKey = String(memberEntry && memberEntry.precinct || '').trim().toUpperCase();
+                    if (!precinctKey) return;
+
+                    Object.entries(memberEntry.votesById || {}).forEach(([voteId, voteValue]) => {
+                        const normalizedVote = normalizeVote(voteValue);
+                        if (normalizedVote !== 'YES' && normalizedVote !== 'NO') return;
+
+                        if (!precinctCountsByVoteId.has(voteId)) {
+                            precinctCountsByVoteId.set(voteId, new Map());
+                        }
+                        const precinctMap = precinctCountsByVoteId.get(voteId);
+                        if (!precinctMap.has(precinctKey)) {
+                            precinctMap.set(precinctKey, { YES: 0, NO: 0 });
+                        }
+                        precinctMap.get(precinctKey)[normalizedVote] += 1;
+                    });
+                });
+            });
+
+            return {
+                voteMetaById,
+                meetingMajorityByVoteId,
+                precinctCountsByVoteId
+            };
+        }
+
+        function getOutlierPrecinctComparison(profile, voteId, memberVote, precinctCountsByVoteId) {
+            const precinctKey = String(profile && profile.precinct || '').trim().toUpperCase();
+            if (!precinctKey || memberVote !== 'YES' && memberVote !== 'NO') {
+                return { qualifies: false, againstMajority: false, peerYes: 0, peerNo: 0 };
+            }
+
+            const precinctMap = precinctCountsByVoteId.get(voteId);
+            if (!precinctMap || !precinctMap.has(precinctKey)) {
+                return { qualifies: false, againstMajority: false, peerYes: 0, peerNo: 0 };
+            }
+
+            let yes = Number(precinctMap.get(precinctKey).YES) || 0;
+            let no = Number(precinctMap.get(precinctKey).NO) || 0;
+            if (memberVote === 'YES') yes = Math.max(0, yes - 1);
+            if (memberVote === 'NO') no = Math.max(0, no - 1);
+
+            const comparablePeers = yes + no;
+            if (comparablePeers < 2) {
+                return { qualifies: false, againstMajority: false, peerYes: yes, peerNo: no };
+            }
+
+            const majorityVote = yes > no ? 'YES' : (no > yes ? 'NO' : '');
+            return {
+                qualifies: Boolean(majorityVote),
+                againstMajority: Boolean(majorityVote) && memberVote !== majorityVote,
+                peerYes: yes,
+                peerNo: no,
+                majorityVote
+            };
+        }
+
+        function sortOutlierVoteEntries(entries) {
+            return [...entries].sort((a, b) => {
+                if (b.outlierScore !== a.outlierScore) return b.outlierScore - a.outlierScore;
+                const sessionCmp = getSessionOrderIndex(b.sessionId) - getSessionOrderIndex(a.sessionId);
+                if (sessionCmp !== 0) return sessionCmp;
+                const colCmp = (a.colIndex || 0) - (b.colIndex || 0);
+                if (colCmp !== 0) return colCmp;
+                const titleCmp = String(a.voteTitle || '').localeCompare(String(b.voteTitle || ''));
+                if (titleCmp !== 0) return titleCmp;
+                return String(a.memberName || '').localeCompare(String(b.memberName || ''));
+            });
+        }
+
+        function buildOutlierVotesAnalysis(sessionDataList, options) {
+            if (!Array.isArray(sessionDataList) || sessionDataList.length === 0) {
+                return {
+                    profiles: [],
+                    memberDataByKey: new Map(),
+                    topEntries: [],
+                    totalEntries: 0
+                };
+            }
+
+            if (!Array.isArray(memberNetworkProfilesCache) || memberNetworkProfilesCache.length === 0) {
+                cacheMemberNetworkProfilesFromSessions(sessionDataList);
+            }
+
+            const profiles = Array.isArray(memberNetworkProfilesCache)
+                ? memberNetworkProfilesCache.filter(profile => memberCastRecordedVote(profile.votesById))
+                : [];
+            const context = buildOutlierVotesContext(sessionDataList);
+            const memberDataByKey = new Map();
+            const allEntries = [];
+
+            profiles.forEach(profile => {
+                const eligibleVoteIds = Object.keys(profile.votesById || {}).filter(voteId => {
+                    const voteValue = normalizeVote(profile.votesById[voteId]);
+                    if (voteValue !== 'YES' && voteValue !== 'NO') return false;
+
+                    if (options.ignoreTerminateDebate) {
+                        const meta = context.voteMetaById.get(voteId);
+                        if (meta && meta.isTerminateDebate) return false;
+                    }
+                    return true;
+                });
+
+                const comparisons = [];
+                profiles.forEach(candidateProfile => {
+                    if (candidateProfile.canonicalKey === profile.canonicalKey) return;
+                    const similarityData = computeSimilarityOnVoteIds(
+                        profile.votesById,
+                        candidateProfile.votesById,
+                        eligibleVoteIds,
+                        true
+                    );
+                    if (!similarityData || similarityData.overlap < options.minSharedVoteHistory) return;
+
+                    comparisons.push({
+                        profile: candidateProfile,
+                        overlap: similarityData.overlap,
+                        similarity: similarityData.similarity,
+                        exactMatches: similarityData.exactMatches
+                    });
+                });
+
+                comparisons.sort((a, b) => {
+                    if (b.similarity !== a.similarity) return b.similarity - a.similarity;
+                    if (b.overlap !== a.overlap) return b.overlap - a.overlap;
+                    return a.profile.name.localeCompare(b.profile.name);
+                });
+
+                const peerGroup = comparisons.slice(0, options.peerGroupSize);
+                const entries = [];
+
+                eligibleVoteIds.forEach(voteId => {
+                    const memberVote = normalizeVote(profile.votesById[voteId]);
+                    if (memberVote !== 'YES' && memberVote !== 'NO') return;
+
+                    let peerYes = 0;
+                    let peerNo = 0;
+                    let comparablePeers = 0;
+                    let overlapSum = 0;
+                    const comparablePeerRows = [];
+
+                    peerGroup.forEach(peerEntry => {
+                        const peerVote = normalizeVote(peerEntry.profile.votesById[voteId]);
+                        if (peerVote !== 'YES' && peerVote !== 'NO') return;
+
+                        comparablePeers += 1;
+                        overlapSum += peerEntry.overlap;
+                        comparablePeerRows.push(peerEntry);
+                        if (peerVote === 'YES') {
+                            peerYes += 1;
+                        } else {
+                            peerNo += 1;
+                        }
+                    });
+
+                    if (comparablePeers < options.minComparablePeers) return;
+
+                    const peerMajority = peerYes > peerNo ? 'YES' : (peerNo > peerYes ? 'NO' : '');
+                    if (!peerMajority || memberVote === peerMajority) return;
+
+                    const voteMeta = context.voteMetaById.get(voteId);
+                    if (!voteMeta) return;
+
+                    const cohesion = Math.max(peerYes, peerNo) / comparablePeers;
+                    const coverage = comparablePeers / options.peerGroupSize;
+                    const outlierScore = cohesion * coverage;
+                    const precinctComparison = getOutlierPrecinctComparison(
+                        profile,
+                        voteId,
+                        memberVote,
+                        context.precinctCountsByVoteId
+                    );
+                    const meetingMajority = context.meetingMajorityByVoteId.get(voteId) || '';
+                    const sameVotePeers = memberVote === 'YES' ? peerYes : peerNo;
+                    const oppositeVotePeers = comparablePeers - sameVotePeers;
+
+                    const entry = {
+                        canonicalKey: profile.canonicalKey,
+                        memberName: profile.name,
+                        precinct: profile.precinct,
+                        memberVote,
+                        voteId,
+                        sessionId: voteMeta.sessionId,
+                        sessionLabel: voteMeta.sessionLabel ||
+                            ((getSessionMetaById(voteMeta.sessionId) || {}).label) ||
+                            voteMeta.sessionId,
+                        colIndex: voteMeta.colIndex || 0,
+                        voteTitle: voteMeta.title,
+                        voteDescription: voteMeta.description || '—',
+                        outlierScore,
+                        peerYes,
+                        peerNo,
+                        comparablePeers,
+                        peerMajority,
+                        cohesion,
+                        coverage,
+                        sameVotePeers,
+                        oppositeVotePeers,
+                        sharedHistoryWithPeerGroup: comparablePeerRows.length > 0 ? overlapSum / comparablePeerRows.length : 0,
+                        againstPrecinctMajority: precinctComparison.qualifies && precinctComparison.againstMajority,
+                        againstMeetingMajority: Boolean(meetingMajority) && memberVote !== meetingMajority,
+                        isTerminateDebate: Boolean(voteMeta.isTerminateDebate)
+                    };
+
+                    entries.push(entry);
+                    allEntries.push(entry);
+                });
+
+                const sortedEntries = sortOutlierVoteEntries(entries);
+                const averageSimilarity = peerGroup.length > 0
+                    ? peerGroup.reduce((sum, peerEntry) => sum + peerEntry.similarity, 0) / peerGroup.length
+                    : 0;
+
+                memberDataByKey.set(profile.canonicalKey, {
+                    profile,
+                    eligibleVoteCount: eligibleVoteIds.length,
+                    peerGroup,
+                    entries: sortedEntries,
+                    outlierVoteCount: sortedEntries.length,
+                    averageOutlierScore: sortedEntries.length > 0
+                        ? sortedEntries.reduce((sum, entry) => sum + entry.outlierScore, 0) / sortedEntries.length
+                        : 0,
+                    maxOutlierScore: sortedEntries.length > 0 ? sortedEntries[0].outlierScore : 0,
+                    averagePeerSimilarity: averageSimilarity
+                });
+            });
+
+            const profileOrder = [...profiles].sort((a, b) => {
+                const dataA = memberDataByKey.get(a.canonicalKey);
+                const dataB = memberDataByKey.get(b.canonicalKey);
+                const countCmp = (dataB ? dataB.outlierVoteCount : 0) - (dataA ? dataA.outlierVoteCount : 0);
+                if (countCmp !== 0) return countCmp;
+                const maxCmp = (dataB ? dataB.maxOutlierScore : 0) - (dataA ? dataA.maxOutlierScore : 0);
+                if (maxCmp !== 0) return maxCmp;
+                return a.name.localeCompare(b.name);
+            });
+
+            return {
+                profiles: profileOrder,
+                memberDataByKey,
+                topEntries: sortOutlierVoteEntries(allEntries),
+                totalEntries: allEntries.length,
+                options
+            };
+        }
+
+        function populateOutlierMemberDropdown(analysis) {
+            const memberSelect = document.getElementById('outlier-member-select');
+            if (!memberSelect) return;
+
+            const currentValue = memberSelect.value || selectedOutlierMemberKey;
+            memberSelect.replaceChildren();
+
+            (analysis && analysis.profiles || []).forEach(profile => {
+                const memberData = analysis.memberDataByKey.get(profile.canonicalKey);
+                const option = document.createElement('option');
+                option.value = profile.canonicalKey;
+                const precinctLabel = profile.precinct ? formatPrecinctLabel(profile.precinct) : 'MULTI';
+                const outlierCount = memberData ? memberData.outlierVoteCount : 0;
+                option.textContent = `${profile.name} (${precinctLabel}) - ${outlierCount} outlier votes`;
+                memberSelect.appendChild(option);
+            });
+
+            const hasCurrent = currentValue && Array.from(memberSelect.options).some(option => option.value === currentValue);
+            if (hasCurrent) {
+                memberSelect.value = currentValue;
+                selectedOutlierMemberKey = currentValue;
+                return;
+            }
+
+            const firstWithEntries = (analysis && analysis.profiles || []).find(profile => {
+                const memberData = analysis.memberDataByKey.get(profile.canonicalKey);
+                return memberData && memberData.outlierVoteCount > 0;
+            });
+
+            if (firstWithEntries) {
+                memberSelect.value = firstWithEntries.canonicalKey;
+                selectedOutlierMemberKey = firstWithEntries.canonicalKey;
+            } else if (memberSelect.options.length > 0) {
+                memberSelect.value = memberSelect.options[0].value;
+                selectedOutlierMemberKey = memberSelect.value;
+            } else {
+                selectedOutlierMemberKey = '';
+            }
+        }
+
+        function renderOutlierVotesSummaryTable(container, analysis) {
+            const summaryEl = document.createElement('div');
+            summaryEl.className = 'vote-history-message outlier-votes-summary';
+            if (analysis.totalEntries === 0) {
+                summaryEl.textContent = 'No outlier votes match the current filters.';
+                container.appendChild(summaryEl);
+                return;
+            }
+
+            const displayedEntries = analysis.topEntries.slice(0, 100);
+            summaryEl.textContent = `Showing ${displayedEntries.length} of ${analysis.totalEntries} scored outlier votes across all loaded sessions.`;
+            container.appendChild(summaryEl);
+
+            const tableWrapEl = document.createElement('div');
+            tableWrapEl.className = 'outlier-votes-table-wrap';
+
+            const tableEl = document.createElement('table');
+            tableEl.className = 'outlier-votes-table';
+
+            const headers = [
+                { text: 'Session', className: 'session-col' },
+                { text: 'Vote Title', className: '' },
+                { text: 'Member', className: 'member-col' },
+                { text: 'Vote', className: 'vote-col' },
+                { text: 'Peer Split', className: 'peer-split-col' },
+                { text: 'Score', className: 'score-col' },
+                { text: 'Flags', className: '' }
+            ];
+
+            const theadEl = document.createElement('thead');
+            const headRowEl = document.createElement('tr');
+            headers.forEach(header => {
+                const th = document.createElement('th');
+                if (header.className) th.className = header.className;
+                th.textContent = header.text;
+                headRowEl.appendChild(th);
+            });
+            theadEl.appendChild(headRowEl);
+            tableEl.appendChild(theadEl);
+
+            const tbodyEl = document.createElement('tbody');
+            displayedEntries.forEach(entry => {
+                const rowEl = document.createElement('tr');
+                if (entry.canonicalKey === selectedOutlierMemberKey) {
+                    rowEl.classList.add('selected');
+                }
+                rowEl.addEventListener('click', () => {
+                    selectedOutlierMemberKey = entry.canonicalKey;
+                    const memberSelect = document.getElementById('outlier-member-select');
+                    if (memberSelect) memberSelect.value = entry.canonicalKey;
+                    renderOutlierVotes();
+                });
+
+                const sessionCell = document.createElement('td');
+                sessionCell.className = 'session-col';
+                sessionCell.textContent = entry.sessionLabel;
+                rowEl.appendChild(sessionCell);
+
+                const titleCell = document.createElement('td');
+                titleCell.appendChild(createNavigationBubbleButton(
+                    entry.voteTitle,
+                    evt => {
+                        evt.stopPropagation();
+                        void openVoteFromCrossSession(entry.sessionId, entry.voteTitle);
+                    },
+                    'Open this vote in View by Vote',
+                    'vote-title-nav-bubble'
+                ));
+                rowEl.appendChild(titleCell);
+
+                const memberCell = document.createElement('td');
+                memberCell.className = 'member-col';
+                memberCell.textContent = `${entry.memberName} (${formatPrecinctLabel(entry.precinct)})`;
+                rowEl.appendChild(memberCell);
+
+                const voteCell = document.createElement('td');
+                voteCell.className = `vote-col vote-${entry.memberVote.toLowerCase()}`;
+                voteCell.textContent = entry.memberVote;
+                rowEl.appendChild(voteCell);
+
+                const peerSplitCell = document.createElement('td');
+                peerSplitCell.className = 'peer-split-col';
+                peerSplitCell.textContent = `${entry.peerYes} YES / ${entry.peerNo} NO`;
+                rowEl.appendChild(peerSplitCell);
+
+                const scoreCell = document.createElement('td');
+                scoreCell.className = 'score-col';
+                scoreCell.textContent = entry.outlierScore.toFixed(2);
+                rowEl.appendChild(scoreCell);
+
+                const flagsCell = document.createElement('td');
+                const badges = document.createElement('div');
+                badges.className = 'outlier-votes-badges';
+                if (entry.againstPrecinctMajority) {
+                    const badge = document.createElement('span');
+                    badge.className = 'outlier-votes-badge precinct';
+                    badge.textContent = 'Against precinct majority';
+                    badges.appendChild(badge);
+                }
+                if (entry.againstMeetingMajority) {
+                    const badge = document.createElement('span');
+                    badge.className = 'outlier-votes-badge meeting';
+                    badge.textContent = 'Against meeting majority';
+                    badges.appendChild(badge);
+                }
+                if (!entry.againstPrecinctMajority && !entry.againstMeetingMajority) {
+                    const badge = document.createElement('span');
+                    badge.className = 'outlier-votes-badge none';
+                    badge.textContent = 'Peer-group outlier';
+                    badges.appendChild(badge);
+                }
+                flagsCell.appendChild(badges);
+                rowEl.appendChild(flagsCell);
+
+                tbodyEl.appendChild(rowEl);
+            });
+
+            tableEl.appendChild(tbodyEl);
+            tableWrapEl.appendChild(tableEl);
+            container.appendChild(tableWrapEl);
+        }
+
+        function renderOutlierVotesMemberPanel(container, analysis) {
+            const detailWrap = document.createElement('div');
+            detailWrap.className = 'outlier-votes-panel-grid';
+
+            const detailEl = document.createElement('div');
+            detailEl.className = 'outlier-votes-detail';
+            const helperEl = document.createElement('div');
+            helperEl.className = 'outlier-votes-detail';
+
+            if (!selectedOutlierMemberKey || !analysis.memberDataByKey.has(selectedOutlierMemberKey)) {
+                const message = document.createElement('p');
+                message.className = 'outlier-votes-empty';
+                message.textContent = 'Select a member to inspect their strongest outlier votes.';
+                detailEl.appendChild(message);
+                helperEl.appendChild(document.createTextNode('Click a table row above to jump to a member.'));
+                detailWrap.appendChild(detailEl);
+                detailWrap.appendChild(helperEl);
+                container.appendChild(detailWrap);
+                return;
+            }
+
+            const memberData = analysis.memberDataByKey.get(selectedOutlierMemberKey);
+            const profile = memberData.profile;
+            const titleEl = document.createElement('h3');
+            titleEl.textContent = `${profile.name} (${formatPrecinctLabel(profile.precinct)})`;
+            detailEl.appendChild(titleEl);
+
+            const metaEl = document.createElement('p');
+            metaEl.className = 'outlier-votes-meta';
+            metaEl.textContent =
+                `${memberData.outlierVoteCount} outlier votes from ${memberData.eligibleVoteCount} eligible YES/NO votes, ` +
+                `${memberData.peerGroup.length} peers, average peer similarity ${(memberData.averagePeerSimilarity * 100).toFixed(1)}%.`;
+            detailEl.appendChild(metaEl);
+
+            const actionsEl = document.createElement('div');
+            actionsEl.className = 'outlier-vote-card-row';
+            actionsEl.appendChild(createNavigationBubbleButton(
+                'Open Member in View by Member',
+                () => { void openMemberFromNetworkView(profile.canonicalKey, profile.precinct); },
+                'Open this member in View by Member',
+                'member-network-nav-bubble'
+            ));
+            detailEl.appendChild(actionsEl);
+
+            if (memberData.outlierVoteCount === 0) {
+                const emptyEl = document.createElement('p');
+                emptyEl.className = 'outlier-votes-empty';
+                emptyEl.textContent = memberData.peerGroup.length < analysis.options.minComparablePeers
+                    ? 'Not enough shared voting history to form a reliable peer group under the current filters.'
+                    : 'This member has no scored outlier votes under the current filters.';
+                detailEl.appendChild(emptyEl);
+            } else {
+                const listEl = document.createElement('div');
+                listEl.className = 'outlier-votes-detail-list';
+
+                memberData.entries.slice(0, 5).forEach(entry => {
+                    const cardEl = document.createElement('div');
+                    cardEl.className = 'outlier-vote-card';
+
+                    const headerEl = document.createElement('div');
+                    headerEl.className = 'outlier-vote-card-header';
+
+                    const titleWrapEl = document.createElement('div');
+                    titleWrapEl.className = 'outlier-vote-card-title';
+                    titleWrapEl.textContent = `${entry.sessionLabel}: ${entry.voteTitle}`;
+                    headerEl.appendChild(titleWrapEl);
+
+                    const scoreEl = document.createElement('div');
+                    scoreEl.className = 'outlier-vote-card-score';
+                    scoreEl.textContent = `Score ${entry.outlierScore.toFixed(2)}`;
+                    headerEl.appendChild(scoreEl);
+                    cardEl.appendChild(headerEl);
+
+                    const bodyEl = document.createElement('div');
+                    bodyEl.className = 'outlier-vote-card-body';
+
+                    const voteRowEl = document.createElement('div');
+                    voteRowEl.className = 'outlier-vote-card-row';
+                    voteRowEl.textContent =
+                        `Vote: ${entry.memberVote}. Peer split: ${entry.peerYes} YES / ${entry.peerNo} NO ` +
+                        `(${entry.comparablePeers} comparable peers).`;
+                    bodyEl.appendChild(voteRowEl);
+
+                    const metricsRowEl = document.createElement('div');
+                    metricsRowEl.className = 'outlier-vote-card-row';
+                    metricsRowEl.textContent =
+                        `Cohesion ${(entry.cohesion * 100).toFixed(0)}%, coverage ${(entry.coverage * 100).toFixed(0)}%, ` +
+                        `avg shared history ${entry.sharedHistoryWithPeerGroup.toFixed(1)} votes.`;
+                    bodyEl.appendChild(metricsRowEl);
+
+                    const badgeRowEl = document.createElement('div');
+                    badgeRowEl.className = 'outlier-vote-card-row';
+                    const badgeWrapEl = document.createElement('div');
+                    badgeWrapEl.className = 'outlier-votes-badges';
+                    if (entry.againstPrecinctMajority) {
+                        const badge = document.createElement('span');
+                        badge.className = 'outlier-votes-badge precinct';
+                        badge.textContent = 'Against precinct majority';
+                        badgeWrapEl.appendChild(badge);
+                    }
+                    if (entry.againstMeetingMajority) {
+                        const badge = document.createElement('span');
+                        badge.className = 'outlier-votes-badge meeting';
+                        badge.textContent = 'Against meeting majority';
+                        badgeWrapEl.appendChild(badge);
+                    }
+                    if (badgeWrapEl.children.length === 0) {
+                        const badge = document.createElement('span');
+                        badge.className = 'outlier-votes-badge none';
+                        badge.textContent = 'Peer-group outlier';
+                        badgeWrapEl.appendChild(badge);
+                    }
+                    badgeRowEl.appendChild(badgeWrapEl);
+                    bodyEl.appendChild(badgeRowEl);
+
+                    const actionsRowEl = document.createElement('div');
+                    actionsRowEl.className = 'outlier-vote-card-row';
+                    actionsRowEl.appendChild(createNavigationBubbleButton(
+                        'Open Vote',
+                        () => { void openVoteFromCrossSession(entry.sessionId, entry.voteTitle); },
+                        'Open this vote in View by Vote',
+                        'vote-title-nav-bubble'
+                    ));
+                    cardEl.appendChild(bodyEl);
+                    cardEl.appendChild(actionsRowEl);
+                    listEl.appendChild(cardEl);
+                });
+
+                detailEl.appendChild(listEl);
+            }
+
+            helperEl.innerHTML =
+                `<strong>How scoring works</strong><br>` +
+                `Only YES/NO votes are scored. A vote is counted when the member breaks with the YES/NO majority of their closest peers. ` +
+                `Score = cohesion × coverage, so strong peer agreement and broad peer participation both matter.`;
+
+            detailWrap.appendChild(detailEl);
+            detailWrap.appendChild(helperEl);
+            container.appendChild(detailWrap);
+        }
+
+        function renderOutlierVotes() {
+            if (!outlierVotesResultsEl) return;
+
+            syncOutlierVotesComparableOptions();
+            const sessionDataList = getOutlierVotesSessionData();
+            if (!Array.isArray(sessionDataList) || sessionDataList.length === 0) {
+                setOutlierVotesStatus('Outlier Votes is unavailable.');
+                return;
+            }
+
+            const options = getOutlierVotesOptions();
+            const analysis = buildOutlierVotesAnalysis(sessionDataList, options);
+            outlierVotesAnalysisState = analysis;
+            populateOutlierMemberDropdown(analysis);
+
+            outlierVotesResultsEl.replaceChildren();
+            outlierVotesResultsEl.className = '';
+
+            if (!analysis || analysis.profiles.length === 0) {
+                setOutlierVotesStatus('No members were found in the available Town Meeting sessions.', true);
+                return;
+            }
+
+            renderOutlierVotesSummaryTable(outlierVotesResultsEl, analysis);
+            renderOutlierVotesMemberPanel(outlierVotesResultsEl, analysis);
+        }
+
+        async function ensureOutlierVotesDataLoaded() {
+            initializeOutlierVotesControls();
+            if (!outlierVotesResultsEl) return;
+
+            const existingSessions = getOutlierVotesSessionData();
+            if (existingSessions) {
+                if (!memberNetworkProfilesCache || memberNetworkProfilesCache.length === 0) {
+                    cacheMemberNetworkProfilesFromSessions(existingSessions);
+                }
+                renderOutlierVotes();
+                return;
+            }
+
+            if (outlierVotesLoadPromise) {
+                await outlierVotesLoadPromise;
+                return;
+            }
+
+            if (memberNetworkLoadPromise) {
+                setOutlierVotesStatus('Loading Outlier Votes...');
+                await memberNetworkLoadPromise;
+                if (getOutlierVotesSessionData()) renderOutlierVotes();
+                return;
+            }
+
+            if (voteHistoryLoadPromise) {
+                setOutlierVotesStatus('Loading Outlier Votes...');
+                await voteHistoryLoadPromise;
+                if (getOutlierVotesSessionData()) {
+                    if (!memberNetworkProfilesCache || memberNetworkProfilesCache.length === 0) {
+                        cacheMemberNetworkProfilesFromSessions(getOutlierVotesSessionData());
+                    }
+                    renderOutlierVotes();
+                }
+                return;
+            }
+
+            if (clusteringLoadPromise) {
+                setOutlierVotesStatus('Loading Outlier Votes...');
+                await clusteringLoadPromise;
+                if (getOutlierVotesSessionData()) {
+                    if (!memberNetworkProfilesCache || memberNetworkProfilesCache.length === 0) {
+                        cacheMemberNetworkProfilesFromSessions(getOutlierVotesSessionData());
+                    }
+                    renderOutlierVotes();
+                }
+                return;
+            }
+
+            let loadedCount = 0;
+            const total = SESSION_FILES.length;
+            setOutlierVotesStatus(`Loading Outlier Votes (0 of ${total})...`);
+
+            outlierVotesLoadPromise = (async () => {
+                try {
+                    await ensureVoteGuideLoaded();
+                    const sessions = await Promise.all(
+                        SESSION_FILES.map(async session => {
+                            try {
+                                return await fetchAndParseSpreadsheet(session);
+                            } catch (err) {
+                                throw new Error(`${session.label}: ${err.message}`);
+                            } finally {
+                                loadedCount += 1;
+                                setOutlierVotesStatus(`Loading Outlier Votes (${loadedCount} of ${total})...`);
+                            }
+                        })
+                    );
+
+                    voteHistorySessionsCache = sessions;
+                    if (!clusteringSessionsCache) clusteringSessionsCache = sessions;
+
+                    cacheMemberNetworkProfilesFromSessions(sessions);
+                    renderOutlierVotes();
+                } catch (err) {
+                    console.error(err);
+                    outlierVotesAnalysisState = null;
+                    setOutlierVotesStatus(`Error loading Outlier Votes: ${err.message}`, true);
+                } finally {
+                    outlierVotesLoadPromise = null;
+                }
+            })();
+
+            await outlierVotesLoadPromise;
         }
 
         /****************************************************
@@ -6416,6 +7537,23 @@
             return activeTab ? activeTab.id : 'by-vote';
         }
 
+        function applyFeatureFlags() {
+            const moduleMenuEl = document.getElementById('module-menu');
+            const outlierTabButtonEl = document.querySelector('#module-menu .tab[data-tab="outlier-votes"]');
+            const outlierTabContentEl = document.getElementById('outlier-votes');
+
+            if (!ENABLE_OUTLIER_VOTES) {
+                if (outlierTabButtonEl) outlierTabButtonEl.style.display = 'none';
+                if (outlierTabContentEl) outlierTabContentEl.style.display = 'none';
+                if (moduleMenuEl) moduleMenuEl.classList.add('even-tabs');
+                return;
+            }
+
+            if (outlierTabButtonEl) outlierTabButtonEl.style.display = '';
+            if (outlierTabContentEl) outlierTabContentEl.style.display = '';
+            if (moduleMenuEl) moduleMenuEl.classList.remove('even-tabs');
+        }
+
         function updateModuleContextControls(activeModuleId = getActiveModuleId()) {
             if (!moduleContextControlsEl) return;
             moduleContextControlsEl.style.display = SINGLE_SESSION_MODULE_IDS.has(activeModuleId) ? 'block' : 'none';
@@ -6426,6 +7564,12 @@
 
             if (activeModuleId === 'member-networks') {
                 moduleInstructionEl.textContent = 'Member Networks uses all Town Meeting sessions attended by the selected member.';
+                moduleInstructionEl.style.display = 'block';
+                return;
+            }
+
+            if (activeModuleId === 'outlier-votes') {
+                moduleInstructionEl.textContent = 'Outlier Votes highlights votes where a member diverged from their closest voting peers across all loaded sessions.';
                 moduleInstructionEl.style.display = 'block';
                 return;
             }
@@ -6467,6 +7611,10 @@
         }
 
         function switchTab(evt, tabName) {
+            if (tabName === 'outlier-votes' && !ENABLE_OUTLIER_VOTES) {
+                return;
+            }
+
             setActiveTabButton(evt, tabName);
 
             document.querySelectorAll('.tab-content').forEach(content => {
@@ -6484,6 +7632,10 @@
 
             if (tabName === 'member-networks') {
                 ensureMemberNetworkDataLoaded();
+            }
+
+            if (tabName === 'outlier-votes') {
+                ensureOutlierVotesDataLoaded();
             }
 
             if (tabName === 'vote-history') {
@@ -6523,6 +7675,7 @@
 
         function enterVoteAnalyzerMode() {
             if (loadingEl) loadingEl.style.display = 'none';
+            if (pageHeaderNavEl) pageHeaderNavEl.style.display = 'block';
             if (mainContentEl) mainContentEl.style.display = 'block';
 
             const titleEl = document.querySelector('.page h1');
@@ -6542,6 +7695,7 @@
             const byVoteEl = document.getElementById('by-vote');
             const byMemberEl = document.getElementById('by-member');
             const memberNetworksEl = document.getElementById('member-networks');
+            const outlierVotesEl = document.getElementById('outlier-votes');
             const voteHistoryEl = document.getElementById('vote-history');
             const precinctVotesEl = document.getElementById('precinct-votes');
             const contentiousVotesEl = document.getElementById('contentious-votes');
@@ -6550,12 +7704,14 @@
             if (byVoteEl) byVoteEl.classList.remove('active');
             if (byMemberEl) byMemberEl.classList.remove('active');
             if (memberNetworksEl) memberNetworksEl.classList.remove('active');
+            if (outlierVotesEl) outlierVotesEl.classList.remove('active');
             if (voteHistoryEl) voteHistoryEl.classList.remove('active');
             if (precinctVotesEl) precinctVotesEl.classList.remove('active');
             if (contentiousVotesEl) contentiousVotesEl.classList.remove('active');
             if (tmmHistoryEl) tmmHistoryEl.classList.remove('active');
             if (clusteringEl) clusteringEl.classList.add('active');
 
+            syncPinnedLayoutOffsets();
             ensureClusteringDataLoaded();
         }
 
@@ -6564,6 +7720,9 @@
          ****************************************************/
 
         window.addEventListener('DOMContentLoaded', () => {
+            applyFeatureFlags();
+            syncPinnedLayoutOffsets();
+
             if (APP_MODE === 'vote-analyzer') {
                 enterVoteAnalyzerMode();
                 return;
@@ -6583,6 +7742,7 @@
                         loadingEl.style.display = 'block';
                         loadingEl.textContent = 'Loading voting data...';
                     }
+                    if (pageHeaderNavEl) pageHeaderNavEl.style.display = 'none';
                     if (mainContentEl) mainContentEl.style.display = 'none';
 
                     // Required full reset before loading a different meeting spreadsheet.
