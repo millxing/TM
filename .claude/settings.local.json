@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -n \"}\\\\s*$\" /Users/robschoen/Dropbox/CC/TM/TMMvotes.html)",
+      "Bash(curl -s https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js)",
+      "Bash(openssl dgst:*)",
+      "Bash(openssl base64:*)",
+      "Bash(curl -s https://cdn.plot.ly/plotly-2.27.0.min.js)"
+    ]
+  }
+}

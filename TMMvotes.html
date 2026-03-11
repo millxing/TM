@@ -10,9 +10,13 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Varela+Round&display=swap">
 
     <!-- XLSX library for reading Excel files directly in the browser -->
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"
+            integrity="sha384-vtjasyidUo0kW94K5MXDXntzOJpQgBKXmE7e2Ga4LG0skTTLeBi97eFAXsqewJjw"
+            crossorigin="anonymous"></script>
     <!-- Plotly for interactive scatter plots in voter clustering -->
-    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"
+            integrity="sha384-Hl48Kq2HifOWdXEjMsKo6qxqvRLTYqIGbvlENBmkHAxZKIGCXv43H6W1jA671RzC"
+            crossorigin="anonymous"></script>
 
     <style>
         /* Basic reset to make sizing and spacing predictable */
@@ -34,6 +38,30 @@
             --tm-soft-rose: rgba(208, 39, 82, 0.12);
             --tm-soft-plum: rgba(138, 36, 75, 0.14);
             --tm-focus: rgba(246, 48, 73, 0.18);
+            /* Surfaces */
+            --tm-surface: #fff;
+            --tm-surface-alt: #f8f9fa;
+            --tm-surface-hover: #f3f7fc;
+            --tm-surface-muted: #f1f5f8;
+            --tm-surface-warm: #fbf8fa;
+            --tm-surface-blue: #f8fbff;
+            /* Borders */
+            --tm-border: #e9ecef;
+            --tm-border-soft: #e0e7ee;
+            --tm-border-blue: #e3e9ef;
+            /* Text */
+            --tm-text-dark: #2c3e50;
+            --tm-text-mid: #5f6c7b;
+            --tm-text-muted: #66788a;
+            --tm-text-heading: #203040;
+            --tm-text-link: #2456a6;
+            /* Vote badges */
+            --tm-badge-no-bg: #eef3f8;
+            --tm-badge-link-bg: #e7f0fb;
+            --tm-badge-yes-bg: #edf7ea;
+            --tm-badge-yes-text: #2f6b2f;
+            --tm-badge-neutral-bg: #f4f6f8;
+            /* Layout */
             --page-max-width: 1400px;
             --page-header-height: 120px;
             --page-footer-height: 92px;
@@ -123,7 +151,7 @@
         .disclaimer-button {
             border: 2px solid rgba(246, 48, 73, 0.5);
             border-radius: 999px;
-            background-color: #fff;
+            background-color: var(--tm-surface);
             color: var(--tm-plum);
             padding: 10px 14px;
             font-family: inherit;
@@ -141,7 +169,7 @@
             padding: 18px 20px;
             border: 1px solid rgba(138, 36, 75, 0.3);
             border-radius: 10px;
-            background-color: #fff;
+            background-color: var(--tm-surface);
             color: var(--tm-navy);
             box-shadow: 0 10px 26px rgba(17, 31, 53, 0.24);
             font-size: 14px;
@@ -229,7 +257,7 @@
             cursor: pointer;
             border: 2px solid var(--tm-line);
             border-radius: 999px;
-            background: #fff;
+            background: var(--tm-surface);
             font-family: inherit;
             font-size: 15px;
             color: var(--tm-plum);
@@ -307,7 +335,7 @@
         }
 
         .module-ai-summary-button:hover {
-            background-color: #f3f7fc;
+            background-color: var(--tm-surface-hover);
         }
 
         .module-ai-summary-button:focus-visible {
@@ -377,7 +405,7 @@
 
         /* Base styling for each vote column (Yes/No/Abstain/No Vote) */
         .vote-column {
-            background-color: #fbf8fa;
+            background-color: var(--tm-surface-warm);
             border-radius: 10px;
             padding: 20px;
             border: 1px solid var(--tm-line);
@@ -771,7 +799,7 @@
             height: 600px;
             border: 1px solid var(--tm-line);
             border-radius: 10px;
-            background-color: #fff;
+            background-color: var(--tm-surface);
         }
 
         .cluster-panels {
@@ -821,9 +849,9 @@
 
         .cluster-neighbor-list li {
             padding: 8px 10px;
-            border: 1px solid #e9ecef;
+            border: 1px solid var(--tm-border);
             border-radius: 6px;
-            background-color: #fff;
+            background-color: var(--tm-surface);
             margin-bottom: 6px;
             line-height: 1.4;
         }
@@ -831,14 +859,14 @@
         .member-network-table-wrap {
             border: 1px solid var(--tm-line);
             border-radius: 8px;
-            background-color: #fff;
+            background-color: var(--tm-surface);
             overflow: hidden;
         }
 
         .member-network-table-header {
             overflow: hidden;
             border-bottom: 1px solid var(--tm-line);
-            background-color: #fff;
+            background-color: var(--tm-surface);
         }
 
         .member-network-table-scroller {
@@ -862,7 +890,7 @@
             text-align: center;
             font-size: 14px;
             line-height: 1.35;
-            background-color: #fff;
+            background-color: var(--tm-surface);
         }
 
         .member-network-table th {
@@ -973,7 +1001,7 @@
 
         .axis-component {
             margin-bottom: 16px;
-            background-color: #fff;
+            background-color: var(--tm-surface);
             border: 1px solid var(--tm-line);
             border-radius: 8px;
             padding: 10px 12px;
@@ -1004,7 +1032,7 @@
         .vote-history-session {
             border: 1px solid var(--tm-line);
             border-radius: 8px;
-            background-color: #fbf8fa;
+            background-color: var(--tm-surface-warm);
             overflow: hidden;
         }
 
@@ -1050,7 +1078,7 @@
         }
 
         .vote-history-session .meeting-ai-summary-button:hover {
-            background-color: #f3f7fc;
+            background-color: var(--tm-surface-hover);
         }
 
         .vote-history-session .meeting-ai-summary-button:focus-visible {
@@ -1083,7 +1111,7 @@
         }
 
         .vote-history-table th {
-            background-color: #f1f5f8;
+            background-color: var(--tm-surface-muted);
             color: var(--tm-navy);
             font-weight: 600;
             position: sticky;
@@ -1159,10 +1187,10 @@
 
         .vote-history-message {
             padding: 12px 14px;
-            border: 1px solid #e0e7ee;
+            border: 1px solid var(--tm-border-soft);
             border-radius: 8px;
-            background-color: #f8f9fa;
-            color: #4a5b6b;
+            background-color: var(--tm-surface-alt);
+            color: var(--tm-text-mid);
             font-size: 14px;
         }
 
@@ -1188,7 +1216,7 @@
         }
 
         .tmm-history-action-btn:hover {
-            background-color: #f3f7fc;
+            background-color: var(--tm-surface-hover);
         }
 
         .tmm-history-export-btn {
@@ -1204,7 +1232,7 @@
         }
 
         .tmm-history-export-btn:hover {
-            background-color: #f3f7fc;
+            background-color: var(--tm-surface-hover);
         }
 
         .tmm-history-sort-btn {
@@ -1225,9 +1253,9 @@
         }
 
         .tmm-history-table-wrap {
-            border: 1px solid #e9ecef;
+            border: 1px solid var(--tm-border);
             border-radius: 8px;
-            background-color: #fff;
+            background-color: var(--tm-surface);
             overflow: hidden;
             position: relative;
         }
@@ -1235,7 +1263,7 @@
         .tmm-history-table-header {
             overflow: hidden;
             border-bottom: 1px solid var(--tm-line);
-            background-color: #fff;
+            background-color: var(--tm-surface);
         }
 
         .tmm-history-table-scroller {
@@ -1306,9 +1334,9 @@
         .contentious-votes-table-wrap {
             overflow: auto;
             max-height: 860px;
-            border: 1px solid #e9ecef;
+            border: 1px solid var(--tm-border);
             border-radius: 8px;
-            background-color: #fff;
+            background-color: var(--tm-surface);
         }
 
         .contentious-votes-table {
@@ -1320,7 +1348,7 @@
 
         .contentious-votes-table th,
         .contentious-votes-table td {
-            border: 1px solid #e9ecef;
+            border: 1px solid var(--tm-border);
             padding: 8px 10px;
             text-align: left;
             vertical-align: top;
@@ -1329,8 +1357,8 @@
         }
 
         .contentious-votes-table th {
-            background-color: #f1f5f8;
-            color: #2c3e50;
+            background-color: var(--tm-surface-muted);
+            color: var(--tm-text-dark);
             font-weight: 600;
             position: sticky;
             top: 0;
@@ -1386,9 +1414,9 @@
         .outlier-votes-table-wrap {
             overflow: auto;
             max-height: 560px;
-            border: 1px solid #e9ecef;
+            border: 1px solid var(--tm-border);
             border-radius: 8px;
-            background-color: #fff;
+            background-color: var(--tm-surface);
         }
 
         .outlier-votes-table {
@@ -1400,7 +1428,7 @@
 
         .outlier-votes-table th,
         .outlier-votes-table td {
-            border: 1px solid #e9ecef;
+            border: 1px solid var(--tm-border);
             padding: 8px 10px;
             text-align: left;
             vertical-align: top;
@@ -1409,8 +1437,8 @@
         }
 
         .outlier-votes-table th {
-            background-color: #f1f5f8;
-            color: #2c3e50;
+            background-color: var(--tm-surface-muted);
+            color: var(--tm-text-dark);
             font-weight: 600;
             position: sticky;
             top: 0;
@@ -1423,7 +1451,7 @@
 
         .outlier-votes-table tbody tr:hover,
         .outlier-votes-table tbody tr.selected {
-            background-color: #f8fbff;
+            background-color: var(--tm-surface-blue);
         }
 
         .outlier-votes-table .num-col {
@@ -1480,23 +1508,23 @@
             font-size: 11px;
             font-weight: 600;
             line-height: 1.2;
-            background: #eef3f8;
-            color: #2c3e50;
+            background: var(--tm-badge-no-bg);
+            color: var(--tm-text-dark);
         }
 
         .outlier-votes-badge.precinct {
-            background: #e7f0fb;
-            color: #2456a6;
+            background: var(--tm-badge-link-bg);
+            color: var(--tm-text-link);
         }
 
         .outlier-votes-badge.meeting {
-            background: #edf7ea;
-            color: #2f6b2f;
+            background: var(--tm-badge-yes-bg);
+            color: var(--tm-badge-yes-text);
         }
 
         .outlier-votes-badge.none {
-            background: #f4f6f8;
-            color: #66788a;
+            background: var(--tm-badge-neutral-bg);
+            color: var(--tm-text-muted);
         }
 
         .outlier-votes-panel-grid {
@@ -1508,8 +1536,8 @@
         }
 
         .outlier-votes-detail {
-            background-color: #fff;
-            border: 1px solid #e9ecef;
+            background-color: var(--tm-surface);
+            border: 1px solid var(--tm-border);
             border-radius: 8px;
             padding: 14px 16px;
         }
@@ -1517,12 +1545,12 @@
         .outlier-votes-detail h3 {
             margin: 0 0 8px;
             font-size: 16px;
-            color: #2c3e50;
+            color: var(--tm-text-dark);
         }
 
         .outlier-votes-meta {
             margin: 0 0 12px;
-            color: #5f6c7b;
+            color: var(--tm-text-mid);
             font-size: 13px;
         }
 
@@ -1533,10 +1561,10 @@
         }
 
         .outlier-vote-card {
-            border: 1px solid #e3e9ef;
+            border: 1px solid var(--tm-border-blue);
             border-radius: 8px;
             padding: 11px 12px;
-            background: #fbfdff;
+            background: var(--tm-surface-blue);
         }
 
         .outlier-vote-card-header {
@@ -1549,13 +1577,13 @@
 
         .outlier-vote-card-title {
             font-weight: 600;
-            color: #203040;
+            color: var(--tm-text-heading);
         }
 
         .outlier-vote-card-score {
             flex-shrink: 0;
             font-weight: 600;
-            color: #2456a6;
+            color: var(--tm-text-link);
             font-variant-numeric: tabular-nums;
         }
 
@@ -1580,7 +1608,7 @@
 
         .outlier-votes-empty {
             font-style: italic;
-            color: #66788a;
+            color: var(--tm-text-muted);
         }
 
         .precinct-votes-list {
@@ -1602,9 +1630,9 @@
             overflow-y: hidden;
             height: 12px;
             background-color: white;
-            border-top: 1px solid #e9ecef;
-            border-left: 1px solid #e9ecef;
-            border-right: 1px solid #e9ecef;
+            border-top: 1px solid var(--tm-border);
+            border-left: 1px solid var(--tm-border);
+            border-right: 1px solid var(--tm-border);
         }
 
         .precinct-votes-scroll-inner {
@@ -1636,7 +1664,7 @@
         }
 
         .precinct-votes-table th {
-            background-color: #f1f5f8;
+            background-color: var(--tm-surface-muted);
             color: var(--tm-navy);
             font-weight: 600;
             position: sticky;
@@ -1701,7 +1729,7 @@
         .precinct-votes-table th:nth-child(2),
         .precinct-votes-table th:nth-child(3) {
             z-index: 8;
-            background-color: #f1f5f8;
+            background-color: var(--tm-surface-muted);
         }
 
         .precinct-votes-table .description-col {
@@ -1725,7 +1753,7 @@
             transform: translateX(-50%);
             width: min(calc(100vw - 32px), var(--page-max-width));
             padding: 10px 18px;
-            border: 1px solid #e3e8ed;
+            border: 1px solid var(--tm-border-blue);
             border-radius: 12px;
             background: rgba(255, 255, 255, 0.97);
             box-shadow: 0 -4px 18px rgba(17, 31, 53, 0.08);
@@ -2157,6 +2185,7 @@
     <script>
         /****************************************************
          * SPREADSHEET STRUCTURE CONFIGURATION
+         * [SHARED] — keep in sync with TMMpca.html
          ****************************************************/
 
         const TITLE_ROW_INDEX = 2;
@@ -2227,10 +2256,25 @@
         const STANDARD_PRECINCTS = Array.from({ length: 17 }, (_, idx) => String(idx + 1));
 
         /****************************************************
+         * VOTE-TYPE CONSTANTS & THRESHOLDS
+         ****************************************************/
+
+        const VOTE_YES = 'YES';
+        const VOTE_NO = 'NO';
+        const VOTE_ABSTAIN = 'ABSTAIN';
+        const VOTE_NOT_PRESENT = 'NoVote';
+
+        const PRECINCT_SORT_AL = 999;
+        const PRECINCT_SORT_OTHER = 998;
+        const DEFAULT_LAST_VOTE_COL = 100;
+        const DEFAULT_MIN_SHARED_SESSIONS = 4;
+        const MAX_CONTENTIOUS_DISPLAY = 100;
+
+        /****************************************************
          * GLOBAL STATE
          ****************************************************/
 
-        let LAST_VOTE_COL_INDEX = 100;
+        let LAST_VOTE_COL_INDEX = DEFAULT_LAST_VOTE_COL;
         let votingData = null;
         let votes = [];
         let members = [];
@@ -2302,6 +2346,19 @@
 
         window.addEventListener('resize', syncPinnedLayoutOffsets);
         window.addEventListener('load', syncPinnedLayoutOffsets);
+
+        /****************************************************
+         * ERROR HELPERS
+         ****************************************************/
+
+        function handleModuleError(err, containerEl, moduleName) {
+            const message = err && err.message ? err.message : String(err);
+            console.error(`[${moduleName}]`, err);
+            if (containerEl) {
+                containerEl.className = 'vote-history-message';
+                containerEl.textContent = `Error loading ${moduleName}: ${message}`;
+            }
+        }
 
         /****************************************************
          * URL / FILE HELPERS
@@ -2412,13 +2469,14 @@
 
         /****************************************************
          * DATA NORMALIZATION & SORT HELPERS
+         * [SHARED] — keep in sync with TMMpca.html
          ****************************************************/
 
         function precinctSortValue(precinct) {
             const n = parseInt(precinct, 10);
             if (!isNaN(n)) return n;
-            if (String(precinct).toUpperCase() === 'AL') return 999;
-            return 998;
+            if (String(precinct).toUpperCase() === 'AL') return PRECINCT_SORT_AL;
+            return PRECINCT_SORT_OTHER;
         }
 
         function normalizeVote(raw) {
@@ -3476,51 +3534,43 @@
             });
         }
 
-        async function ensureVoteHistoryDataLoaded() {
-            const container = document.getElementById('vote-history-results');
-            if (!container) return;
-
-            // Reuse already-loaded session data whenever possible.
-            if (voteHistorySessionsCache) {
-                renderVoteHistory();
-                return;
-            }
-
+        /**
+         * Shared session-loading helper used by all cross-session modules.
+         * Returns the cached session array, loading from network only if needed.
+         * Avoids duplicate fetches by checking all pending load promises.
+         */
+        async function ensureAllSessionsLoaded(moduleName, onProgress) {
+            // Return from either cache.
+            if (voteHistorySessionsCache) return voteHistorySessionsCache;
             if (clusteringSessionsCache) {
                 voteHistorySessionsCache = clusteringSessionsCache;
-                renderVoteHistory();
-                return;
+                return voteHistorySessionsCache;
             }
 
-            if (voteHistoryLoadPromise) {
-                await voteHistoryLoadPromise;
-                return;
-            }
-            // Avoid duplicate network fetches when another module is already loading all sessions.
-            if (precinctVotesLoadPromise) {
-                await precinctVotesLoadPromise;
-                if (voteHistorySessionsCache) {
-                    renderVoteHistory();
-                    return;
-                }
-            }
+            // Wait on any in-flight load from another module.
+            const pendingPromise = voteHistoryLoadPromise
+                || precinctVotesLoadPromise
+                || contentiousVotesLoadPromise
+                || tmmHistoryLoadPromise
+                || memberNetworkLoadPromise
+                || outlierVotesLoadPromise
+                || clusteringLoadPromise;
 
-            if (clusteringLoadPromise) {
-                await clusteringLoadPromise;
+            if (pendingPromise) {
+                await pendingPromise;
+                if (voteHistorySessionsCache) return voteHistorySessionsCache;
                 if (clusteringSessionsCache) {
                     voteHistorySessionsCache = clusteringSessionsCache;
-                    renderVoteHistory();
-                    return;
+                    return voteHistorySessionsCache;
                 }
             }
 
+            // No cached data and no in-flight load — perform the actual fetch.
             let loadedCount = 0;
             const total = SESSION_FILES.length;
-            container.className = 'vote-history-message';
-            container.textContent = `Loading Vote History (0 of ${total})...`;
+            onProgress(`Loading ${moduleName} (0 of ${total})...`);
 
-            // Fetch every configured session once, then cache for other cross-session modules.
-            voteHistoryLoadPromise = Promise.all(
+            const results = await Promise.all(
                 SESSION_FILES.map(async session => {
                     try {
                         return await fetchAndParseSpreadsheet(session);
@@ -3528,21 +3578,27 @@
                         throw new Error(`${session.label}: ${err.message}`);
                     } finally {
                         loadedCount += 1;
-                        container.textContent = `Loading Vote History (${loadedCount} of ${total})...`;
+                        onProgress(`Loading ${moduleName} (${loadedCount} of ${total})...`);
                     }
                 })
-            ).then(results => {
-                voteHistorySessionsCache = results;
-                if (!clusteringSessionsCache) clusteringSessionsCache = results;
-                renderVoteHistory();
-            }).catch(err => {
-                console.error(err);
-                container.className = 'vote-history-message';
-                container.textContent = `Error loading Vote History: ${err.message}`;
-            }).finally(() => {
-                voteHistoryLoadPromise = null;
-            });
+            );
 
+            voteHistorySessionsCache = results;
+            if (!clusteringSessionsCache) clusteringSessionsCache = results;
+            return results;
+        }
+
+        async function ensureVoteHistoryDataLoaded() {
+            const container = document.getElementById('vote-history-results');
+            if (!container) return;
+
+            if (voteHistorySessionsCache) { renderVoteHistory(); return; }
+
+            container.className = 'vote-history-message';
+            voteHistoryLoadPromise = ensureAllSessionsLoaded('Vote History', msg => { container.textContent = msg; })
+                .then(() => renderVoteHistory())
+                .catch(err => handleModuleError(err, container, 'Vote History'))
+                .finally(() => { voteHistoryLoadPromise = null; });
             await voteHistoryLoadPromise;
         }
 
@@ -3695,68 +3751,13 @@
             const container = document.getElementById('precinct-votes-results');
             if (!container) return;
 
-            if (voteHistorySessionsCache) {
-                renderPrecinctVotes();
-                return;
-            }
+            if (voteHistorySessionsCache) { renderPrecinctVotes(); return; }
 
-            if (clusteringSessionsCache) {
-                voteHistorySessionsCache = clusteringSessionsCache;
-                renderPrecinctVotes();
-                return;
-            }
-
-            if (precinctVotesLoadPromise) {
-                await precinctVotesLoadPromise;
-                return;
-            }
-
-            // Reuse shared cache if Vote History or Clustering already loaded all sessions.
-            if (voteHistoryLoadPromise) {
-                await voteHistoryLoadPromise;
-                if (voteHistorySessionsCache) {
-                    renderPrecinctVotes();
-                    return;
-                }
-            }
-
-            if (clusteringLoadPromise) {
-                await clusteringLoadPromise;
-                if (clusteringSessionsCache) {
-                    voteHistorySessionsCache = clusteringSessionsCache;
-                    renderPrecinctVotes();
-                    return;
-                }
-            }
-
-            let loadedCount = 0;
-            const total = SESSION_FILES.length;
             container.className = 'vote-history-message';
-            container.textContent = `Loading Precinct Votes (0 of ${total})...`;
-
-            precinctVotesLoadPromise = Promise.all(
-                SESSION_FILES.map(async session => {
-                    try {
-                        return await fetchAndParseSpreadsheet(session);
-                    } catch (err) {
-                        throw new Error(`${session.label}: ${err.message}`);
-                    } finally {
-                        loadedCount += 1;
-                        container.textContent = `Loading Precinct Votes (${loadedCount} of ${total})...`;
-                    }
-                })
-            ).then(results => {
-                voteHistorySessionsCache = results;
-                if (!clusteringSessionsCache) clusteringSessionsCache = results;
-                renderPrecinctVotes();
-            }).catch(err => {
-                console.error(err);
-                container.className = 'vote-history-message';
-                container.textContent = `Error loading Precinct Votes: ${err.message}`;
-            }).finally(() => {
-                precinctVotesLoadPromise = null;
-            });
-
+            precinctVotesLoadPromise = ensureAllSessionsLoaded('Precinct Votes', msg => { container.textContent = msg; })
+                .then(() => renderPrecinctVotes())
+                .catch(err => handleModuleError(err, container, 'Precinct Votes'))
+                .finally(() => { precinctVotesLoadPromise = null; });
             await precinctVotesLoadPromise;
         }
 
@@ -3906,75 +3907,13 @@
             const container = document.getElementById('contentious-votes-results');
             if (!container) return;
 
-            if (voteHistorySessionsCache) {
-                renderContentiousVotes();
-                return;
-            }
+            if (voteHistorySessionsCache) { renderContentiousVotes(); return; }
 
-            if (clusteringSessionsCache) {
-                voteHistorySessionsCache = clusteringSessionsCache;
-                renderContentiousVotes();
-                return;
-            }
-
-            if (contentiousVotesLoadPromise) {
-                await contentiousVotesLoadPromise;
-                return;
-            }
-
-            if (voteHistoryLoadPromise) {
-                await voteHistoryLoadPromise;
-                if (voteHistorySessionsCache) {
-                    renderContentiousVotes();
-                    return;
-                }
-            }
-
-            if (precinctVotesLoadPromise) {
-                await precinctVotesLoadPromise;
-                if (voteHistorySessionsCache) {
-                    renderContentiousVotes();
-                    return;
-                }
-            }
-
-            if (clusteringLoadPromise) {
-                await clusteringLoadPromise;
-                if (clusteringSessionsCache) {
-                    voteHistorySessionsCache = clusteringSessionsCache;
-                    renderContentiousVotes();
-                    return;
-                }
-            }
-
-            let loadedCount = 0;
-            const total = SESSION_FILES.length;
             container.className = 'vote-history-message';
-            container.textContent = `Loading Closest Votes (0 of ${total})...`;
-
-            contentiousVotesLoadPromise = Promise.all(
-                SESSION_FILES.map(async session => {
-                    try {
-                        return await fetchAndParseSpreadsheet(session);
-                    } catch (err) {
-                        throw new Error(`${session.label}: ${err.message}`);
-                    } finally {
-                        loadedCount += 1;
-                        container.textContent = `Loading Closest Votes (${loadedCount} of ${total})...`;
-                    }
-                })
-            ).then(results => {
-                voteHistorySessionsCache = results;
-                if (!clusteringSessionsCache) clusteringSessionsCache = results;
-                renderContentiousVotes();
-            }).catch(err => {
-                console.error(err);
-                container.className = 'vote-history-message';
-                container.textContent = `Error loading Closest Votes: ${err.message}`;
-            }).finally(() => {
-                contentiousVotesLoadPromise = null;
-            });
-
+            contentiousVotesLoadPromise = ensureAllSessionsLoaded('Closest Votes', msg => { container.textContent = msg; })
+                .then(() => renderContentiousVotes())
+                .catch(err => handleModuleError(err, container, 'Closest Votes'))
+                .finally(() => { contentiousVotesLoadPromise = null; });
             await contentiousVotesLoadPromise;
         }
 
@@ -3982,91 +3921,13 @@
             const container = document.getElementById('tmm-history-results');
             if (!container) return;
 
-            if (voteHistorySessionsCache) {
-                renderTmmHistory();
-                return;
-            }
+            if (voteHistorySessionsCache) { renderTmmHistory(); return; }
 
-            if (clusteringSessionsCache) {
-                voteHistorySessionsCache = clusteringSessionsCache;
-                renderTmmHistory();
-                return;
-            }
-
-            if (tmmHistoryLoadPromise) {
-                await tmmHistoryLoadPromise;
-                return;
-            }
-
-            if (voteHistoryLoadPromise) {
-                await voteHistoryLoadPromise;
-                if (voteHistorySessionsCache) {
-                    renderTmmHistory();
-                    return;
-                }
-            }
-
-            if (precinctVotesLoadPromise) {
-                await precinctVotesLoadPromise;
-                if (voteHistorySessionsCache) {
-                    renderTmmHistory();
-                    return;
-                }
-            }
-
-            if (contentiousVotesLoadPromise) {
-                await contentiousVotesLoadPromise;
-                if (voteHistorySessionsCache) {
-                    renderTmmHistory();
-                    return;
-                }
-            }
-
-            if (memberNetworkLoadPromise) {
-                await memberNetworkLoadPromise;
-                if (voteHistorySessionsCache) {
-                    renderTmmHistory();
-                    return;
-                }
-            }
-
-            if (clusteringLoadPromise) {
-                await clusteringLoadPromise;
-                if (clusteringSessionsCache) {
-                    voteHistorySessionsCache = clusteringSessionsCache;
-                    renderTmmHistory();
-                    return;
-                }
-            }
-
-            let loadedCount = 0;
-            const total = SESSION_FILES.length;
             container.className = 'vote-history-message';
-            container.textContent = `Loading TMM History (0 of ${total})...`;
-
-            tmmHistoryLoadPromise = Promise.all(
-                SESSION_FILES.map(async session => {
-                    try {
-                        return await fetchAndParseSpreadsheet(session);
-                    } catch (err) {
-                        throw new Error(`${session.label}: ${err.message}`);
-                    } finally {
-                        loadedCount += 1;
-                        container.textContent = `Loading TMM History (${loadedCount} of ${total})...`;
-                    }
-                })
-            ).then(results => {
-                voteHistorySessionsCache = results;
-                if (!clusteringSessionsCache) clusteringSessionsCache = results;
-                renderTmmHistory();
-            }).catch(err => {
-                console.error(err);
-                container.className = 'vote-history-message';
-                container.textContent = `Error loading TMM History: ${err.message}`;
-            }).finally(() => {
-                tmmHistoryLoadPromise = null;
-            });
-
+            tmmHistoryLoadPromise = ensureAllSessionsLoaded('TMM History', msg => { container.textContent = msg; })
+                .then(() => renderTmmHistory())
+                .catch(err => handleModuleError(err, container, 'TMM History'))
+                .finally(() => { tmmHistoryLoadPromise = null; });
             await tmmHistoryLoadPromise;
         }
 
@@ -4548,8 +4409,7 @@
                 // Rebuild UI from fresh in-memory state after every spreadsheet load.
                 initializeApp();
             } catch (err) {
-                console.error(err);
-                if (loadingEl) loadingEl.textContent = `Error loading spreadsheet: ${err.message}`;
+                handleModuleError(err, loadingEl, 'Spreadsheet');
             }
         }
 
@@ -4607,7 +4467,7 @@
                 return a.name.localeCompare(b.name);
             });
 
-            memberSelect.innerHTML = '';
+            memberSelect.replaceChildren();
             sortedMembers.forEach(member => {
                 const option = document.createElement('option');
                 option.value = member.key;
@@ -4626,7 +4486,7 @@
             const voteSelect = document.getElementById('vote-select');
             if (!voteSelect) return;
 
-            voteSelect.innerHTML = '';
+            voteSelect.replaceChildren();
             votes.forEach(vote => {
                 const option = document.createElement('option');
                 option.value = vote.title;
@@ -5312,7 +5172,7 @@
                     populateMemberNetworkDropdown();
                     updateMemberNetworkResults();
                 } catch (err) {
-                    console.error(err);
+                    handleModuleError(err, null, 'Member Networks');
                     memberNetworkProfilesCache = null;
                     memberNetworkProfileByKey = new Map();
                     setMemberNetworkStatus(`Error loading member network data: ${err.message}`, true);
@@ -5375,7 +5235,7 @@
             const selectedProfile = memberNetworkProfileByKey.get(selectedMemberKey);
             const selectedSessionCount = selectedProfile.sessions ? selectedProfile.sessions.size : 0;
 
-            if (selectedSessionCount < 4) {
+            if (selectedSessionCount < DEFAULT_MIN_SHARED_SESSIONS) {
                 return {
                     selectedProfile,
                     selectedMemberKey,
@@ -5637,7 +5497,9 @@
         }
 
         /****************************************************
-         * OUTLIER VOTES
+         * OUTLIER VOTES — DISABLED (ENABLE_OUTLIER_VOTES = false)
+         * This feature is complete but disabled.
+         * Set ENABLE_OUTLIER_VOTES = true to re-enable.
          ****************************************************/
 
         function getOutlierVotesSessionData() {
@@ -6042,7 +5904,7 @@
                 return;
             }
 
-            const displayedEntries = analysis.topEntries.slice(0, 100);
+            const displayedEntries = analysis.topEntries.slice(0, MAX_CONTENTIOUS_DISPLAY);
             summaryEl.textContent = `Showing ${displayedEntries.length} of ${analysis.totalEntries} scored outlier votes across all loaded sessions.`;
             container.appendChild(summaryEl);
 
@@ -6286,10 +6148,16 @@
                 detailEl.appendChild(listEl);
             }
 
-            helperEl.innerHTML =
-                `<strong>How scoring works</strong><br>` +
-                `Only YES/NO votes are scored. A vote is counted when the member breaks with the YES/NO majority of their closest peers. ` +
-                `Score = cohesion × coverage, so strong peer agreement and broad peer participation both matter.`;
+            const scoringHeadingEl = document.createElement('strong');
+            scoringHeadingEl.textContent = 'How scoring works';
+            helperEl.replaceChildren(
+                scoringHeadingEl,
+                document.createElement('br'),
+                document.createTextNode(
+                    'Only YES/NO votes are scored. A vote is counted when the member breaks with the YES/NO majority of their closest peers. ' +
+                    'Score = cohesion \u00d7 coverage, so strong peer agreement and broad peer participation both matter.'
+                )
+            );
 
             detailWrap.appendChild(detailEl);
             detailWrap.appendChild(helperEl);
@@ -6398,7 +6266,7 @@
                     cacheMemberNetworkProfilesFromSessions(sessions);
                     renderOutlierVotes();
                 } catch (err) {
-                    console.error(err);
+                    handleModuleError(err, null, 'Outlier Votes');
                     outlierVotesAnalysisState = null;
                     setOutlierVotesStatus(`Error loading Outlier Votes: ${err.message}`, true);
                 } finally {
@@ -6605,7 +6473,7 @@
                 setClusteringStatus(`Loaded ${total} sessions. Rendering clustering view...`);
                 runClusteringAnalysis();
             }).catch(err => {
-                console.error(err);
+                handleModuleError(err, null, 'Clustering');
                 clearClusterPlot();
                 setClusteringStatus(`Error loading clustering data: ${err.message}`, true);
                 setPanelMessage(clusterMemberDetailEl, 'Clustering data failed to load.');
@@ -6755,6 +6623,7 @@
 
         /****************************************************
          * VOTER CLUSTERING — PCA
+         * [SHARED] — PCA math shared with TMMpca.html
          ****************************************************/
 
         function dotProduct(a, b) {

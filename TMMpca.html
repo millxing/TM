@@ -6,8 +6,12 @@
     <title>TM PCA Analyzer</title>
     <link rel="icon" type="image/jpeg" href="https://raw.githubusercontent.com/millxing/TM/main/entangledParticlesLogo3.jpg">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Varela+Round&display=swap">
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"
+            integrity="sha384-vtjasyidUo0kW94K5MXDXntzOJpQgBKXmE7e2Ga4LG0skTTLeBi97eFAXsqewJjw"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"
+            integrity="sha384-Hl48Kq2HifOWdXEjMsKo6qxqvRLTYqIGbvlENBmkHAxZKIGCXv43H6W1jA671RzC"
+            crossorigin="anonymous"></script>
     <style>
         :root {
             --tm-coral: #F63049;
@@ -440,6 +444,7 @@
     <script>
         /****************************************************
          * SPREADSHEET STRUCTURE CONFIG
+         * [SHARED] — keep in sync with TMMvotes.html
          ****************************************************/
         const TITLE_ROW_INDEX = 2;
         const DESCRIPTION_ROW_INDEX = 3;
@@ -487,6 +492,18 @@
         ];
 
         /****************************************************
+         * VOTE-TYPE CONSTANTS & THRESHOLDS
+         ****************************************************/
+
+        const VOTE_YES = 'YES';
+        const VOTE_NO = 'NO';
+        const VOTE_ABSTAIN = 'ABSTAIN';
+        const VOTE_NOT_PRESENT = 'NoVote';
+
+        const PRECINCT_SORT_AL = 999;
+        const PRECINCT_SORT_OTHER = 998;
+
+        /****************************************************
          * GLOBAL STATE
          ****************************************************/
         let memberAliasesLoadPromise = null;
@@ -505,6 +522,7 @@
 
         /****************************************************
          * BASIC HELPERS
+         * [SHARED] — keep in sync with TMMvotes.html
          ****************************************************/
         function getSpreadsheetRawURL(file) {
             return `${SPREADSHEET_BASE_URL}${file}`;
@@ -600,8 +618,8 @@
         function precinctSortValue(precinct) {
             const n = parseInt(precinct, 10);
             if (!Number.isNaN(n)) return n;
-            if (String(precinct).toUpperCase() === 'AL') return 999;
-            return 998;
+            if (String(precinct).toUpperCase() === 'AL') return PRECINCT_SORT_AL;
+            return PRECINCT_SORT_OTHER;
         }
 
         function formatPrecinctLabel(precinct) {
@@ -810,6 +828,7 @@
 
         /****************************************************
          * NAME NORMALIZATION (CROSS-SESSION MEMBER IDENTITY)
+         * [SHARED] — keep in sync with TMMvotes.html
          ****************************************************/
         function normalizeMemberName(name) {
             return String(name || '').trim().toLowerCase().replace(/\s+/g, ' ');
@@ -1197,6 +1216,7 @@
 
         /****************************************************
          * PCA MATH
+         * [SHARED] — PCA math shared with TMMvotes.html
          ****************************************************/
         function dotProduct(a, b) {
             let sum = 0;
