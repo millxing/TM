@@ -10,9 +10,13 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Varela+Round&display=swap">
 
     <!-- XLSX library for reading Excel files directly in the browser -->
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"
+            integrity="sha384-vtjasyidUo0kW94K5MXDXntzOJpQgBKXmE7e2Ga4LG0skTTLeBi97eFAXsqewJjw"
+            crossorigin="anonymous"></script>
     <!-- Plotly for interactive scatter plots in voter clustering -->
-    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"
+            integrity="sha384-Hl48Kq2HifOWdXEjMsKo6qxqvRLTYqIGbvlENBmkHAxZKIGCXv43H6W1jA671RzC"
+            crossorigin="anonymous"></script>
 
     <style>
         /* Basic reset to make sizing and spacing predictable */
@@ -34,19 +38,83 @@
             --tm-soft-rose: rgba(208, 39, 82, 0.12);
             --tm-soft-plum: rgba(138, 36, 75, 0.14);
             --tm-focus: rgba(246, 48, 73, 0.18);
+            /* Surfaces */
+            --tm-surface: #fff;
+            --tm-surface-alt: #f8f9fa;
+            --tm-surface-hover: #f3f7fc;
+            --tm-surface-muted: #f1f5f8;
+            --tm-surface-warm: #fbf8fa;
+            --tm-surface-blue: #f8fbff;
+            /* Borders */
+            --tm-border: #e9ecef;
+            --tm-border-soft: #e0e7ee;
+            --tm-border-blue: #e3e9ef;
+            /* Text */
+            --tm-text-dark: #2c3e50;
+            --tm-text-mid: #5f6c7b;
+            --tm-text-muted: #66788a;
+            --tm-text-heading: #203040;
+            --tm-text-link: #2456a6;
+            /* Vote badges */
+            --tm-badge-no-bg: #eef3f8;
+            --tm-badge-link-bg: #e7f0fb;
+            --tm-badge-yes-bg: #edf7ea;
+            --tm-badge-yes-text: #2f6b2f;
+            --tm-badge-neutral-bg: #f4f6f8;
+            /* Layout */
+            --page-max-width: 1400px;
+            --page-header-height: 120px;
+            --page-footer-height: 92px;
         }
 
         /* Overall page styling */
         body {
             font-family: 'Varela Round', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             background-color: var(--tm-bg);
-            padding: 20px;
+            padding: calc(var(--page-header-height) + 24px) 20px calc(var(--page-footer-height) + 28px);
             color: var(--tm-navy);
         }
 
         .page {
-            max-width: 1400px;
+            max-width: var(--page-max-width);
             margin: 0 auto;
+        }
+
+        .page-header-shell {
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: min(calc(100vw - 40px), var(--page-max-width));
+            z-index: 1200;
+        }
+
+        .page-header-card {
+            background: rgba(246, 243, 245, 0.96);
+            border: 1px solid rgba(229, 221, 227, 0.95);
+            border-radius: 12px;
+            box-shadow: 0 10px 26px rgba(17, 31, 53, 0.08);
+            backdrop-filter: blur(14px);
+            padding: 18px 22px 16px;
+        }
+
+        .page-header-main {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 18px;
+        }
+
+        .page-header-copy {
+            min-width: 0;
+        }
+
+        .page-header-nav {
+            display: none;
+            margin-top: 8px;
+            padding-top: 10px;
+            padding-bottom: 0;
+            border-top: 1px solid var(--tm-line);
         }
 
         /* Main centered card container */
@@ -74,16 +142,16 @@
         }
 
         .disclaimer-hover-wrap {
-            position: fixed;
-            top: 16px;
-            right: max(20px, calc((100vw - 1400px) / 2));
-            z-index: 1200;
+            position: relative;
+            z-index: 1201;
+            flex: 0 0 auto;
+            margin-left: auto;
         }
 
         .disclaimer-button {
             border: 2px solid rgba(246, 48, 73, 0.5);
             border-radius: 999px;
-            background-color: #fff;
+            background-color: var(--tm-surface);
             color: var(--tm-plum);
             padding: 10px 14px;
             font-family: inherit;
@@ -101,7 +169,7 @@
             padding: 18px 20px;
             border: 1px solid rgba(138, 36, 75, 0.3);
             border-radius: 10px;
-            background-color: #fff;
+            background-color: var(--tm-surface);
             color: var(--tm-navy);
             box-shadow: 0 10px 26px rgba(17, 31, 53, 0.24);
             font-size: 14px;
@@ -125,12 +193,62 @@
             pointer-events: auto;
         }
 
+        /* CSS tooltip (use data-tooltip attr on any element) */
+        [data-tooltip] {
+            position: relative;
+        }
+
+        [data-tooltip]::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%) translateY(4px);
+            padding: 8px 12px;
+            border-radius: 8px;
+            background-color: var(--tm-navy);
+            color: #fff;
+            font-size: 13px;
+            font-weight: 400;
+            line-height: 1.4;
+            white-space: normal;
+            width: max-content;
+            max-width: 280px;
+            text-align: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s ease;
+            pointer-events: none;
+            z-index: 1100;
+        }
+
+        [data-tooltip]:hover::after {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
+
         /* Tab bar container */
         .tabs {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
             margin-bottom: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--tm-line);
+        }
+
+        #module-menu {
+            position: static;
+            z-index: auto;
+            background: transparent;
+            margin-bottom: 0;
+        }
+
+        #module-menu.even-tabs .tab {
+            flex: 1 1 0;
+            min-width: 0;
+            text-align: center;
         }
 
         /* Individual tab button */
@@ -139,7 +257,7 @@
             cursor: pointer;
             border: 2px solid var(--tm-line);
             border-radius: 999px;
-            background: #fff;
+            background: var(--tm-surface);
             font-family: inherit;
             font-size: 15px;
             color: var(--tm-plum);
@@ -148,24 +266,32 @@
 
         .tab:hover {
             color: var(--tm-rose);
-            border-color: rgba(246, 48, 73, 0.4);
+            border-color: var(--tm-rose);
             background-color: var(--tm-soft-coral);
         }
 
         /* Active tab styling */
         .tab.active {
-            color: var(--tm-navy);
-            border-color: rgba(246, 48, 73, 0.4);
-            background-color: var(--tm-soft-coral);
+            color: #fff;
+            background-color: var(--tm-rose);
+            border-color: var(--tm-rose);
             font-weight: 600;
+        }
+
+        .tab.active:hover {
+            color: #fff;
+            background-color: var(--tm-plum);
+            border-color: var(--tm-plum);
         }
 
         .module-instruction {
             display: none;
-            margin-bottom: 12px;
+            margin-top: 12px;
+            margin-bottom: 2px;
             color: var(--tm-plum);
             font-size: 14px;
             font-weight: 600;
+            line-height: 1.45;
         }
 
         /* Base hidden state for tab content */
@@ -209,7 +335,7 @@
         }
 
         .module-ai-summary-button:hover {
-            background-color: #f3f7fc;
+            background-color: var(--tm-surface-hover);
         }
 
         .module-ai-summary-button:focus-visible {
@@ -279,7 +405,7 @@
 
         /* Base styling for each vote column (Yes/No/Abstain/No Vote) */
         .vote-column {
-            background-color: #fbf8fa;
+            background-color: var(--tm-surface-warm);
             border-radius: 10px;
             padding: 20px;
             border: 1px solid var(--tm-line);
@@ -673,7 +799,7 @@
             height: 600px;
             border: 1px solid var(--tm-line);
             border-radius: 10px;
-            background-color: #fff;
+            background-color: var(--tm-surface);
         }
 
         .cluster-panels {
@@ -723,9 +849,9 @@
 
         .cluster-neighbor-list li {
             padding: 8px 10px;
-            border: 1px solid #e9ecef;
+            border: 1px solid var(--tm-border);
             border-radius: 6px;
-            background-color: #fff;
+            background-color: var(--tm-surface);
             margin-bottom: 6px;
             line-height: 1.4;
         }
@@ -733,14 +859,14 @@
         .member-network-table-wrap {
             border: 1px solid var(--tm-line);
             border-radius: 8px;
-            background-color: #fff;
+            background-color: var(--tm-surface);
             overflow: hidden;
         }
 
         .member-network-table-header {
             overflow: hidden;
             border-bottom: 1px solid var(--tm-line);
-            background-color: #fff;
+            background-color: var(--tm-surface);
         }
 
         .member-network-table-scroller {
@@ -764,7 +890,7 @@
             text-align: center;
             font-size: 14px;
             line-height: 1.35;
-            background-color: #fff;
+            background-color: var(--tm-surface);
         }
 
         .member-network-table th {
@@ -875,7 +1001,7 @@
 
         .axis-component {
             margin-bottom: 16px;
-            background-color: #fff;
+            background-color: var(--tm-surface);
             border: 1px solid var(--tm-line);
             border-radius: 8px;
             padding: 10px 12px;
@@ -906,7 +1032,7 @@
         .vote-history-session {
             border: 1px solid var(--tm-line);
             border-radius: 8px;
-            background-color: #fbf8fa;
+            background-color: var(--tm-surface-warm);
             overflow: hidden;
         }
 
@@ -952,7 +1078,7 @@
         }
 
         .vote-history-session .meeting-ai-summary-button:hover {
-            background-color: #f3f7fc;
+            background-color: var(--tm-surface-hover);
         }
 
         .vote-history-session .meeting-ai-summary-button:focus-visible {
@@ -961,13 +1087,16 @@
         }
 
         .vote-history-table-wrap {
-            overflow-x: auto;
+            overflow: auto;
+            max-height: min(68vh, 640px);
             background-color: white;
+            overscroll-behavior: contain;
         }
 
         .vote-history-table {
             width: 100%;
-            border-collapse: collapse;
+            border-collapse: separate;
+            border-spacing: 0;
             min-width: 1250px;
         }
 
@@ -982,12 +1111,13 @@
         }
 
         .vote-history-table th {
-            background-color: var(--tm-soft-navy);
+            background-color: var(--tm-surface-muted);
             color: var(--tm-navy);
             font-weight: 600;
             position: sticky;
             top: 0;
-            z-index: 1;
+            z-index: 5;
+            box-shadow: 0 1px 0 var(--tm-line);
         }
 
         .vote-history-table .num-col {
@@ -1057,10 +1187,10 @@
 
         .vote-history-message {
             padding: 12px 14px;
-            border: 1px solid #e0e7ee;
+            border: 1px solid var(--tm-border-soft);
             border-radius: 8px;
-            background-color: #f8f9fa;
-            color: #4a5b6b;
+            background-color: var(--tm-surface-alt);
+            color: var(--tm-text-mid);
             font-size: 14px;
         }
 
@@ -1086,7 +1216,23 @@
         }
 
         .tmm-history-action-btn:hover {
-            background-color: #f3f7fc;
+            background-color: var(--tm-surface-hover);
+        }
+
+        .tmm-history-export-btn {
+            padding: 8px 12px;
+            border: 1px solid var(--tm-line);
+            border-radius: 999px;
+            background-color: white;
+            color: var(--tm-navy);
+            font-family: inherit;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .tmm-history-export-btn:hover {
+            background-color: var(--tm-surface-hover);
         }
 
         .tmm-history-sort-btn {
@@ -1107,9 +1253,9 @@
         }
 
         .tmm-history-table-wrap {
-            border: 1px solid #e9ecef;
+            border: 1px solid var(--tm-border);
             border-radius: 8px;
-            background-color: #fff;
+            background-color: var(--tm-surface);
             overflow: hidden;
             position: relative;
         }
@@ -1117,7 +1263,7 @@
         .tmm-history-table-header {
             overflow: hidden;
             border-bottom: 1px solid var(--tm-line);
-            background-color: #fff;
+            background-color: var(--tm-surface);
         }
 
         .tmm-history-table-scroller {
@@ -1128,7 +1274,7 @@
 
         .tmm-history-table {
             width: 100%;
-            min-width: 1080px;
+            min-width: 990px;
             border-collapse: separate;
             border-spacing: 0;
             table-layout: fixed;
@@ -1159,22 +1305,22 @@
 
         .tmm-history-table th:nth-child(1),
         .tmm-history-table td:nth-child(1) {
-            width: 220px;
+            width: 180px;
         }
 
         .tmm-history-table th:nth-child(2),
         .tmm-history-table td:nth-child(2) {
-            width: 120px;
+            width: 90px;
         }
 
         .tmm-history-table th:nth-child(3),
         .tmm-history-table td:nth-child(3) {
-            width: 150px;
+            width: 120px;
         }
 
         .tmm-history-table th:nth-child(n+4),
         .tmm-history-table td:nth-child(n+4) {
-            width: 108px;
+            width: 120px;
         }
 
         .contentious-votes-controls {
@@ -1188,9 +1334,9 @@
         .contentious-votes-table-wrap {
             overflow: auto;
             max-height: 860px;
-            border: 1px solid #e9ecef;
+            border: 1px solid var(--tm-border);
             border-radius: 8px;
-            background-color: #fff;
+            background-color: var(--tm-surface);
         }
 
         .contentious-votes-table {
@@ -1202,7 +1348,7 @@
 
         .contentious-votes-table th,
         .contentious-votes-table td {
-            border: 1px solid #e9ecef;
+            border: 1px solid var(--tm-border);
             padding: 8px 10px;
             text-align: left;
             vertical-align: top;
@@ -1211,8 +1357,8 @@
         }
 
         .contentious-votes-table th {
-            background-color: #f1f5f8;
-            color: #2c3e50;
+            background-color: var(--tm-surface-muted);
+            color: var(--tm-text-dark);
             font-weight: 600;
             position: sticky;
             top: 0;
@@ -1248,6 +1394,223 @@
             min-width: 96px;
         }
 
+        .outlier-votes-controls {
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .outlier-votes-controls .control-group {
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .outlier-votes-summary {
+            margin-bottom: 12px;
+        }
+
+        .outlier-votes-table-wrap {
+            overflow: auto;
+            max-height: 560px;
+            border: 1px solid var(--tm-border);
+            border-radius: 8px;
+            background-color: var(--tm-surface);
+        }
+
+        .outlier-votes-table {
+            width: 100%;
+            min-width: 1180px;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+
+        .outlier-votes-table th,
+        .outlier-votes-table td {
+            border: 1px solid var(--tm-border);
+            padding: 8px 10px;
+            text-align: left;
+            vertical-align: top;
+            font-size: 13px;
+            line-height: 1.35;
+        }
+
+        .outlier-votes-table th {
+            background-color: var(--tm-surface-muted);
+            color: var(--tm-text-dark);
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        .outlier-votes-table tbody tr {
+            cursor: pointer;
+        }
+
+        .outlier-votes-table tbody tr:hover,
+        .outlier-votes-table tbody tr.selected {
+            background-color: var(--tm-surface-blue);
+        }
+
+        .outlier-votes-table .num-col {
+            width: 88px;
+            min-width: 88px;
+            white-space: nowrap;
+            text-align: right;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .outlier-votes-table .member-col {
+            width: 190px;
+            min-width: 190px;
+        }
+
+        .outlier-votes-table .session-col {
+            width: 170px;
+            min-width: 170px;
+        }
+
+        .outlier-votes-table .score-col {
+            width: 96px;
+            min-width: 96px;
+            text-align: right;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .outlier-votes-table .vote-col {
+            width: 84px;
+            min-width: 84px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .outlier-votes-table .peer-split-col {
+            width: 110px;
+            min-width: 110px;
+            text-align: right;
+            white-space: nowrap;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .outlier-votes-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .outlier-votes-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 2px 7px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 600;
+            line-height: 1.2;
+            background: var(--tm-badge-no-bg);
+            color: var(--tm-text-dark);
+        }
+
+        .outlier-votes-badge.precinct {
+            background: var(--tm-badge-link-bg);
+            color: var(--tm-text-link);
+        }
+
+        .outlier-votes-badge.meeting {
+            background: var(--tm-badge-yes-bg);
+            color: var(--tm-badge-yes-text);
+        }
+
+        .outlier-votes-badge.none {
+            background: var(--tm-badge-neutral-bg);
+            color: var(--tm-text-muted);
+        }
+
+        .outlier-votes-panel-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
+            gap: 14px;
+            margin-top: 14px;
+            align-items: start;
+        }
+
+        .outlier-votes-detail {
+            background-color: var(--tm-surface);
+            border: 1px solid var(--tm-border);
+            border-radius: 8px;
+            padding: 14px 16px;
+        }
+
+        .outlier-votes-detail h3 {
+            margin: 0 0 8px;
+            font-size: 16px;
+            color: var(--tm-text-dark);
+        }
+
+        .outlier-votes-meta {
+            margin: 0 0 12px;
+            color: var(--tm-text-mid);
+            font-size: 13px;
+        }
+
+        .outlier-votes-detail-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .outlier-vote-card {
+            border: 1px solid var(--tm-border-blue);
+            border-radius: 8px;
+            padding: 11px 12px;
+            background: var(--tm-surface-blue);
+        }
+
+        .outlier-vote-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 10px;
+            margin-bottom: 6px;
+        }
+
+        .outlier-vote-card-title {
+            font-weight: 600;
+            color: var(--tm-text-heading);
+        }
+
+        .outlier-vote-card-score {
+            flex-shrink: 0;
+            font-weight: 600;
+            color: var(--tm-text-link);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .outlier-vote-card-body {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            font-size: 13px;
+            color: #31465a;
+        }
+
+        .outlier-vote-card-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .outlier-vote-card-row .nav-bubble-btn {
+            flex-shrink: 0;
+        }
+
+        .outlier-votes-empty {
+            font-style: italic;
+            color: var(--tm-text-muted);
+        }
+
         .precinct-votes-list {
             display: flex;
             flex-direction: column;
@@ -1267,9 +1630,9 @@
             overflow-y: hidden;
             height: 12px;
             background-color: white;
-            border-top: 1px solid #e9ecef;
-            border-left: 1px solid #e9ecef;
-            border-right: 1px solid #e9ecef;
+            border-top: 1px solid var(--tm-border);
+            border-left: 1px solid var(--tm-border);
+            border-right: 1px solid var(--tm-border);
         }
 
         .precinct-votes-scroll-inner {
@@ -1284,7 +1647,8 @@
             /* Width for "All" + precinct percentage columns (P1..P17). */
             --precinct-col-width: 50px;
             width: max-content;
-            border-collapse: collapse;
+            border-collapse: separate;
+            border-spacing: 0;
             table-layout: fixed;
         }
 
@@ -1300,13 +1664,14 @@
         }
 
         .precinct-votes-table th {
-            background-color: var(--tm-soft-navy);
+            background-color: var(--tm-surface-muted);
             color: var(--tm-navy);
             font-weight: 600;
             position: sticky;
             top: 0;
-            z-index: 1;
+            z-index: 5;
             white-space: nowrap;
+            box-shadow: 0 1px 0 var(--tm-line);
         }
 
         .precinct-votes-table th:nth-child(n+4) {
@@ -1363,8 +1728,8 @@
         .precinct-votes-table th:nth-child(1),
         .precinct-votes-table th:nth-child(2),
         .precinct-votes-table th:nth-child(3) {
-            z-index: 6;
-            background-color: #f1f5f8;
+            z-index: 8;
+            background-color: var(--tm-surface-muted);
         }
 
         .precinct-votes-table .description-col {
@@ -1382,21 +1747,29 @@
         }
 
         .page-footer {
-            margin-top: 28px;
-            padding-top: 18px;
-            border-top: 1px solid #e3e8ed;
+            position: fixed;
+            left: 50%;
+            bottom: 0;
+            transform: translateX(-50%);
+            width: min(calc(100vw - 32px), var(--page-max-width));
+            padding: 10px 18px;
+            border: 1px solid var(--tm-border-blue);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.97);
+            box-shadow: 0 -4px 18px rgba(17, 31, 53, 0.08);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            gap: 4px;
+            z-index: 1250;
         }
 
         .page-footer-text {
             text-align: center;
             color: #445566;
-            font-size: 16px;
-            line-height: 1.45;
+            font-size: 14px;
+            line-height: 1.35;
         }
 
         .page-footer-text a {
@@ -1406,13 +1779,6 @@
 
         .page-footer-credit {
             font-weight: 700;
-        }
-
-        .page-footer-logo {
-            width: 120px;
-            height: auto;
-            display: block;
-            flex: 0 0 auto;
         }
 
         @media (max-width: 900px) {
@@ -1428,8 +1794,13 @@
                 grid-template-columns: 1fr;
             }
 
-            .page-footer-logo {
-                width: 80px;
+            .page-header-main {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .disclaimer-hover-wrap {
+                margin-left: 0;
             }
 
             .results {
@@ -1442,10 +1813,6 @@
                 min-width: 180px;
             }
 
-            .disclaimer-hover-wrap {
-                top: 10px;
-            }
-
             .disclaimer-button {
                 font-size: 12px;
                 padding: 8px 12px;
@@ -1453,6 +1820,16 @@
 
             .disclaimer-overlay {
                 width: min(420px, calc(100vw - 20px));
+            }
+
+            .page-header-card {
+                padding: 16px 16px 14px;
+            }
+
+            .page-footer {
+                width: min(calc(100vw - 20px), var(--page-max-width));
+                bottom: 0;
+                padding: 10px 12px;
             }
 
             .cluster-member-search-group {
@@ -1475,20 +1852,42 @@
 </head>
 
 <body>
-    <div class="disclaimer-hover-wrap">
-        <button type="button" class="disclaimer-button" aria-describedby="important-disclaimer">
-            IMPORTANT DISCLAIMER: Please read.
-        </button>
-        <div class="disclaimer-overlay" id="important-disclaimer" role="note">
-            <p>This project is intended to promote transparency by making Town Meeting voting records more accessible to the public. However, individual votes do not always tell the full story.</p>
-            <p>Town Meeting decisions are often shaped by discussion, amendments, procedural motions, and trade-offs that occur in real time. A representative may fully support the overall goal of a warrant article, yet vote against a particular motion because of specific language, funding details, timing, or other provisions attached to it.</p>
-            <p>If a vote by your precinct representative raises questions or concerns, consider reaching out to them directly. They can provide the context behind their decision and explain how they evaluated the issue. Transparency is most meaningful when paired with open communication.</p>
-        </div>
-    </div>
-
     <div class="page">
-        <h1>Brookline Town Meeting Voting Analysis</h1>
-        <p class="subtitle">Research voting patterns at Brookline's Town Meeting</p>
+        <div class="page-header-shell" id="page-header-shell">
+            <div class="page-header-card">
+                <div class="page-header-main">
+                    <div class="page-header-copy">
+                        <h1>Brookline Town Meeting Voting Analysis</h1>
+                        <p class="subtitle">Research voting patterns at Brookline's Town Meeting</p>
+                    </div>
+                    <div class="disclaimer-hover-wrap">
+                        <button type="button" class="disclaimer-button" aria-describedby="important-disclaimer">
+                            IMPORTANT DISCLAIMER: Please read.
+                        </button>
+                        <div class="disclaimer-overlay" id="important-disclaimer" role="note">
+                            <p>This project is intended to promote transparency by making Town Meeting voting records more accessible to the public. However, individual votes do not always tell the full story.</p>
+                            <p>Town Meeting decisions are often shaped by discussion, amendments, procedural motions, and trade-offs that occur in real time. A representative may fully support the overall goal of a warrant article, yet vote against a particular motion because of specific language, funding details, timing, or other provisions attached to it.</p>
+                            <p>If a vote by your precinct representative raises questions or concerns, consider reaching out to them directly. They can provide the context behind their decision and explain how they evaluated the issue. Transparency is most meaningful when paired with open communication.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="page-header-nav" id="page-header-nav">
+                    <!-- Module selector buttons -->
+                    <div class="tabs" id="module-menu">
+                        <button class="tab active" data-tab="by-vote" onclick="switchTab(event, 'by-vote')" data-tooltip="Select a Town Meeting session and a vote to see how members voted">View by Vote</button>
+                        <button class="tab" data-tab="by-member" onclick="switchTab(event, 'by-member')" data-tooltip="Select a Town Meeting session and a member to see how they voted in that session">View by Member</button>
+                        <button class="tab" data-tab="member-networks" onclick="switchTab(event, 'member-networks')" data-tooltip="Select a Town Meeting member to see which members they tend to vote with">Member Networks</button>
+                        <button class="tab" data-tab="outlier-votes" onclick="switchTab(event, 'outlier-votes')" data-tooltip="See votes where members diverged from their closest voting peers across Town Meeting sessions">Outlier Votes</button>
+                        <button class="tab" data-tab="vote-history" onclick="switchTab(event, 'vote-history')" data-tooltip="See vote outcomes in each Town Meeting session and links to more information about each vote">Vote History</button>
+                        <button class="tab" data-tab="precinct-votes" onclick="switchTab(event, 'precinct-votes')" data-tooltip="View how precincts voted in aggregate on each vote">Precinct Votes</button>
+                        <button class="tab" data-tab="contentious-votes" onclick="switchTab(event, 'contentious-votes')" data-tooltip="See what the closest votes at Town Meeting were (since 2021)">Closest Votes</button>
+                        <button class="tab" data-tab="tmm-history" onclick="switchTab(event, 'tmm-history')" data-tooltip="View all the members at Town Meeting (since 2021) and statistics on their votes">TMM History</button>
+                        <button class="tab" type="button" onclick="openPcaInNewTab()" data-tooltip="View a principal component analysis of Town Meeting votes (opens in a new window)">PCA</button>
+                    </div>
+                    <div id="module-instruction" class="module-instruction"></div>
+                </div>
+            </div>
+        </div>
 
         <div class="container">
         <!-- Shown initially while spreadsheet data is being fetched and parsed -->
@@ -1498,19 +1897,6 @@
 
         <!-- All main content is hidden until data is successfully loaded -->
         <div id="main-content" style="display: none;">
-
-            <!-- Module selector buttons -->
-            <div class="tabs" id="module-menu">
-                <button class="tab active" data-tab="by-vote" onclick="switchTab(event, 'by-vote')">View by Vote</button>
-                <button class="tab" data-tab="by-member" onclick="switchTab(event, 'by-member')">View by Member</button>
-                <button class="tab" data-tab="member-networks" onclick="switchTab(event, 'member-networks')">Member Networks</button>
-                <button class="tab" data-tab="vote-history" onclick="switchTab(event, 'vote-history')">Vote History</button>
-                <button class="tab" data-tab="precinct-votes" onclick="switchTab(event, 'precinct-votes')">Precinct Votes</button>
-                <button class="tab" data-tab="contentious-votes" onclick="switchTab(event, 'contentious-votes')">Closest Votes</button>
-                <button class="tab" data-tab="tmm-history" onclick="switchTab(event, 'tmm-history')">TMM History</button>
-                <button class="tab" type="button" onclick="openPcaInNewTab()">Principal Component Analysis</button>
-            </div>
-            <div id="module-instruction" class="module-instruction"></div>
 
             <!-- Context controls shown for modules that operate on a single session -->
             <div id="module-context-controls" class="controls" style="margin-bottom: 20px;">
@@ -1536,7 +1922,7 @@
                         <option value="Votes/May%202021%20Votes.xlsx">May 2021 Annual Town Meeting (68 votes)</option>
                     </select>
                     <div id="single-session-ai-summary-actions" class="module-ai-summary-actions" style="display: none;">
-                        <button type="button" id="single-session-ai-summary-button" class="module-ai-summary-button">
+                        <button type="button" id="single-session-ai-summary-button" class="module-ai-summary-button" data-tooltip="View an AI-generated summary of this Town Meeting. AI can make mistakes, so verify any important information">
                             Show AI Summary of Meeting
                         </button>
                     </div>
@@ -1599,7 +1985,7 @@
                                 id="member-network-ignore-terminate"
                                 checked
                                 onchange="updateMemberNetworkResults()">
-                            <label for="member-network-ignore-terminate">Ignore motions to terminate debate</label>
+                            <label for="member-network-ignore-terminate" data-tooltip="Procedural motions to terminate debate are generally less consequential and not indicative of how the member will vote on the main issue">Ignore motions to terminate debate</label>
                         </div>
                         <div class="checkbox-group">
                             <input
@@ -1626,6 +2012,37 @@
                 </div>
             </div>
 
+            <!-- TAB: Outlier Votes -->
+            <div id="outlier-votes" class="tab-content">
+                <div class="controls outlier-votes-controls">
+                    <div class="control-group">
+                        <label for="outlier-member-select">Select Member:</label>
+                        <select id="outlier-member-select" onchange="renderOutlierVotes()"></select>
+                    </div>
+                    <div class="checkbox-group">
+                        <input
+                            type="checkbox"
+                            id="outlier-ignore-terminate"
+                            checked
+                            onchange="renderOutlierVotes()">
+                        <label for="outlier-ignore-terminate" data-tooltip="Procedural motions to terminate debate are generally less consequential and not indicative of how the member will vote on the main issue">Ignore motions to terminate debate</label>
+                    </div>
+                    <div class="control-group">
+                        <label for="outlier-peer-group-size">Peer group size:</label>
+                        <select id="outlier-peer-group-size" onchange="renderOutlierVotes()"></select>
+                    </div>
+                    <div class="control-group">
+                        <label for="outlier-min-comparable-peers">Minimum comparable peers:</label>
+                        <select id="outlier-min-comparable-peers" onchange="renderOutlierVotes()"></select>
+                    </div>
+                    <div class="control-group">
+                        <label for="outlier-min-shared-history">Minimum shared vote history:</label>
+                        <select id="outlier-min-shared-history" onchange="renderOutlierVotes()"></select>
+                    </div>
+                </div>
+                <div id="outlier-votes-results" class="vote-history-message">Open this module to load all sessions.</div>
+            </div>
+
             <!-- TAB: Vote History -->
             <div id="vote-history" class="tab-content">
                 <div id="vote-history-results" class="vote-history-message">Open this module to load all sessions.</div>
@@ -1645,7 +2062,7 @@
                             id="contentious-ignore-terminate"
                             checked
                             onchange="renderContentiousVotes()">
-                        <label for="contentious-ignore-terminate">Ignore motions to terminate debate</label>
+                        <label for="contentious-ignore-terminate" data-tooltip="Procedural motions to terminate debate are generally less consequential and not indicative of how the member will vote on the main issue">Ignore motions to terminate debate</label>
                     </div>
                 </div>
                 <div id="contentious-votes-results" class="vote-history-message">Open this module to load all sessions.</div>
@@ -1660,7 +2077,7 @@
                             id="tmm-history-ignore-terminate"
                             checked
                             onchange="renderTmmHistory()">
-                        <label for="tmm-history-ignore-terminate">Ignore motions to terminate debate</label>
+                        <label for="tmm-history-ignore-terminate" data-tooltip="Procedural motions to terminate debate are generally less consequential and not indicative of how the member will vote on the main issue">Ignore motions to terminate debate</label>
                     </div>
                     <div class="checkbox-group">
                         <input
@@ -1672,9 +2089,15 @@
                     </div>
                     <button
                         type="button"
+                        class="tmm-history-export-btn"
+                        onclick="void exportTmmHistoryToExcel()">
+                        Export to Excel
+                    </button>
+                    <button
+                        type="button"
                         class="tmm-history-action-btn"
                         onclick="openTmmEmailsInNewTab()"
-                        title="You will need to log in to the Town website in order to download TMM emails"
+                        data-tooltip="You will need to log in to the Town website in order to download TMM emails"
                         aria-label="TMM emails. You will need to log in to the Town website in order to download TMM emails">
                         TMM emails
                     </button>
@@ -1754,63 +2177,14 @@
                 <p>If you find any bugs or errors, please report them to: robschoen.robschoen at gmail dot com</p>
                 <p class="page-footer-credit">created by Rob Schoen TMM P1 // <a href="https://entangledparticles.xyz/" target="_blank" rel="noopener noreferrer">Entangled Particles</a> // <a href="https://www.longwoodmall.org" target="_blank" rel="noopener noreferrer">www.longwoodmall.org</a></p>
             </div>
-            <a href="https://entangledparticles.xyz/" target="_blank" rel="noopener noreferrer">
-                <img class="page-footer-logo" src="entangledParticlesLogo.jpg" alt="Entangled Particles logo">
-            </a>
         </footer>
         </div>
     </div>
 
 
+    <script src="tm-shared.js"></script>
     <script>
-        /****************************************************
-         * SPREADSHEET STRUCTURE CONFIGURATION
-         ****************************************************/
 
-        const TITLE_ROW_INDEX = 2;
-        const DESCRIPTION_ROW_INDEX = 3;
-        const HEADER_ROW_INDEX = 4;
-        const FIRST_DATA_ROW_INDEX = 5;
-
-        const PRECINCT_COL_INDEX = 0;
-        const NAME_COL_INDEX = 1;
-        const FIRST_VOTE_COL_INDEX = 2;
-        const PRIMARY_VOTE_METADATA_FILE_NAMES = [
-            'AllVotes_categorized.xlsx'
-        ];
-        const VOTE_GUIDE_FILE_NAMES = [
-            'VoteGuide.xlsx',
-            'Vote%20Guide.xlsx',
-            'voteguide.xlsx'
-        ];
-        const MEMBER_ALIASES_FILE_NAMES = [
-            'members_aliases.xlsx',
-            'members%20aliases.xlsx',
-            'member_aliases.xlsx',
-            'MemberAliases.xlsx'
-        ];
-
-        const SPREADSHEET_BASE_URL = 'https://raw.githubusercontent.com/millxing/TM/main/';
-        const DISALLOWED_MEMBER_NAMES = new Set(['YES', 'NO', 'ABSTAIN', 'NO VOTE', 'TOTAL', 'ARTICLE', 'MOTION']);
-        // Fallback alias overrides for known name variants.
-        const DEFAULT_MEMBER_IDENTITY_ALIASES = new Map([
-            ['ingraham, katherine a', 'ingraham, katherine'],
-            ['warren, paul s', 'warren, paul']
-        ]);
-        const SESSION_FILES = [
-            { id: '2021-05', label: 'May 2021 Annual Town Meeting', file: 'Votes/May%202021%20Votes.xlsx' },
-            { id: '2021-10', label: 'October 2021 Special Town Meeting', file: 'Votes/October%202021%20Votes.xlsx' },
-            { id: '2021-11', label: 'November 2021 Special Town Meeting', file: 'Votes/November%202021%20Votes.xlsx' },
-            { id: '2022-05', label: 'May 2022 Annual Town Meeting', file: 'Votes/May%202022%20Votes.xlsx' },
-            { id: '2022-11', label: 'November 2022 Special Town Meeting', file: 'Votes/November%202022%20Votes.xlsx' },
-            { id: '2023-01', label: 'January 2023 Special Town Meeting', file: 'Votes/January%202023%20Votes.xlsx' },
-            { id: '2023-05', label: 'May 2023 Annual Town Meeting', file: 'Votes/May%202023%20Votes.xlsx' },
-            { id: '2023-11', label: 'November 2023 Special Town Meeting', file: 'Votes/November%202023%20Votes.xlsx' },
-            { id: '2024-05', label: 'May 2024 Annual Town Meeting', file: 'Votes/May%202024%20Votes.xlsx' },
-            { id: '2024-11', label: 'November 2024 Special Town Meeting', file: 'Votes/November%202024%20Votes.xlsx' },
-            { id: '2025-05', label: 'May 2025 Annual Town Meeting', file: 'Votes/May%202025%20Votes.xlsx' },
-            { id: '2025-11', label: 'November 2025 Special Town Meeting', file: 'Votes/November%202025%20Votes.xlsx' }
-        ];
         const SESSION_ORDER_INDEX = SESSION_FILES.reduce((acc, session, index) => {
             acc[session.id] = index;
             return acc;
@@ -1835,10 +2209,17 @@
         const STANDARD_PRECINCTS = Array.from({ length: 17 }, (_, idx) => String(idx + 1));
 
         /****************************************************
+         * THRESHOLDS & APP-SPECIFIC CONSTANTS
+         ****************************************************/
+        const DEFAULT_LAST_VOTE_COL = 100;
+        const DEFAULT_MIN_SHARED_SESSIONS = 4;
+        const MAX_CONTENTIOUS_DISPLAY = 100;
+
+        /****************************************************
          * GLOBAL STATE
          ****************************************************/
 
-        let LAST_VOTE_COL_INDEX = 100;
+        let LAST_VOTE_COL_INDEX = DEFAULT_LAST_VOTE_COL;
         let votingData = null;
         let votes = [];
         let members = [];
@@ -1854,6 +2235,7 @@
         let voteHistoryLoadPromise = null;
         let precinctVotesLoadPromise = null;
         let contentiousVotesLoadPromise = null;
+        let outlierVotesLoadPromise = null;
         let tmmHistoryLoadPromise = null;
         let tmmHistorySortState = { key: 'name', direction: 'asc' };
         let memberNetworkProfilesCache = null;
@@ -1861,6 +2243,9 @@
         let memberNetworkLoadPromise = null;
         let memberNetworkCurrentData = null;
         let memberNetworkSortState = { key: 'baseRank', direction: 'asc' };
+        let outlierVotesAnalysisState = null;
+        let outlierVotesControlsInitialized = false;
+        let selectedOutlierMemberKey = '';
 
         let clusteringSessionsCache = null;
         let clusteringLoadPromise = null;
@@ -1870,15 +2255,20 @@
         let selectedClusterMemberKey = null;
         const clusterMemberSearchLabelToKey = new Map();
         const clusterMemberSearchKeyToLabel = new Map();
+        const ENABLE_OUTLIER_VOTES = false;
         const APP_MODE = new URLSearchParams(window.location.search).get('app') === 'vote-analyzer'
             ? 'vote-analyzer'
             : 'tmmvotes';
         const SINGLE_SESSION_MODULE_IDS = new Set(['by-vote', 'by-member']);
 
+        const pageHeaderShellEl = document.getElementById('page-header-shell');
+        const pageHeaderNavEl = document.getElementById('page-header-nav');
+        const pageFooterEl = document.querySelector('.page-footer');
         const loadingEl = document.getElementById('loading');
         const mainContentEl = document.getElementById('main-content');
         const moduleInstructionEl = document.getElementById('module-instruction');
         const moduleContextControlsEl = document.getElementById('module-context-controls');
+        const outlierVotesResultsEl = document.getElementById('outlier-votes-results');
         const memberNetworkStatusEl = document.getElementById('member-network-status');
         const memberNetworkNeighborsEl = document.getElementById('member-network-neighbors');
         const clusterStatusEl = document.getElementById('cluster-status');
@@ -1887,13 +2277,37 @@
         const clusterNeighborsEl = document.getElementById('cluster-neighbors');
         const clusterAxisInfoEl = document.getElementById('cluster-axis-info');
 
+        function syncPinnedLayoutOffsets() {
+            window.requestAnimationFrame(() => {
+                if (pageHeaderShellEl) {
+                    document.documentElement.style.setProperty('--page-header-height', `${pageHeaderShellEl.offsetHeight}px`);
+                }
+
+                if (pageFooterEl) {
+                    document.documentElement.style.setProperty('--page-footer-height', `${pageFooterEl.offsetHeight}px`);
+                }
+            });
+        }
+
+        window.addEventListener('resize', syncPinnedLayoutOffsets);
+        window.addEventListener('load', syncPinnedLayoutOffsets);
+
+        /****************************************************
+         * ERROR HELPERS
+         ****************************************************/
+
+        function handleModuleError(err, containerEl, moduleName) {
+            const message = err && err.message ? err.message : String(err);
+            console.error(`[${moduleName}]`, err);
+            if (containerEl) {
+                containerEl.className = 'vote-history-message';
+                containerEl.textContent = `Error loading ${moduleName}: ${message}`;
+            }
+        }
+
         /****************************************************
          * URL / FILE HELPERS
          ****************************************************/
-
-        function getSpreadsheetRawURL(file) {
-            return `${SPREADSHEET_BASE_URL}${file}`;
-        }
 
         function getSelectedSpreadsheetURL() {
             const select = document.getElementById('spreadsheet-select');
@@ -1995,146 +2409,8 @@
         }
 
         /****************************************************
-         * DATA NORMALIZATION & SORT HELPERS
+         * APP-SPECIFIC SORT & FORMAT HELPERS
          ****************************************************/
-
-        function precinctSortValue(precinct) {
-            const n = parseInt(precinct, 10);
-            if (!isNaN(n)) return n;
-            if (String(precinct).toUpperCase() === 'AL') return 999;
-            return 998;
-        }
-
-        function normalizeVote(raw) {
-            // Keep this contract strict; downstream views assume only these 4 buckets.
-            const value = (raw == null ? '' : String(raw)).trim().toUpperCase();
-            if (!value) return 'NoVote';
-            if (value === 'Y') return 'YES';
-            if (value === 'N') return 'NO';
-            if (value === 'A') return 'ABSTAIN';
-            if (value === 'YES' || value === 'NO' || value === 'ABSTAIN') return value;
-            return 'NoVote';
-        }
-
-        function voteToNumeric(voteValue) {
-            if (voteValue === 'YES') return 1;
-            if (voteValue === 'NO') return -1;
-            if (voteValue === 'ABSTAIN') return 0;
-            return NaN;
-        }
-
-        function normalizeMemberName(name) {
-            return String(name || '').trim().toLowerCase().replace(/\s+/g, ' ');
-        }
-
-        function normalizeMemberAliasToken(name) {
-            return normalizeMemberName(name)
-                .replace(/\./g, '')
-                .replace(/\s*,\s*/g, ', ')
-                .replace(/\s+/g, ' ')
-                .trim();
-        }
-
-        function reorderNameIfLikelyFirstLast(normalizedName) {
-            if (!normalizedName || normalizedName.includes(',')) return '';
-            const tokens = normalizedName.split(/\s+/).filter(Boolean);
-            if (tokens.length < 2) return '';
-
-            const suffixPattern = /^(jr|sr|ii|iii|iv|v|vi)$/i;
-            let suffix = '';
-            if (tokens.length > 2 && suffixPattern.test(tokens[tokens.length - 1])) {
-                suffix = tokens.pop();
-            }
-
-            const last = tokens.pop();
-            if (!last || tokens.length === 0) return '';
-            const given = suffix ? [...tokens, suffix] : tokens;
-            return `${last}, ${given.join(' ')}`.replace(/\s+/g, ' ').trim();
-        }
-
-        function stripLikelyMiddleInitials(normalizedName) {
-            if (!normalizedName) return '';
-
-            if (normalizedName.includes(',')) {
-                const parts = normalizedName.split(',');
-                const last = (parts[0] || '').trim();
-                const given = (parts.slice(1).join(',') || '').trim();
-                if (!given) return last;
-
-                const tokens = given
-                    .replace(/\./g, '')
-                    .split(/\s+/)
-                    .filter(Boolean);
-
-                if (tokens.length > 1 && /^[a-z]$/.test(tokens[tokens.length - 1])) {
-                    tokens.pop();
-                }
-
-                return `${last}, ${tokens.join(' ')}`.replace(/\s+/g, ' ').trim();
-            }
-
-            const tokens = normalizedName
-                .replace(/\./g, '')
-                .split(/\s+/)
-                .filter(Boolean);
-
-            if (tokens.length > 1 && /^[a-z]$/.test(tokens[tokens.length - 1])) {
-                tokens.pop();
-            } else if (tokens.length === 3 && /^[a-z]$/.test(tokens[1])) {
-                tokens.splice(1, 1);
-            }
-
-            return tokens.join(' ');
-        }
-
-        function canonicalMemberIdentityName(name) {
-            const normalized = normalizeMemberAliasToken(name);
-            if (!normalized) return '';
-
-            const candidates = [];
-            const pushCandidate = value => {
-                const token = normalizeMemberAliasToken(value);
-                if (token && !candidates.includes(token)) candidates.push(token);
-            };
-
-            pushCandidate(normalized);
-            pushCandidate(stripLikelyMiddleInitials(normalized));
-
-            const reordered = reorderNameIfLikelyFirstLast(normalized);
-            if (reordered) {
-                pushCandidate(reordered);
-                pushCandidate(stripLikelyMiddleInitials(reordered));
-            }
-
-            for (const candidate of candidates) {
-                const mapped = memberIdentityAliases.get(candidate);
-                if (mapped) return mapped;
-            }
-
-            return candidates[1] || candidates[0];
-        }
-
-        function preferDisplayName(existingName, incomingName) {
-            const existing = String(existingName || '').trim();
-            const incoming = String(incomingName || '').trim();
-            if (!existing) return incoming;
-            if (!incoming) return existing;
-            if (incoming.length < existing.length) return incoming;
-            return existing;
-        }
-
-        function summarizePrecinctSet(precinctSet) {
-            const items = Array.from(precinctSet || []).filter(Boolean);
-            if (items.length === 0) return '';
-            if (items.length === 1) return items[0];
-            if (items.includes('AL')) return 'AL';
-            const numeric = items
-                .map(value => parseInt(value, 10))
-                .filter(value => !isNaN(value))
-                .sort((a, b) => a - b);
-            if (numeric.length > 0) return String(numeric[0]);
-            return items[0];
-        }
 
         function getSessionOrderIndex(sessionId) {
             return SESSION_ORDER_INDEX[sessionId] !== undefined ? SESSION_ORDER_INDEX[sessionId] : -1;
@@ -2143,12 +2419,6 @@
         function getSessionYear(sessionId) {
             const match = String(sessionId || '').trim().match(/^(\d{4})-/);
             return match ? match[1] : '';
-        }
-
-        function canonicalMemberKey(name, precinct) {
-            // Cross-session identity intentionally ignores precinct so redistricting/AL service doesn't split members.
-            void precinct;
-            return canonicalMemberIdentityName(name);
         }
 
         function formatPrecinctLabel(precinct) {
@@ -2196,10 +2466,6 @@
             return parts[parts.length - 1].toLowerCase();
         }
 
-        function isTerminateDebateVote(title) {
-            return String(title || '').toLowerCase().includes('terminate debate');
-        }
-
         function normalizeVoteResult(value) {
             const text = String(value || '').trim().toUpperCase();
             if (!text) return '';
@@ -2238,58 +2504,6 @@
                 if (voteResult) resultsByCol[col] = voteResult;
             }
             return resultsByCol;
-        }
-
-        function normalizeVoteTitleForMatch(title) {
-            return String(title || '')
-                .toLowerCase()
-                .replace(/\s+/g, ' ')
-                .trim();
-        }
-
-        function buildVoteGuideKey(sessionId, voteTitle) {
-            return `${sessionId}||${normalizeVoteTitleForMatch(voteTitle)}`;
-        }
-
-        function normalizeVoteTitleForLooseMatch(title) {
-            return normalizeVoteTitleForMatch(title)
-                .replace(/\barticles\b/g, 'article')
-                .replace(/\bmain motion\b/g, 'motion')
-                .replace(/\s+/g, ' ')
-                .trim();
-        }
-
-        function buildLooseVoteGuideKey(sessionId, voteTitle) {
-            return `${sessionId}||${normalizeVoteTitleForLooseMatch(voteTitle)}`;
-        }
-
-        function getSessionIdFromGuideLabel(sessionLabel) {
-            const normalized = String(sessionLabel || '').toLowerCase().trim();
-            if (!normalized) return null;
-
-            // Prefer exact known labels from SESSION_FILES before parsing month/year text.
-            const direct = SESSION_FILES.find(session =>
-                normalized.includes(session.label.toLowerCase())
-            );
-            if (direct) return direct.id;
-
-            const match = normalized.match(/\b(january|may|october|november)\s+(20\d{2})\b/i);
-            if (!match) return null;
-
-            const monthMap = { january: '01', may: '05', october: '10', november: '11' };
-            const month = monthMap[match[1].toLowerCase()];
-            const year = match[2];
-            const candidate = `${year}-${month}`;
-            return SESSION_ORDER_INDEX[candidate] !== undefined ? candidate : null;
-        }
-
-        function getVoteGuideDetails(sessionId, voteTitle) {
-            if (!sessionId || voteGuideBySessionAndVote.size === 0) return null;
-            return (
-                voteGuideBySessionAndVote.get(buildVoteGuideKey(sessionId, voteTitle)) ||
-                voteGuideBySessionAndLooseVote.get(buildLooseVoteGuideKey(sessionId, voteTitle)) ||
-                null
-            );
         }
 
         function buildArticleLinksElement(links) {
@@ -2614,7 +2828,7 @@
         }
 
         function createTmmHistoryColGroup() {
-            const widths = [220, 120, 150, 108, 108, 108, 108, 108];
+            const widths = [180, 90, 120, 120, 120, 120, 120, 120];
             const colGroup = document.createElement('colgroup');
             widths.forEach(width => {
                 const col = document.createElement('col');
@@ -2706,14 +2920,22 @@
             });
         }
 
-        function renderTmmHistory() {
-            const container = document.getElementById('tmm-history-results');
-            if (!container) return;
+        function getTmmHistoryHeaders() {
+            return [
+                { text: 'Name', className: '', key: 'name' },
+                { text: 'Precincts', className: '', key: 'precincts' },
+                { text: 'Years Active', className: '', key: 'years' },
+                { text: 'Total Votes Eligible', className: 'num-col', key: 'totalEligible' },
+                { text: 'Votes in the Majority', className: 'num-col', key: 'majorityVotes' },
+                { text: 'Votes in the Minority', className: 'num-col', key: 'minorityVotes' },
+                { text: 'Abstentions', className: 'num-col', key: 'abstentions' },
+                { text: 'Not Present', className: 'num-col', key: 'notPresent' }
+            ];
+        }
 
+        function getCurrentTmmHistoryViewState() {
             if (!Array.isArray(voteHistorySessionsCache) || voteHistorySessionsCache.length === 0) {
-                container.className = 'vote-history-message';
-                container.textContent = 'TMM History is unavailable.';
-                return;
+                return null;
             }
 
             const ignoreTerminateCheckbox = document.getElementById('tmm-history-ignore-terminate');
@@ -2721,12 +2943,6 @@
             const showPercentagesCheckbox = document.getElementById('tmm-history-show-percentages');
             const showPercentages = showPercentagesCheckbox ? showPercentagesCheckbox.checked : true;
             const rows = buildTmmHistoryRows(voteHistorySessionsCache, ignoreTerminate);
-
-            if (rows.length === 0) {
-                container.className = 'vote-history-message';
-                container.textContent = 'No Town Meeting members were found in the available sessions.';
-                return;
-            }
 
             const sortKey = tmmHistorySortState.key || 'name';
             const direction = tmmHistorySortState.direction === 'desc' ? -1 : 1;
@@ -2746,6 +2962,76 @@
                 return a.name.localeCompare(b.name);
             });
 
+            return {
+                rows,
+                showPercentages,
+                sortKey,
+                direction,
+                headers: getTmmHistoryHeaders()
+            };
+        }
+
+        async function exportTmmHistoryToExcel() {
+            if (typeof XLSX === 'undefined') {
+                window.alert('Excel export is unavailable because the XLSX library did not load.');
+                return;
+            }
+
+            if (!Array.isArray(voteHistorySessionsCache) || voteHistorySessionsCache.length === 0) {
+                await ensureTmmHistoryDataLoaded();
+            }
+
+            const viewState = getCurrentTmmHistoryViewState();
+            if (!viewState || !Array.isArray(viewState.rows) || viewState.rows.length === 0) {
+                window.alert('There is no TMM History data to export.');
+                return;
+            }
+
+            const headerRow = viewState.headers.map(header => header.text);
+            const dataRows = viewState.rows.map(row => {
+                const percentageBreakdown = viewState.showPercentages
+                    ? buildTmmHistoryPercentageBreakdown(row)
+                    : null;
+
+                return [
+                    row.name || '—',
+                    formatPrecinctHistoryList(row.precincts),
+                    formatYearList(row.years),
+                    row.totalEligible,
+                    viewState.showPercentages ? percentageBreakdown.majorityVotes : row.majorityVotes,
+                    viewState.showPercentages ? percentageBreakdown.minorityVotes : row.minorityVotes,
+                    viewState.showPercentages ? percentageBreakdown.abstentions : row.abstentions,
+                    viewState.showPercentages ? percentageBreakdown.notPresent : row.notPresent
+                ];
+            });
+
+            const worksheet = XLSX.utils.aoa_to_sheet([headerRow, ...dataRows]);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, 'TMM History');
+
+            const stamp = new Date().toISOString().slice(0, 10);
+            XLSX.writeFile(workbook, `tmm_history_${stamp}.xlsx`);
+        }
+
+        function renderTmmHistory() {
+            const container = document.getElementById('tmm-history-results');
+            if (!container) return;
+
+            const viewState = getCurrentTmmHistoryViewState();
+            if (!viewState) {
+                container.className = 'vote-history-message';
+                container.textContent = 'TMM History is unavailable.';
+                return;
+            }
+
+            const { rows, showPercentages, sortKey, direction, headers } = viewState;
+
+            if (rows.length === 0) {
+                container.className = 'vote-history-message';
+                container.textContent = 'No Town Meeting members were found in the available sessions.';
+                return;
+            }
+
             container.replaceChildren();
             container.className = '';
 
@@ -2760,17 +3046,6 @@
             tableHeaderEl.className = 'tmm-history-table-header';
             const tableScrollerEl = document.createElement('div');
             tableScrollerEl.className = 'tmm-history-table-scroller';
-
-            const headers = [
-                { text: 'Name', className: '', key: 'name' },
-                { text: 'Precincts', className: '', key: 'precincts' },
-                { text: 'Years Active', className: '', key: 'years' },
-                { text: 'Total Votes Eligible', className: 'num-col', key: 'totalEligible' },
-                { text: 'Votes in the Majority', className: 'num-col', key: 'majorityVotes' },
-                { text: 'Votes in the Minority', className: 'num-col', key: 'minorityVotes' },
-                { text: 'Abstentions', className: 'num-col', key: 'abstentions' },
-                { text: 'Not Present', className: 'num-col', key: 'notPresent' }
-            ];
 
             const headerTableEl = document.createElement('table');
             headerTableEl.className = 'tmm-history-table';
@@ -2910,6 +3185,7 @@
                     aiSummaryButtonEl.type = 'button';
                     aiSummaryButtonEl.className = 'meeting-ai-summary-button';
                     aiSummaryButtonEl.textContent = 'Show AI Summary of Meeting';
+                    aiSummaryButtonEl.dataset.tooltip = 'View an AI-generated summary of this Town Meeting. AI can make mistakes, so verify any important information';
                     aiSummaryButtonEl.addEventListener('click', () => {
                         window.open(aiSummaryFile, '_blank', 'noopener');
                     });
@@ -2998,51 +3274,43 @@
             });
         }
 
-        async function ensureVoteHistoryDataLoaded() {
-            const container = document.getElementById('vote-history-results');
-            if (!container) return;
-
-            // Reuse already-loaded session data whenever possible.
-            if (voteHistorySessionsCache) {
-                renderVoteHistory();
-                return;
-            }
-
+        /**
+         * Shared session-loading helper used by all cross-session modules.
+         * Returns the cached session array, loading from network only if needed.
+         * Avoids duplicate fetches by checking all pending load promises.
+         */
+        async function ensureAllSessionsLoaded(moduleName, onProgress) {
+            // Return from either cache.
+            if (voteHistorySessionsCache) return voteHistorySessionsCache;
             if (clusteringSessionsCache) {
                 voteHistorySessionsCache = clusteringSessionsCache;
-                renderVoteHistory();
-                return;
+                return voteHistorySessionsCache;
             }
 
-            if (voteHistoryLoadPromise) {
-                await voteHistoryLoadPromise;
-                return;
-            }
-            // Avoid duplicate network fetches when another module is already loading all sessions.
-            if (precinctVotesLoadPromise) {
-                await precinctVotesLoadPromise;
-                if (voteHistorySessionsCache) {
-                    renderVoteHistory();
-                    return;
-                }
-            }
+            // Wait on any in-flight load from another module.
+            const pendingPromise = voteHistoryLoadPromise
+                || precinctVotesLoadPromise
+                || contentiousVotesLoadPromise
+                || tmmHistoryLoadPromise
+                || memberNetworkLoadPromise
+                || outlierVotesLoadPromise
+                || clusteringLoadPromise;
 
-            if (clusteringLoadPromise) {
-                await clusteringLoadPromise;
+            if (pendingPromise) {
+                await pendingPromise;
+                if (voteHistorySessionsCache) return voteHistorySessionsCache;
                 if (clusteringSessionsCache) {
                     voteHistorySessionsCache = clusteringSessionsCache;
-                    renderVoteHistory();
-                    return;
+                    return voteHistorySessionsCache;
                 }
             }
 
+            // No cached data and no in-flight load — perform the actual fetch.
             let loadedCount = 0;
             const total = SESSION_FILES.length;
-            container.className = 'vote-history-message';
-            container.textContent = `Loading Vote History (0 of ${total})...`;
+            onProgress(`Loading ${moduleName} (0 of ${total})...`);
 
-            // Fetch every configured session once, then cache for other cross-session modules.
-            voteHistoryLoadPromise = Promise.all(
+            const results = await Promise.all(
                 SESSION_FILES.map(async session => {
                     try {
                         return await fetchAndParseSpreadsheet(session);
@@ -3050,21 +3318,27 @@
                         throw new Error(`${session.label}: ${err.message}`);
                     } finally {
                         loadedCount += 1;
-                        container.textContent = `Loading Vote History (${loadedCount} of ${total})...`;
+                        onProgress(`Loading ${moduleName} (${loadedCount} of ${total})...`);
                     }
                 })
-            ).then(results => {
-                voteHistorySessionsCache = results;
-                if (!clusteringSessionsCache) clusteringSessionsCache = results;
-                renderVoteHistory();
-            }).catch(err => {
-                console.error(err);
-                container.className = 'vote-history-message';
-                container.textContent = `Error loading Vote History: ${err.message}`;
-            }).finally(() => {
-                voteHistoryLoadPromise = null;
-            });
+            );
 
+            voteHistorySessionsCache = results;
+            if (!clusteringSessionsCache) clusteringSessionsCache = results;
+            return results;
+        }
+
+        async function ensureVoteHistoryDataLoaded() {
+            const container = document.getElementById('vote-history-results');
+            if (!container) return;
+
+            if (voteHistorySessionsCache) { renderVoteHistory(); return; }
+
+            container.className = 'vote-history-message';
+            voteHistoryLoadPromise = ensureAllSessionsLoaded('Vote History', msg => { container.textContent = msg; })
+                .then(() => renderVoteHistory())
+                .catch(err => handleModuleError(err, container, 'Vote History'))
+                .finally(() => { voteHistoryLoadPromise = null; });
             await voteHistoryLoadPromise;
         }
 
@@ -3110,6 +3384,7 @@
                     aiSummaryButtonEl.type = 'button';
                     aiSummaryButtonEl.className = 'meeting-ai-summary-button';
                     aiSummaryButtonEl.textContent = 'Show AI Summary of Meeting';
+                    aiSummaryButtonEl.dataset.tooltip = 'View an AI-generated summary of this Town Meeting. AI can make mistakes, so verify any important information';
                     aiSummaryButtonEl.addEventListener('click', () => {
                         window.open(aiSummaryFile, '_blank', 'noopener');
                     });
@@ -3216,68 +3491,13 @@
             const container = document.getElementById('precinct-votes-results');
             if (!container) return;
 
-            if (voteHistorySessionsCache) {
-                renderPrecinctVotes();
-                return;
-            }
+            if (voteHistorySessionsCache) { renderPrecinctVotes(); return; }
 
-            if (clusteringSessionsCache) {
-                voteHistorySessionsCache = clusteringSessionsCache;
-                renderPrecinctVotes();
-                return;
-            }
-
-            if (precinctVotesLoadPromise) {
-                await precinctVotesLoadPromise;
-                return;
-            }
-
-            // Reuse shared cache if Vote History or Clustering already loaded all sessions.
-            if (voteHistoryLoadPromise) {
-                await voteHistoryLoadPromise;
-                if (voteHistorySessionsCache) {
-                    renderPrecinctVotes();
-                    return;
-                }
-            }
-
-            if (clusteringLoadPromise) {
-                await clusteringLoadPromise;
-                if (clusteringSessionsCache) {
-                    voteHistorySessionsCache = clusteringSessionsCache;
-                    renderPrecinctVotes();
-                    return;
-                }
-            }
-
-            let loadedCount = 0;
-            const total = SESSION_FILES.length;
             container.className = 'vote-history-message';
-            container.textContent = `Loading Precinct Votes (0 of ${total})...`;
-
-            precinctVotesLoadPromise = Promise.all(
-                SESSION_FILES.map(async session => {
-                    try {
-                        return await fetchAndParseSpreadsheet(session);
-                    } catch (err) {
-                        throw new Error(`${session.label}: ${err.message}`);
-                    } finally {
-                        loadedCount += 1;
-                        container.textContent = `Loading Precinct Votes (${loadedCount} of ${total})...`;
-                    }
-                })
-            ).then(results => {
-                voteHistorySessionsCache = results;
-                if (!clusteringSessionsCache) clusteringSessionsCache = results;
-                renderPrecinctVotes();
-            }).catch(err => {
-                console.error(err);
-                container.className = 'vote-history-message';
-                container.textContent = `Error loading Precinct Votes: ${err.message}`;
-            }).finally(() => {
-                precinctVotesLoadPromise = null;
-            });
-
+            precinctVotesLoadPromise = ensureAllSessionsLoaded('Precinct Votes', msg => { container.textContent = msg; })
+                .then(() => renderPrecinctVotes())
+                .catch(err => handleModuleError(err, container, 'Precinct Votes'))
+                .finally(() => { precinctVotesLoadPromise = null; });
             await precinctVotesLoadPromise;
         }
 
@@ -3427,75 +3647,13 @@
             const container = document.getElementById('contentious-votes-results');
             if (!container) return;
 
-            if (voteHistorySessionsCache) {
-                renderContentiousVotes();
-                return;
-            }
+            if (voteHistorySessionsCache) { renderContentiousVotes(); return; }
 
-            if (clusteringSessionsCache) {
-                voteHistorySessionsCache = clusteringSessionsCache;
-                renderContentiousVotes();
-                return;
-            }
-
-            if (contentiousVotesLoadPromise) {
-                await contentiousVotesLoadPromise;
-                return;
-            }
-
-            if (voteHistoryLoadPromise) {
-                await voteHistoryLoadPromise;
-                if (voteHistorySessionsCache) {
-                    renderContentiousVotes();
-                    return;
-                }
-            }
-
-            if (precinctVotesLoadPromise) {
-                await precinctVotesLoadPromise;
-                if (voteHistorySessionsCache) {
-                    renderContentiousVotes();
-                    return;
-                }
-            }
-
-            if (clusteringLoadPromise) {
-                await clusteringLoadPromise;
-                if (clusteringSessionsCache) {
-                    voteHistorySessionsCache = clusteringSessionsCache;
-                    renderContentiousVotes();
-                    return;
-                }
-            }
-
-            let loadedCount = 0;
-            const total = SESSION_FILES.length;
             container.className = 'vote-history-message';
-            container.textContent = `Loading Closest Votes (0 of ${total})...`;
-
-            contentiousVotesLoadPromise = Promise.all(
-                SESSION_FILES.map(async session => {
-                    try {
-                        return await fetchAndParseSpreadsheet(session);
-                    } catch (err) {
-                        throw new Error(`${session.label}: ${err.message}`);
-                    } finally {
-                        loadedCount += 1;
-                        container.textContent = `Loading Closest Votes (${loadedCount} of ${total})...`;
-                    }
-                })
-            ).then(results => {
-                voteHistorySessionsCache = results;
-                if (!clusteringSessionsCache) clusteringSessionsCache = results;
-                renderContentiousVotes();
-            }).catch(err => {
-                console.error(err);
-                container.className = 'vote-history-message';
-                container.textContent = `Error loading Closest Votes: ${err.message}`;
-            }).finally(() => {
-                contentiousVotesLoadPromise = null;
-            });
-
+            contentiousVotesLoadPromise = ensureAllSessionsLoaded('Closest Votes', msg => { container.textContent = msg; })
+                .then(() => renderContentiousVotes())
+                .catch(err => handleModuleError(err, container, 'Closest Votes'))
+                .finally(() => { contentiousVotesLoadPromise = null; });
             await contentiousVotesLoadPromise;
         }
 
@@ -3503,136 +3661,19 @@
             const container = document.getElementById('tmm-history-results');
             if (!container) return;
 
-            if (voteHistorySessionsCache) {
-                renderTmmHistory();
-                return;
-            }
+            if (voteHistorySessionsCache) { renderTmmHistory(); return; }
 
-            if (clusteringSessionsCache) {
-                voteHistorySessionsCache = clusteringSessionsCache;
-                renderTmmHistory();
-                return;
-            }
-
-            if (tmmHistoryLoadPromise) {
-                await tmmHistoryLoadPromise;
-                return;
-            }
-
-            if (voteHistoryLoadPromise) {
-                await voteHistoryLoadPromise;
-                if (voteHistorySessionsCache) {
-                    renderTmmHistory();
-                    return;
-                }
-            }
-
-            if (precinctVotesLoadPromise) {
-                await precinctVotesLoadPromise;
-                if (voteHistorySessionsCache) {
-                    renderTmmHistory();
-                    return;
-                }
-            }
-
-            if (contentiousVotesLoadPromise) {
-                await contentiousVotesLoadPromise;
-                if (voteHistorySessionsCache) {
-                    renderTmmHistory();
-                    return;
-                }
-            }
-
-            if (memberNetworkLoadPromise) {
-                await memberNetworkLoadPromise;
-                if (voteHistorySessionsCache) {
-                    renderTmmHistory();
-                    return;
-                }
-            }
-
-            if (clusteringLoadPromise) {
-                await clusteringLoadPromise;
-                if (clusteringSessionsCache) {
-                    voteHistorySessionsCache = clusteringSessionsCache;
-                    renderTmmHistory();
-                    return;
-                }
-            }
-
-            let loadedCount = 0;
-            const total = SESSION_FILES.length;
             container.className = 'vote-history-message';
-            container.textContent = `Loading TMM History (0 of ${total})...`;
-
-            tmmHistoryLoadPromise = Promise.all(
-                SESSION_FILES.map(async session => {
-                    try {
-                        return await fetchAndParseSpreadsheet(session);
-                    } catch (err) {
-                        throw new Error(`${session.label}: ${err.message}`);
-                    } finally {
-                        loadedCount += 1;
-                        container.textContent = `Loading TMM History (${loadedCount} of ${total})...`;
-                    }
-                })
-            ).then(results => {
-                voteHistorySessionsCache = results;
-                if (!clusteringSessionsCache) clusteringSessionsCache = results;
-                renderTmmHistory();
-            }).catch(err => {
-                console.error(err);
-                container.className = 'vote-history-message';
-                container.textContent = `Error loading TMM History: ${err.message}`;
-            }).finally(() => {
-                tmmHistoryLoadPromise = null;
-            });
-
+            tmmHistoryLoadPromise = ensureAllSessionsLoaded('TMM History', msg => { container.textContent = msg; })
+                .then(() => renderTmmHistory())
+                .catch(err => handleModuleError(err, container, 'TMM History'))
+                .finally(() => { tmmHistoryLoadPromise = null; });
             await tmmHistoryLoadPromise;
         }
 
         /****************************************************
          * LOADING & PARSING EXCEL
          ****************************************************/
-
-        function parseMemberAliasesRows(rows) {
-            const aliasMap = new Map();
-            const canonicalDisplayNames = new Map();
-            if (!Array.isArray(rows) || rows.length === 0) {
-                return { aliasMap, canonicalDisplayNames };
-            }
-
-            const firstCol = String(((rows[0] || [])[0]) || '').trim().toLowerCase();
-            const secondCol = String(((rows[0] || [])[1]) || '').trim().toLowerCase();
-            const hasHeaderRow =
-                (firstCol.includes('canonical') || firstCol === 'name') &&
-                secondCol.includes('alias');
-            const startRow = hasHeaderRow ? 1 : 0;
-
-            for (let r = startRow; r < rows.length; r++) {
-                const row = rows[r] || [];
-                const canonicalRaw = String(row[0] || '').trim();
-                const aliasesRaw = String(row[1] || '').trim();
-                if (!canonicalRaw) continue;
-
-                const canonical = normalizeMemberAliasToken(canonicalRaw);
-                if (!canonical) continue;
-                if (!canonicalDisplayNames.has(canonical)) {
-                    canonicalDisplayNames.set(canonical, canonicalRaw);
-                }
-
-                aliasMap.set(canonical, canonical);
-                if (!aliasesRaw) continue;
-
-                aliasesRaw
-                    .split('::')
-                    .map(token => normalizeMemberAliasToken(token))
-                    .filter(Boolean)
-                    .forEach(alias => aliasMap.set(alias, canonical));
-            }
-
-            return { aliasMap, canonicalDisplayNames };
-        }
 
         async function ensureMemberAliasesLoaded() {
             if (memberAliasesLoadComplete) return;
@@ -4069,8 +4110,7 @@
                 // Rebuild UI from fresh in-memory state after every spreadsheet load.
                 initializeApp();
             } catch (err) {
-                console.error(err);
-                if (loadingEl) loadingEl.textContent = `Error loading spreadsheet: ${err.message}`;
+                handleModuleError(err, loadingEl, 'Spreadsheet');
             }
         }
 
@@ -4090,7 +4130,9 @@
             updateSingleSessionAISummaryButtons();
 
             if (loadingEl) loadingEl.style.display = 'none';
+            if (pageHeaderNavEl) pageHeaderNavEl.style.display = 'block';
             if (mainContentEl) mainContentEl.style.display = 'block';
+            syncPinnedLayoutOffsets();
 
             if (votes.length > 0) {
                 const voteSelect = document.getElementById('vote-select');
@@ -4126,7 +4168,7 @@
                 return a.name.localeCompare(b.name);
             });
 
-            memberSelect.innerHTML = '';
+            memberSelect.replaceChildren();
             sortedMembers.forEach(member => {
                 const option = document.createElement('option');
                 option.value = member.key;
@@ -4145,7 +4187,7 @@
             const voteSelect = document.getElementById('vote-select');
             if (!voteSelect) return;
 
-            voteSelect.innerHTML = '';
+            voteSelect.replaceChildren();
             votes.forEach(vote => {
                 const option = document.createElement('option');
                 option.value = vote.title;
@@ -4193,6 +4235,7 @@
                 loadingEl.style.display = 'block';
                 loadingEl.textContent = 'Loading voting data...';
             }
+            if (pageHeaderNavEl) pageHeaderNavEl.style.display = 'none';
             if (mainContentEl) mainContentEl.style.display = 'none';
 
             // Required full reset before loading a different meeting spreadsheet.
@@ -4830,7 +4873,7 @@
                     populateMemberNetworkDropdown();
                     updateMemberNetworkResults();
                 } catch (err) {
-                    console.error(err);
+                    handleModuleError(err, null, 'Member Networks');
                     memberNetworkProfilesCache = null;
                     memberNetworkProfileByKey = new Map();
                     setMemberNetworkStatus(`Error loading member network data: ${err.message}`, true);
@@ -4893,7 +4936,7 @@
             const selectedProfile = memberNetworkProfileByKey.get(selectedMemberKey);
             const selectedSessionCount = selectedProfile.sessions ? selectedProfile.sessions.size : 0;
 
-            if (selectedSessionCount < 4) {
+            if (selectedSessionCount < DEFAULT_MIN_SHARED_SESSIONS) {
                 return {
                     selectedProfile,
                     selectedMemberKey,
@@ -5155,6 +5198,787 @@
         }
 
         /****************************************************
+         * OUTLIER VOTES — DISABLED (ENABLE_OUTLIER_VOTES = false)
+         * This feature is complete but disabled.
+         * Set ENABLE_OUTLIER_VOTES = true to re-enable.
+         ****************************************************/
+
+        function getOutlierVotesSessionData() {
+            if (Array.isArray(voteHistorySessionsCache) && voteHistorySessionsCache.length > 0) {
+                return voteHistorySessionsCache;
+            }
+            if (Array.isArray(clusteringSessionsCache) && clusteringSessionsCache.length > 0) {
+                return clusteringSessionsCache;
+            }
+            return null;
+        }
+
+        function setOutlierVotesStatus(message, isError = false) {
+            if (!outlierVotesResultsEl) return;
+            outlierVotesResultsEl.className = 'vote-history-message';
+            outlierVotesResultsEl.textContent = message;
+            outlierVotesResultsEl.classList.toggle('error', isError);
+        }
+
+        function initializeOutlierVotesControls() {
+            if (outlierVotesControlsInitialized) return;
+
+            const peerGroupSelect = document.getElementById('outlier-peer-group-size');
+            const minComparableSelect = document.getElementById('outlier-min-comparable-peers');
+            const minSharedHistorySelect = document.getElementById('outlier-min-shared-history');
+            if (!peerGroupSelect || !minComparableSelect || !minSharedHistorySelect) return;
+
+            [5, 6, 7, 8, 9, 10, 12].forEach(value => {
+                const option = document.createElement('option');
+                option.value = String(value);
+                option.textContent = String(value);
+                if (value === 8) option.selected = true;
+                peerGroupSelect.appendChild(option);
+            });
+
+            [3, 4, 5, 6, 7, 8, 9, 10, 12].forEach(value => {
+                const option = document.createElement('option');
+                option.value = String(value);
+                option.textContent = String(value);
+                if (value === 5) option.selected = true;
+                minComparableSelect.appendChild(option);
+            });
+
+            [8, 10, 12, 15, 18, 20, 24, 30].forEach(value => {
+                const option = document.createElement('option');
+                option.value = String(value);
+                option.textContent = String(value);
+                if (value === 12) option.selected = true;
+                minSharedHistorySelect.appendChild(option);
+            });
+
+            outlierVotesControlsInitialized = true;
+            syncOutlierVotesComparableOptions();
+        }
+
+        function syncOutlierVotesComparableOptions() {
+            const peerGroupSelect = document.getElementById('outlier-peer-group-size');
+            const minComparableSelect = document.getElementById('outlier-min-comparable-peers');
+            if (!peerGroupSelect || !minComparableSelect) return;
+
+            const peerGroupSize = Number(peerGroupSelect.value) || 8;
+            const currentValue = Number(minComparableSelect.value) || 5;
+
+            Array.from(minComparableSelect.options).forEach(option => {
+                option.disabled = Number(option.value) > peerGroupSize;
+            });
+
+            if (currentValue > peerGroupSize) {
+                minComparableSelect.value = String(peerGroupSize);
+            }
+        }
+
+        function getOutlierVotesOptions() {
+            initializeOutlierVotesControls();
+
+            const ignoreTerminateCheckbox = document.getElementById('outlier-ignore-terminate');
+            const peerGroupSelect = document.getElementById('outlier-peer-group-size');
+            const minComparableSelect = document.getElementById('outlier-min-comparable-peers');
+            const minSharedHistorySelect = document.getElementById('outlier-min-shared-history');
+
+            const peerGroupSize = Number(peerGroupSelect && peerGroupSelect.value) || 8;
+            const minComparablePeers = Math.min(
+                Number(minComparableSelect && minComparableSelect.value) || 5,
+                peerGroupSize
+            );
+
+            return {
+                ignoreTerminateDebate: ignoreTerminateCheckbox ? ignoreTerminateCheckbox.checked : true,
+                peerGroupSize,
+                minComparablePeers,
+                minSharedVoteHistory: Number(minSharedHistorySelect && minSharedHistorySelect.value) || 12
+            };
+        }
+
+        function buildOutlierVotesContext(sessionDataList) {
+            const voteMetaById = new Map();
+            const meetingMajorityByVoteId = new Map();
+            const precinctCountsByVoteId = new Map();
+
+            (sessionDataList || []).forEach(session => {
+                if (!session) return;
+
+                (session.votes || []).forEach(vote => {
+                    if (!vote) return;
+                    voteMetaById.set(vote.id, vote);
+                    meetingMajorityByVoteId.set(vote.id, getMajorityVoteValue(computeVoteBreakdownFromSession(session, vote)));
+                });
+
+                Object.values(session.canonicalMembers || {}).forEach(memberEntry => {
+                    const precinctKey = String(memberEntry && memberEntry.precinct || '').trim().toUpperCase();
+                    if (!precinctKey) return;
+
+                    Object.entries(memberEntry.votesById || {}).forEach(([voteId, voteValue]) => {
+                        const normalizedVote = normalizeVote(voteValue);
+                        if (normalizedVote !== 'YES' && normalizedVote !== 'NO') return;
+
+                        if (!precinctCountsByVoteId.has(voteId)) {
+                            precinctCountsByVoteId.set(voteId, new Map());
+                        }
+                        const precinctMap = precinctCountsByVoteId.get(voteId);
+                        if (!precinctMap.has(precinctKey)) {
+                            precinctMap.set(precinctKey, { YES: 0, NO: 0 });
+                        }
+                        precinctMap.get(precinctKey)[normalizedVote] += 1;
+                    });
+                });
+            });
+
+            return {
+                voteMetaById,
+                meetingMajorityByVoteId,
+                precinctCountsByVoteId
+            };
+        }
+
+        function getOutlierPrecinctComparison(profile, voteId, memberVote, precinctCountsByVoteId) {
+            const precinctKey = String(profile && profile.precinct || '').trim().toUpperCase();
+            if (!precinctKey || memberVote !== 'YES' && memberVote !== 'NO') {
+                return { qualifies: false, againstMajority: false, peerYes: 0, peerNo: 0 };
+            }
+
+            const precinctMap = precinctCountsByVoteId.get(voteId);
+            if (!precinctMap || !precinctMap.has(precinctKey)) {
+                return { qualifies: false, againstMajority: false, peerYes: 0, peerNo: 0 };
+            }
+
+            let yes = Number(precinctMap.get(precinctKey).YES) || 0;
+            let no = Number(precinctMap.get(precinctKey).NO) || 0;
+            if (memberVote === 'YES') yes = Math.max(0, yes - 1);
+            if (memberVote === 'NO') no = Math.max(0, no - 1);
+
+            const comparablePeers = yes + no;
+            if (comparablePeers < 2) {
+                return { qualifies: false, againstMajority: false, peerYes: yes, peerNo: no };
+            }
+
+            const majorityVote = yes > no ? 'YES' : (no > yes ? 'NO' : '');
+            return {
+                qualifies: Boolean(majorityVote),
+                againstMajority: Boolean(majorityVote) && memberVote !== majorityVote,
+                peerYes: yes,
+                peerNo: no,
+                majorityVote
+            };
+        }
+
+        function sortOutlierVoteEntries(entries) {
+            return [...entries].sort((a, b) => {
+                if (b.outlierScore !== a.outlierScore) return b.outlierScore - a.outlierScore;
+                const sessionCmp = getSessionOrderIndex(b.sessionId) - getSessionOrderIndex(a.sessionId);
+                if (sessionCmp !== 0) return sessionCmp;
+                const colCmp = (a.colIndex || 0) - (b.colIndex || 0);
+                if (colCmp !== 0) return colCmp;
+                const titleCmp = String(a.voteTitle || '').localeCompare(String(b.voteTitle || ''));
+                if (titleCmp !== 0) return titleCmp;
+                return String(a.memberName || '').localeCompare(String(b.memberName || ''));
+            });
+        }
+
+        function buildOutlierVotesAnalysis(sessionDataList, options) {
+            if (!Array.isArray(sessionDataList) || sessionDataList.length === 0) {
+                return {
+                    profiles: [],
+                    memberDataByKey: new Map(),
+                    topEntries: [],
+                    totalEntries: 0
+                };
+            }
+
+            if (!Array.isArray(memberNetworkProfilesCache) || memberNetworkProfilesCache.length === 0) {
+                cacheMemberNetworkProfilesFromSessions(sessionDataList);
+            }
+
+            const profiles = Array.isArray(memberNetworkProfilesCache)
+                ? memberNetworkProfilesCache.filter(profile => memberCastRecordedVote(profile.votesById))
+                : [];
+            const context = buildOutlierVotesContext(sessionDataList);
+            const memberDataByKey = new Map();
+            const allEntries = [];
+
+            profiles.forEach(profile => {
+                const eligibleVoteIds = Object.keys(profile.votesById || {}).filter(voteId => {
+                    const voteValue = normalizeVote(profile.votesById[voteId]);
+                    if (voteValue !== 'YES' && voteValue !== 'NO') return false;
+
+                    if (options.ignoreTerminateDebate) {
+                        const meta = context.voteMetaById.get(voteId);
+                        if (meta && meta.isTerminateDebate) return false;
+                    }
+                    return true;
+                });
+
+                const comparisons = [];
+                profiles.forEach(candidateProfile => {
+                    if (candidateProfile.canonicalKey === profile.canonicalKey) return;
+                    const similarityData = computeSimilarityOnVoteIds(
+                        profile.votesById,
+                        candidateProfile.votesById,
+                        eligibleVoteIds,
+                        true
+                    );
+                    if (!similarityData || similarityData.overlap < options.minSharedVoteHistory) return;
+
+                    comparisons.push({
+                        profile: candidateProfile,
+                        overlap: similarityData.overlap,
+                        similarity: similarityData.similarity,
+                        exactMatches: similarityData.exactMatches
+                    });
+                });
+
+                comparisons.sort((a, b) => {
+                    if (b.similarity !== a.similarity) return b.similarity - a.similarity;
+                    if (b.overlap !== a.overlap) return b.overlap - a.overlap;
+                    return a.profile.name.localeCompare(b.profile.name);
+                });
+
+                const peerGroup = comparisons.slice(0, options.peerGroupSize);
+                const entries = [];
+
+                eligibleVoteIds.forEach(voteId => {
+                    const memberVote = normalizeVote(profile.votesById[voteId]);
+                    if (memberVote !== 'YES' && memberVote !== 'NO') return;
+
+                    let peerYes = 0;
+                    let peerNo = 0;
+                    let comparablePeers = 0;
+                    let overlapSum = 0;
+                    const comparablePeerRows = [];
+
+                    peerGroup.forEach(peerEntry => {
+                        const peerVote = normalizeVote(peerEntry.profile.votesById[voteId]);
+                        if (peerVote !== 'YES' && peerVote !== 'NO') return;
+
+                        comparablePeers += 1;
+                        overlapSum += peerEntry.overlap;
+                        comparablePeerRows.push(peerEntry);
+                        if (peerVote === 'YES') {
+                            peerYes += 1;
+                        } else {
+                            peerNo += 1;
+                        }
+                    });
+
+                    if (comparablePeers < options.minComparablePeers) return;
+
+                    const peerMajority = peerYes > peerNo ? 'YES' : (peerNo > peerYes ? 'NO' : '');
+                    if (!peerMajority || memberVote === peerMajority) return;
+
+                    const voteMeta = context.voteMetaById.get(voteId);
+                    if (!voteMeta) return;
+
+                    const cohesion = Math.max(peerYes, peerNo) / comparablePeers;
+                    const coverage = comparablePeers / options.peerGroupSize;
+                    const outlierScore = cohesion * coverage;
+                    const precinctComparison = getOutlierPrecinctComparison(
+                        profile,
+                        voteId,
+                        memberVote,
+                        context.precinctCountsByVoteId
+                    );
+                    const meetingMajority = context.meetingMajorityByVoteId.get(voteId) || '';
+                    const sameVotePeers = memberVote === 'YES' ? peerYes : peerNo;
+                    const oppositeVotePeers = comparablePeers - sameVotePeers;
+
+                    const entry = {
+                        canonicalKey: profile.canonicalKey,
+                        memberName: profile.name,
+                        precinct: profile.precinct,
+                        memberVote,
+                        voteId,
+                        sessionId: voteMeta.sessionId,
+                        sessionLabel: voteMeta.sessionLabel ||
+                            ((getSessionMetaById(voteMeta.sessionId) || {}).label) ||
+                            voteMeta.sessionId,
+                        colIndex: voteMeta.colIndex || 0,
+                        voteTitle: voteMeta.title,
+                        voteDescription: voteMeta.description || '—',
+                        outlierScore,
+                        peerYes,
+                        peerNo,
+                        comparablePeers,
+                        peerMajority,
+                        cohesion,
+                        coverage,
+                        sameVotePeers,
+                        oppositeVotePeers,
+                        sharedHistoryWithPeerGroup: comparablePeerRows.length > 0 ? overlapSum / comparablePeerRows.length : 0,
+                        againstPrecinctMajority: precinctComparison.qualifies && precinctComparison.againstMajority,
+                        againstMeetingMajority: Boolean(meetingMajority) && memberVote !== meetingMajority,
+                        isTerminateDebate: Boolean(voteMeta.isTerminateDebate)
+                    };
+
+                    entries.push(entry);
+                    allEntries.push(entry);
+                });
+
+                const sortedEntries = sortOutlierVoteEntries(entries);
+                const averageSimilarity = peerGroup.length > 0
+                    ? peerGroup.reduce((sum, peerEntry) => sum + peerEntry.similarity, 0) / peerGroup.length
+                    : 0;
+
+                memberDataByKey.set(profile.canonicalKey, {
+                    profile,
+                    eligibleVoteCount: eligibleVoteIds.length,
+                    peerGroup,
+                    entries: sortedEntries,
+                    outlierVoteCount: sortedEntries.length,
+                    averageOutlierScore: sortedEntries.length > 0
+                        ? sortedEntries.reduce((sum, entry) => sum + entry.outlierScore, 0) / sortedEntries.length
+                        : 0,
+                    maxOutlierScore: sortedEntries.length > 0 ? sortedEntries[0].outlierScore : 0,
+                    averagePeerSimilarity: averageSimilarity
+                });
+            });
+
+            const profileOrder = [...profiles].sort((a, b) => {
+                const dataA = memberDataByKey.get(a.canonicalKey);
+                const dataB = memberDataByKey.get(b.canonicalKey);
+                const countCmp = (dataB ? dataB.outlierVoteCount : 0) - (dataA ? dataA.outlierVoteCount : 0);
+                if (countCmp !== 0) return countCmp;
+                const maxCmp = (dataB ? dataB.maxOutlierScore : 0) - (dataA ? dataA.maxOutlierScore : 0);
+                if (maxCmp !== 0) return maxCmp;
+                return a.name.localeCompare(b.name);
+            });
+
+            return {
+                profiles: profileOrder,
+                memberDataByKey,
+                topEntries: sortOutlierVoteEntries(allEntries),
+                totalEntries: allEntries.length,
+                options
+            };
+        }
+
+        function populateOutlierMemberDropdown(analysis) {
+            const memberSelect = document.getElementById('outlier-member-select');
+            if (!memberSelect) return;
+
+            const currentValue = memberSelect.value || selectedOutlierMemberKey;
+            memberSelect.replaceChildren();
+
+            (analysis && analysis.profiles || []).forEach(profile => {
+                const memberData = analysis.memberDataByKey.get(profile.canonicalKey);
+                const option = document.createElement('option');
+                option.value = profile.canonicalKey;
+                const precinctLabel = profile.precinct ? formatPrecinctLabel(profile.precinct) : 'MULTI';
+                const outlierCount = memberData ? memberData.outlierVoteCount : 0;
+                option.textContent = `${profile.name} (${precinctLabel}) - ${outlierCount} outlier votes`;
+                memberSelect.appendChild(option);
+            });
+
+            const hasCurrent = currentValue && Array.from(memberSelect.options).some(option => option.value === currentValue);
+            if (hasCurrent) {
+                memberSelect.value = currentValue;
+                selectedOutlierMemberKey = currentValue;
+                return;
+            }
+
+            const firstWithEntries = (analysis && analysis.profiles || []).find(profile => {
+                const memberData = analysis.memberDataByKey.get(profile.canonicalKey);
+                return memberData && memberData.outlierVoteCount > 0;
+            });
+
+            if (firstWithEntries) {
+                memberSelect.value = firstWithEntries.canonicalKey;
+                selectedOutlierMemberKey = firstWithEntries.canonicalKey;
+            } else if (memberSelect.options.length > 0) {
+                memberSelect.value = memberSelect.options[0].value;
+                selectedOutlierMemberKey = memberSelect.value;
+            } else {
+                selectedOutlierMemberKey = '';
+            }
+        }
+
+        function renderOutlierVotesSummaryTable(container, analysis) {
+            const summaryEl = document.createElement('div');
+            summaryEl.className = 'vote-history-message outlier-votes-summary';
+            if (analysis.totalEntries === 0) {
+                summaryEl.textContent = 'No outlier votes match the current filters.';
+                container.appendChild(summaryEl);
+                return;
+            }
+
+            const displayedEntries = analysis.topEntries.slice(0, MAX_CONTENTIOUS_DISPLAY);
+            summaryEl.textContent = `Showing ${displayedEntries.length} of ${analysis.totalEntries} scored outlier votes across all loaded sessions.`;
+            container.appendChild(summaryEl);
+
+            const tableWrapEl = document.createElement('div');
+            tableWrapEl.className = 'outlier-votes-table-wrap';
+
+            const tableEl = document.createElement('table');
+            tableEl.className = 'outlier-votes-table';
+
+            const headers = [
+                { text: 'Session', className: 'session-col' },
+                { text: 'Vote Title', className: '' },
+                { text: 'Member', className: 'member-col' },
+                { text: 'Vote', className: 'vote-col' },
+                { text: 'Peer Split', className: 'peer-split-col' },
+                { text: 'Score', className: 'score-col' },
+                { text: 'Flags', className: '' }
+            ];
+
+            const theadEl = document.createElement('thead');
+            const headRowEl = document.createElement('tr');
+            headers.forEach(header => {
+                const th = document.createElement('th');
+                if (header.className) th.className = header.className;
+                th.textContent = header.text;
+                headRowEl.appendChild(th);
+            });
+            theadEl.appendChild(headRowEl);
+            tableEl.appendChild(theadEl);
+
+            const tbodyEl = document.createElement('tbody');
+            displayedEntries.forEach(entry => {
+                const rowEl = document.createElement('tr');
+                if (entry.canonicalKey === selectedOutlierMemberKey) {
+                    rowEl.classList.add('selected');
+                }
+                rowEl.addEventListener('click', () => {
+                    selectedOutlierMemberKey = entry.canonicalKey;
+                    const memberSelect = document.getElementById('outlier-member-select');
+                    if (memberSelect) memberSelect.value = entry.canonicalKey;
+                    renderOutlierVotes();
+                });
+
+                const sessionCell = document.createElement('td');
+                sessionCell.className = 'session-col';
+                sessionCell.textContent = entry.sessionLabel;
+                rowEl.appendChild(sessionCell);
+
+                const titleCell = document.createElement('td');
+                titleCell.appendChild(createNavigationBubbleButton(
+                    entry.voteTitle,
+                    evt => {
+                        evt.stopPropagation();
+                        void openVoteFromCrossSession(entry.sessionId, entry.voteTitle);
+                    },
+                    'Open this vote in View by Vote',
+                    'vote-title-nav-bubble'
+                ));
+                rowEl.appendChild(titleCell);
+
+                const memberCell = document.createElement('td');
+                memberCell.className = 'member-col';
+                memberCell.textContent = `${entry.memberName} (${formatPrecinctLabel(entry.precinct)})`;
+                rowEl.appendChild(memberCell);
+
+                const voteCell = document.createElement('td');
+                voteCell.className = `vote-col vote-${entry.memberVote.toLowerCase()}`;
+                voteCell.textContent = entry.memberVote;
+                rowEl.appendChild(voteCell);
+
+                const peerSplitCell = document.createElement('td');
+                peerSplitCell.className = 'peer-split-col';
+                peerSplitCell.textContent = `${entry.peerYes} YES / ${entry.peerNo} NO`;
+                rowEl.appendChild(peerSplitCell);
+
+                const scoreCell = document.createElement('td');
+                scoreCell.className = 'score-col';
+                scoreCell.textContent = entry.outlierScore.toFixed(2);
+                rowEl.appendChild(scoreCell);
+
+                const flagsCell = document.createElement('td');
+                const badges = document.createElement('div');
+                badges.className = 'outlier-votes-badges';
+                if (entry.againstPrecinctMajority) {
+                    const badge = document.createElement('span');
+                    badge.className = 'outlier-votes-badge precinct';
+                    badge.textContent = 'Against precinct majority';
+                    badges.appendChild(badge);
+                }
+                if (entry.againstMeetingMajority) {
+                    const badge = document.createElement('span');
+                    badge.className = 'outlier-votes-badge meeting';
+                    badge.textContent = 'Against meeting majority';
+                    badges.appendChild(badge);
+                }
+                if (!entry.againstPrecinctMajority && !entry.againstMeetingMajority) {
+                    const badge = document.createElement('span');
+                    badge.className = 'outlier-votes-badge none';
+                    badge.textContent = 'Peer-group outlier';
+                    badges.appendChild(badge);
+                }
+                flagsCell.appendChild(badges);
+                rowEl.appendChild(flagsCell);
+
+                tbodyEl.appendChild(rowEl);
+            });
+
+            tableEl.appendChild(tbodyEl);
+            tableWrapEl.appendChild(tableEl);
+            container.appendChild(tableWrapEl);
+        }
+
+        function renderOutlierVotesMemberPanel(container, analysis) {
+            const detailWrap = document.createElement('div');
+            detailWrap.className = 'outlier-votes-panel-grid';
+
+            const detailEl = document.createElement('div');
+            detailEl.className = 'outlier-votes-detail';
+            const helperEl = document.createElement('div');
+            helperEl.className = 'outlier-votes-detail';
+
+            if (!selectedOutlierMemberKey || !analysis.memberDataByKey.has(selectedOutlierMemberKey)) {
+                const message = document.createElement('p');
+                message.className = 'outlier-votes-empty';
+                message.textContent = 'Select a member to inspect their strongest outlier votes.';
+                detailEl.appendChild(message);
+                helperEl.appendChild(document.createTextNode('Click a table row above to jump to a member.'));
+                detailWrap.appendChild(detailEl);
+                detailWrap.appendChild(helperEl);
+                container.appendChild(detailWrap);
+                return;
+            }
+
+            const memberData = analysis.memberDataByKey.get(selectedOutlierMemberKey);
+            const profile = memberData.profile;
+            const titleEl = document.createElement('h3');
+            titleEl.textContent = `${profile.name} (${formatPrecinctLabel(profile.precinct)})`;
+            detailEl.appendChild(titleEl);
+
+            const metaEl = document.createElement('p');
+            metaEl.className = 'outlier-votes-meta';
+            metaEl.textContent =
+                `${memberData.outlierVoteCount} outlier votes from ${memberData.eligibleVoteCount} eligible YES/NO votes, ` +
+                `${memberData.peerGroup.length} peers, average peer similarity ${(memberData.averagePeerSimilarity * 100).toFixed(1)}%.`;
+            detailEl.appendChild(metaEl);
+
+            const actionsEl = document.createElement('div');
+            actionsEl.className = 'outlier-vote-card-row';
+            actionsEl.appendChild(createNavigationBubbleButton(
+                'Open Member in View by Member',
+                () => { void openMemberFromNetworkView(profile.canonicalKey, profile.precinct); },
+                'Open this member in View by Member',
+                'member-network-nav-bubble'
+            ));
+            detailEl.appendChild(actionsEl);
+
+            if (memberData.outlierVoteCount === 0) {
+                const emptyEl = document.createElement('p');
+                emptyEl.className = 'outlier-votes-empty';
+                emptyEl.textContent = memberData.peerGroup.length < analysis.options.minComparablePeers
+                    ? 'Not enough shared voting history to form a reliable peer group under the current filters.'
+                    : 'This member has no scored outlier votes under the current filters.';
+                detailEl.appendChild(emptyEl);
+            } else {
+                const listEl = document.createElement('div');
+                listEl.className = 'outlier-votes-detail-list';
+
+                memberData.entries.slice(0, 5).forEach(entry => {
+                    const cardEl = document.createElement('div');
+                    cardEl.className = 'outlier-vote-card';
+
+                    const headerEl = document.createElement('div');
+                    headerEl.className = 'outlier-vote-card-header';
+
+                    const titleWrapEl = document.createElement('div');
+                    titleWrapEl.className = 'outlier-vote-card-title';
+                    titleWrapEl.textContent = `${entry.sessionLabel}: ${entry.voteTitle}`;
+                    headerEl.appendChild(titleWrapEl);
+
+                    const scoreEl = document.createElement('div');
+                    scoreEl.className = 'outlier-vote-card-score';
+                    scoreEl.textContent = `Score ${entry.outlierScore.toFixed(2)}`;
+                    headerEl.appendChild(scoreEl);
+                    cardEl.appendChild(headerEl);
+
+                    const bodyEl = document.createElement('div');
+                    bodyEl.className = 'outlier-vote-card-body';
+
+                    const voteRowEl = document.createElement('div');
+                    voteRowEl.className = 'outlier-vote-card-row';
+                    voteRowEl.textContent =
+                        `Vote: ${entry.memberVote}. Peer split: ${entry.peerYes} YES / ${entry.peerNo} NO ` +
+                        `(${entry.comparablePeers} comparable peers).`;
+                    bodyEl.appendChild(voteRowEl);
+
+                    const metricsRowEl = document.createElement('div');
+                    metricsRowEl.className = 'outlier-vote-card-row';
+                    metricsRowEl.textContent =
+                        `Cohesion ${(entry.cohesion * 100).toFixed(0)}%, coverage ${(entry.coverage * 100).toFixed(0)}%, ` +
+                        `avg shared history ${entry.sharedHistoryWithPeerGroup.toFixed(1)} votes.`;
+                    bodyEl.appendChild(metricsRowEl);
+
+                    const badgeRowEl = document.createElement('div');
+                    badgeRowEl.className = 'outlier-vote-card-row';
+                    const badgeWrapEl = document.createElement('div');
+                    badgeWrapEl.className = 'outlier-votes-badges';
+                    if (entry.againstPrecinctMajority) {
+                        const badge = document.createElement('span');
+                        badge.className = 'outlier-votes-badge precinct';
+                        badge.textContent = 'Against precinct majority';
+                        badgeWrapEl.appendChild(badge);
+                    }
+                    if (entry.againstMeetingMajority) {
+                        const badge = document.createElement('span');
+                        badge.className = 'outlier-votes-badge meeting';
+                        badge.textContent = 'Against meeting majority';
+                        badgeWrapEl.appendChild(badge);
+                    }
+                    if (badgeWrapEl.children.length === 0) {
+                        const badge = document.createElement('span');
+                        badge.className = 'outlier-votes-badge none';
+                        badge.textContent = 'Peer-group outlier';
+                        badgeWrapEl.appendChild(badge);
+                    }
+                    badgeRowEl.appendChild(badgeWrapEl);
+                    bodyEl.appendChild(badgeRowEl);
+
+                    const actionsRowEl = document.createElement('div');
+                    actionsRowEl.className = 'outlier-vote-card-row';
+                    actionsRowEl.appendChild(createNavigationBubbleButton(
+                        'Open Vote',
+                        () => { void openVoteFromCrossSession(entry.sessionId, entry.voteTitle); },
+                        'Open this vote in View by Vote',
+                        'vote-title-nav-bubble'
+                    ));
+                    cardEl.appendChild(bodyEl);
+                    cardEl.appendChild(actionsRowEl);
+                    listEl.appendChild(cardEl);
+                });
+
+                detailEl.appendChild(listEl);
+            }
+
+            const scoringHeadingEl = document.createElement('strong');
+            scoringHeadingEl.textContent = 'How scoring works';
+            helperEl.replaceChildren(
+                scoringHeadingEl,
+                document.createElement('br'),
+                document.createTextNode(
+                    'Only YES/NO votes are scored. A vote is counted when the member breaks with the YES/NO majority of their closest peers. ' +
+                    'Score = cohesion \u00d7 coverage, so strong peer agreement and broad peer participation both matter.'
+                )
+            );
+
+            detailWrap.appendChild(detailEl);
+            detailWrap.appendChild(helperEl);
+            container.appendChild(detailWrap);
+        }
+
+        function renderOutlierVotes() {
+            if (!outlierVotesResultsEl) return;
+
+            syncOutlierVotesComparableOptions();
+            const sessionDataList = getOutlierVotesSessionData();
+            if (!Array.isArray(sessionDataList) || sessionDataList.length === 0) {
+                setOutlierVotesStatus('Outlier Votes is unavailable.');
+                return;
+            }
+
+            const options = getOutlierVotesOptions();
+            const analysis = buildOutlierVotesAnalysis(sessionDataList, options);
+            outlierVotesAnalysisState = analysis;
+            populateOutlierMemberDropdown(analysis);
+
+            outlierVotesResultsEl.replaceChildren();
+            outlierVotesResultsEl.className = '';
+
+            if (!analysis || analysis.profiles.length === 0) {
+                setOutlierVotesStatus('No members were found in the available Town Meeting sessions.', true);
+                return;
+            }
+
+            renderOutlierVotesSummaryTable(outlierVotesResultsEl, analysis);
+            renderOutlierVotesMemberPanel(outlierVotesResultsEl, analysis);
+        }
+
+        async function ensureOutlierVotesDataLoaded() {
+            initializeOutlierVotesControls();
+            if (!outlierVotesResultsEl) return;
+
+            const existingSessions = getOutlierVotesSessionData();
+            if (existingSessions) {
+                if (!memberNetworkProfilesCache || memberNetworkProfilesCache.length === 0) {
+                    cacheMemberNetworkProfilesFromSessions(existingSessions);
+                }
+                renderOutlierVotes();
+                return;
+            }
+
+            if (outlierVotesLoadPromise) {
+                await outlierVotesLoadPromise;
+                return;
+            }
+
+            if (memberNetworkLoadPromise) {
+                setOutlierVotesStatus('Loading Outlier Votes...');
+                await memberNetworkLoadPromise;
+                if (getOutlierVotesSessionData()) renderOutlierVotes();
+                return;
+            }
+
+            if (voteHistoryLoadPromise) {
+                setOutlierVotesStatus('Loading Outlier Votes...');
+                await voteHistoryLoadPromise;
+                if (getOutlierVotesSessionData()) {
+                    if (!memberNetworkProfilesCache || memberNetworkProfilesCache.length === 0) {
+                        cacheMemberNetworkProfilesFromSessions(getOutlierVotesSessionData());
+                    }
+                    renderOutlierVotes();
+                }
+                return;
+            }
+
+            if (clusteringLoadPromise) {
+                setOutlierVotesStatus('Loading Outlier Votes...');
+                await clusteringLoadPromise;
+                if (getOutlierVotesSessionData()) {
+                    if (!memberNetworkProfilesCache || memberNetworkProfilesCache.length === 0) {
+                        cacheMemberNetworkProfilesFromSessions(getOutlierVotesSessionData());
+                    }
+                    renderOutlierVotes();
+                }
+                return;
+            }
+
+            let loadedCount = 0;
+            const total = SESSION_FILES.length;
+            setOutlierVotesStatus(`Loading Outlier Votes (0 of ${total})...`);
+
+            outlierVotesLoadPromise = (async () => {
+                try {
+                    await ensureVoteGuideLoaded();
+                    const sessions = await Promise.all(
+                        SESSION_FILES.map(async session => {
+                            try {
+                                return await fetchAndParseSpreadsheet(session);
+                            } catch (err) {
+                                throw new Error(`${session.label}: ${err.message}`);
+                            } finally {
+                                loadedCount += 1;
+                                setOutlierVotesStatus(`Loading Outlier Votes (${loadedCount} of ${total})...`);
+                            }
+                        })
+                    );
+
+                    voteHistorySessionsCache = sessions;
+                    if (!clusteringSessionsCache) clusteringSessionsCache = sessions;
+
+                    cacheMemberNetworkProfilesFromSessions(sessions);
+                    renderOutlierVotes();
+                } catch (err) {
+                    handleModuleError(err, null, 'Outlier Votes');
+                    outlierVotesAnalysisState = null;
+                    setOutlierVotesStatus(`Error loading Outlier Votes: ${err.message}`, true);
+                } finally {
+                    outlierVotesLoadPromise = null;
+                }
+            })();
+
+            await outlierVotesLoadPromise;
+        }
+
+        /****************************************************
          * VOTER CLUSTERING — DATA LOADING
          ****************************************************/
 
@@ -5350,7 +6174,7 @@
                 setClusteringStatus(`Loaded ${total} sessions. Rendering clustering view...`);
                 runClusteringAnalysis();
             }).catch(err => {
-                console.error(err);
+                handleModuleError(err, null, 'Clustering');
                 clearClusterPlot();
                 setClusteringStatus(`Error loading clustering data: ${err.message}`, true);
                 setPanelMessage(clusterMemberDetailEl, 'Clustering data failed to load.');
@@ -5502,65 +6326,9 @@
          * VOTER CLUSTERING — PCA
          ****************************************************/
 
-        function dotProduct(a, b) {
-            let sum = 0;
-            for (let i = 0; i < a.length; i++) sum += a[i] * b[i];
-            return sum;
-        }
-
-        function vectorNorm(vector) {
-            return Math.sqrt(dotProduct(vector, vector));
-        }
-
-        function multiplyMatrixVector(matrix, vector) {
-            return matrix.map(row => dotProduct(row, vector));
-        }
-
         function orthogonalizeVector(vector, basis) {
             const projection = dotProduct(vector, basis);
             return vector.map((value, i) => value - (projection * basis[i]));
-        }
-
-        function normalizeVector(vector) {
-            const norm = vectorNorm(vector);
-            if (norm < 1e-12) return null;
-            return vector.map(value => value / norm);
-        }
-
-        function rayleighQuotient(matrix, vector) {
-            const multiplied = multiplyMatrixVector(matrix, vector);
-            return dotProduct(vector, multiplied);
-        }
-
-        function powerIteration(matrix, maxIterations = 250, tolerance = 1e-9) {
-            const n = matrix.length;
-            if (n === 0) return null;
-
-            let vector = Array.from({ length: n }, (_, i) => (i === 0 ? 1 : 0));
-            const normalizedSeed = normalizeVector(vector);
-            if (!normalizedSeed) return null;
-            vector = normalizedSeed;
-
-            for (let iter = 0; iter < maxIterations; iter++) {
-                const multiplied = multiplyMatrixVector(matrix, vector);
-                const normalized = normalizeVector(multiplied);
-                if (!normalized) return null;
-
-                const delta = normalized.reduce((sum, value, i) => sum + Math.abs(value - vector[i]), 0);
-                vector = normalized;
-                if (delta < tolerance) break;
-            }
-
-            return {
-                vector,
-                eigenvalue: rayleighQuotient(matrix, vector)
-            };
-        }
-
-        function deflateMatrix(matrix, vector, eigenvalue) {
-            return matrix.map((row, i) =>
-                row.map((value, j) => value - (eigenvalue * vector[i] * vector[j]))
-            );
         }
 
         function buildFallbackUnitVector(length, avoidVector) {
@@ -5573,32 +6341,6 @@
                 if (normalized) return normalized;
             }
             return Array.from({ length }, (_, idx) => (idx === 0 ? 1 : 0));
-        }
-
-        function buildCovarianceMatrix(centeredMatrix) {
-            const rowCount = centeredMatrix.length;
-            const colCount = centeredMatrix[0].length;
-            const covariance = Array.from({ length: colCount }, () => Array(colCount).fill(0));
-            const denom = rowCount > 1 ? rowCount - 1 : 1;
-
-            for (let r = 0; r < rowCount; r++) {
-                const row = centeredMatrix[r];
-                for (let i = 0; i < colCount; i++) {
-                    const xi = row[i];
-                    for (let j = i; j < colCount; j++) {
-                        covariance[i][j] += xi * row[j];
-                    }
-                }
-            }
-
-            for (let i = 0; i < colCount; i++) {
-                for (let j = i; j < colCount; j++) {
-                    const value = covariance[i][j] / denom;
-                    covariance[i][j] = value;
-                    covariance[j][i] = value;
-                }
-            }
-            return covariance;
         }
 
         function computePCA2D(matrix) {
@@ -6282,6 +7024,23 @@
             return activeTab ? activeTab.id : 'by-vote';
         }
 
+        function applyFeatureFlags() {
+            const moduleMenuEl = document.getElementById('module-menu');
+            const outlierTabButtonEl = document.querySelector('#module-menu .tab[data-tab="outlier-votes"]');
+            const outlierTabContentEl = document.getElementById('outlier-votes');
+
+            if (!ENABLE_OUTLIER_VOTES) {
+                if (outlierTabButtonEl) outlierTabButtonEl.style.display = 'none';
+                if (outlierTabContentEl) outlierTabContentEl.style.display = 'none';
+                if (moduleMenuEl) moduleMenuEl.classList.add('even-tabs');
+                return;
+            }
+
+            if (outlierTabButtonEl) outlierTabButtonEl.style.display = '';
+            if (outlierTabContentEl) outlierTabContentEl.style.display = '';
+            if (moduleMenuEl) moduleMenuEl.classList.remove('even-tabs');
+        }
+
         function updateModuleContextControls(activeModuleId = getActiveModuleId()) {
             if (!moduleContextControlsEl) return;
             moduleContextControlsEl.style.display = SINGLE_SESSION_MODULE_IDS.has(activeModuleId) ? 'block' : 'none';
@@ -6292,6 +7051,12 @@
 
             if (activeModuleId === 'member-networks') {
                 moduleInstructionEl.textContent = 'Member Networks uses all Town Meeting sessions attended by the selected member.';
+                moduleInstructionEl.style.display = 'block';
+                return;
+            }
+
+            if (activeModuleId === 'outlier-votes') {
+                moduleInstructionEl.textContent = 'Outlier Votes highlights votes where a member diverged from their closest voting peers across all loaded sessions.';
                 moduleInstructionEl.style.display = 'block';
                 return;
             }
@@ -6333,6 +7098,10 @@
         }
 
         function switchTab(evt, tabName) {
+            if (tabName === 'outlier-votes' && !ENABLE_OUTLIER_VOTES) {
+                return;
+            }
+
             setActiveTabButton(evt, tabName);
 
             document.querySelectorAll('.tab-content').forEach(content => {
@@ -6350,6 +7119,10 @@
 
             if (tabName === 'member-networks') {
                 ensureMemberNetworkDataLoaded();
+            }
+
+            if (tabName === 'outlier-votes') {
+                ensureOutlierVotesDataLoaded();
             }
 
             if (tabName === 'vote-history') {
@@ -6389,6 +7162,7 @@
 
         function enterVoteAnalyzerMode() {
             if (loadingEl) loadingEl.style.display = 'none';
+            if (pageHeaderNavEl) pageHeaderNavEl.style.display = 'block';
             if (mainContentEl) mainContentEl.style.display = 'block';
 
             const titleEl = document.querySelector('.page h1');
@@ -6408,6 +7182,7 @@
             const byVoteEl = document.getElementById('by-vote');
             const byMemberEl = document.getElementById('by-member');
             const memberNetworksEl = document.getElementById('member-networks');
+            const outlierVotesEl = document.getElementById('outlier-votes');
             const voteHistoryEl = document.getElementById('vote-history');
             const precinctVotesEl = document.getElementById('precinct-votes');
             const contentiousVotesEl = document.getElementById('contentious-votes');
@@ -6416,12 +7191,14 @@
             if (byVoteEl) byVoteEl.classList.remove('active');
             if (byMemberEl) byMemberEl.classList.remove('active');
             if (memberNetworksEl) memberNetworksEl.classList.remove('active');
+            if (outlierVotesEl) outlierVotesEl.classList.remove('active');
             if (voteHistoryEl) voteHistoryEl.classList.remove('active');
             if (precinctVotesEl) precinctVotesEl.classList.remove('active');
             if (contentiousVotesEl) contentiousVotesEl.classList.remove('active');
             if (tmmHistoryEl) tmmHistoryEl.classList.remove('active');
             if (clusteringEl) clusteringEl.classList.add('active');
 
+            syncPinnedLayoutOffsets();
             ensureClusteringDataLoaded();
         }
 
@@ -6430,6 +7207,9 @@
          ****************************************************/
 
         window.addEventListener('DOMContentLoaded', () => {
+            applyFeatureFlags();
+            syncPinnedLayoutOffsets();
+
             if (APP_MODE === 'vote-analyzer') {
                 enterVoteAnalyzerMode();
                 return;
@@ -6449,6 +7229,7 @@
                         loadingEl.style.display = 'block';
                         loadingEl.textContent = 'Loading voting data...';
                     }
+                    if (pageHeaderNavEl) pageHeaderNavEl.style.display = 'none';
                     if (mainContentEl) mainContentEl.style.display = 'none';
 
                     // Required full reset before loading a different meeting spreadsheet.
