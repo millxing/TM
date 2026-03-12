@@ -75,9 +75,27 @@
             color: var(--tm-navy);
         }
 
+        body.by-vote-lock,
+        body.by-member-lock,
+        body.contentious-votes-lock,
+        body.member-networks-lock,
+        body.outlier-votes-lock,
+        body.tmm-history-lock {
+            overflow: hidden;
+        }
+
         .page {
             max-width: var(--page-max-width);
             margin: 0 auto;
+        }
+
+        body.by-vote-lock .page,
+        body.by-member-lock .page,
+        body.contentious-votes-lock .page,
+        body.member-networks-lock .page,
+        body.outlier-votes-lock .page,
+        body.tmm-history-lock .page {
+            height: calc(100vh - var(--page-header-height) - var(--page-footer-height) - 52px);
         }
 
         .page-header-shell {
@@ -123,6 +141,46 @@
             border-radius: 12px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             padding: 30px;
+        }
+
+        body.by-vote-lock .container,
+        body.by-member-lock .container,
+        body.contentious-votes-lock .container,
+        body.member-networks-lock .container,
+        body.outlier-votes-lock .container,
+        body.tmm-history-lock .container,
+        body.by-vote-lock #by-vote.tab-content.active,
+        body.by-member-lock #by-member.tab-content.active,
+        body.contentious-votes-lock #contentious-votes.tab-content.active,
+        body.member-networks-lock #member-networks.tab-content.active,
+        body.outlier-votes-lock #outlier-votes.tab-content.active,
+        body.tmm-history-lock #tmm-history.tab-content.active {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body.by-vote-lock #main-content,
+        body.by-member-lock #main-content,
+        body.contentious-votes-lock #main-content,
+        body.member-networks-lock #main-content,
+        body.outlier-votes-lock #main-content,
+        body.tmm-history-lock #main-content {
+            display: flex !important;
+            flex-direction: column;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body.by-vote-lock #by-vote.tab-content.active,
+        body.by-member-lock #by-member.tab-content.active,
+        body.contentious-votes-lock #contentious-votes.tab-content.active,
+        body.member-networks-lock #member-networks.tab-content.active,
+        body.outlier-votes-lock #outlier-votes.tab-content.active,
+        body.tmm-history-lock #tmm-history.tab-content.active {
+            display: flex;
+            flex-direction: column;
+            flex: 1 1 auto;
+            min-height: 0;
         }
 
         /* Main title */
@@ -403,6 +461,14 @@
             width: 100%;
         }
 
+        body.by-vote-lock .vote-results-container {
+            flex: 1 1 auto;
+            min-height: 0;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
         /* Base styling for each vote column (Yes/No/Abstain/No Vote) */
         .vote-column {
             background-color: var(--tm-surface-warm);
@@ -429,6 +495,10 @@
             margin-bottom: 20px;
             font-size: 14px;
             line-height: 1.4;
+        }
+
+        body.by-vote-lock .article-description {
+            flex: 0 0 auto;
         }
 
         .article-description h4 {
@@ -621,6 +691,43 @@
             padding-right: 5px;
         }
 
+        body.by-vote-lock #vote-results .results {
+            flex: 1 1 auto;
+            min-height: 0;
+            align-items: stretch;
+        }
+
+        body.by-vote-lock #vote-results .vote-column {
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+
+        body.by-vote-lock #vote-results .member-list {
+            flex: 1 1 auto;
+            min-height: 0;
+            max-height: none;
+        }
+
+        body.by-member-lock #member-results.results {
+            flex: 1 1 auto;
+            min-height: 0;
+            align-items: stretch;
+        }
+
+        body.by-member-lock #member-results .vote-column {
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+
+        body.by-member-lock #member-results .article-list {
+            flex: 1 1 auto;
+            min-height: 0;
+            max-height: none;
+        }
+
+
         /* Individual line items for members/articles */
         .member-item,
         .article-item {
@@ -809,11 +916,24 @@
             margin-top: 20px;
         }
 
+        body.member-networks-lock .cluster-panels {
+            flex: 1 1 auto;
+            min-height: 0;
+            overflow: auto;
+            align-content: start;
+        }
+
         .cluster-panel {
             background-color: var(--tm-soft-navy);
             border: 1px solid var(--tm-line);
             border-radius: 10px;
             padding: 16px;
+        }
+
+        body.member-networks-lock .cluster-panel {
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
         }
 
         .cluster-panel.member-detail {
@@ -829,6 +949,12 @@
         .cluster-panel-body {
             font-size: 14px;
             color: #444;
+        }
+
+        body.member-networks-lock .cluster-panel-body {
+            flex: 1 1 auto;
+            min-height: 0;
+            overflow: auto;
         }
 
         .cluster-message {
@@ -1260,16 +1386,41 @@
             position: relative;
         }
 
+        body.tmm-history-lock #tmm-history-results {
+            flex: 1 1 auto;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        body.tmm-history-lock .tmm-history-table-wrap {
+            flex: 1 1 auto;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
         .tmm-history-table-header {
             overflow: hidden;
             border-bottom: 1px solid var(--tm-line);
             background-color: var(--tm-surface);
         }
 
+        body.tmm-history-lock .tmm-history-table-header {
+            flex: 0 0 auto;
+        }
+
         .tmm-history-table-scroller {
             overflow: auto;
             max-height: 860px;
             scrollbar-gutter: stable;
+        }
+
+        body.tmm-history-lock .tmm-history-table-scroller {
+            flex: 1 1 auto;
+            min-height: 0;
+            max-height: none;
         }
 
         .tmm-history-table {
@@ -1331,12 +1482,51 @@
             flex-wrap: wrap;
         }
 
+        body.contentious-votes-lock #contentious-votes-results {
+            flex: 1 1 auto;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
         .contentious-votes-table-wrap {
             overflow: auto;
             max-height: 860px;
             border: 1px solid var(--tm-border);
             border-radius: 8px;
             background-color: var(--tm-surface);
+        }
+
+        body.contentious-votes-lock .contentious-votes-table-wrap {
+            flex: 1 1 auto;
+            min-height: 0;
+            max-height: none;
+        }
+
+        body.outlier-votes-lock #outlier-votes-results {
+            flex: 1 1 auto;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        body.outlier-votes-lock .outlier-votes-table-wrap {
+            flex: 1 1 auto;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        body.outlier-votes-lock .outlier-votes-table-header {
+            flex: 0 0 auto;
+        }
+
+        body.outlier-votes-lock .outlier-votes-table-scroller {
+            flex: 1 1 auto;
+            min-height: 0;
+            max-height: none;
         }
 
         .contentious-votes-table {
@@ -1397,9 +1587,17 @@
         .outlier-votes-controls {
             margin-bottom: 12px;
             display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 10px;
+        }
+
+        .outlier-votes-controls .control-row {
+            display: flex;
             align-items: center;
-            gap: 14px;
+            gap: 10px 14px;
             flex-wrap: wrap;
+            justify-content: flex-start;
         }
 
         .outlier-votes-controls .control-group {
@@ -1407,21 +1605,98 @@
             flex-wrap: wrap;
         }
 
+        .outlier-votes-controls .outlier-member-group {
+            flex: 0 1 auto;
+            min-width: 0;
+        }
+
+        .outlier-votes-controls .outlier-member-group label {
+            flex-shrink: 0;
+        }
+
+        .outlier-votes-controls .outlier-member-select {
+            min-width: 320px;
+            width: 420px;
+            max-width: 100%;
+        }
+
+        .outlier-votes-controls .outlier-compact-select {
+            min-width: 88px;
+            width: 88px;
+        }
+
+        .outlier-sort-toggle-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .outlier-sort-toggle-label {
+            font-weight: 600;
+            color: var(--tm-navy);
+            font-size: 14px;
+        }
+
+        .outlier-sort-toggle-group {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .outlier-sort-toggle {
+            padding: 8px 12px;
+            border: 2px solid var(--tm-line);
+            border-radius: 999px;
+            background: var(--tm-surface);
+            color: var(--tm-plum);
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .outlier-sort-toggle:hover {
+            color: var(--tm-rose);
+            border-color: var(--tm-rose);
+            background-color: var(--tm-soft-coral);
+        }
+
+        .outlier-sort-toggle.active {
+            color: #fff;
+            background-color: var(--tm-rose);
+            border-color: var(--tm-rose);
+        }
+
         .outlier-votes-summary {
             margin-bottom: 12px;
         }
 
         .outlier-votes-table-wrap {
-            overflow: auto;
-            max-height: 560px;
             border: 1px solid var(--tm-border);
             border-radius: 8px;
             background-color: var(--tm-surface);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .outlier-votes-table-header {
+            overflow: hidden;
+            border-bottom: 1px solid var(--tm-line);
+            background-color: var(--tm-surface);
+        }
+
+        .outlier-votes-table-scroller {
+            overflow: auto;
+            max-height: 560px;
+            scrollbar-gutter: stable;
         }
 
         .outlier-votes-table {
             width: 100%;
-            min-width: 1180px;
+            min-width: 1240px;
             border-collapse: collapse;
             table-layout: fixed;
         }
@@ -1440,9 +1715,7 @@
             background-color: var(--tm-surface-muted);
             color: var(--tm-text-dark);
             font-weight: 600;
-            position: sticky;
-            top: 0;
-            z-index: 1;
+            vertical-align: middle;
         }
 
         .outlier-votes-table tbody tr {
@@ -1468,14 +1741,28 @@
         }
 
         .outlier-votes-table .session-col {
-            width: 170px;
-            min-width: 170px;
+            width: 295px;
+            min-width: 295px;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .outlier-votes-table .vote-title-col {
+            width: 270px;
+            min-width: 270px;
+            vertical-align: middle;
+            text-align: center;
+        }
+
+        .outlier-votes-table .vote-title-col .vote-title-nav-bubble {
+            text-align: center;
         }
 
         .outlier-votes-table .score-col {
             width: 96px;
             min-width: 96px;
             text-align: right;
+            vertical-align: middle;
             font-variant-numeric: tabular-nums;
         }
 
@@ -1483,14 +1770,15 @@
             width: 84px;
             min-width: 84px;
             text-align: center;
+            vertical-align: middle;
             font-weight: 600;
         }
 
         .outlier-votes-table .peer-split-col {
-            width: 110px;
-            min-width: 110px;
-            text-align: right;
-            white-space: nowrap;
+            width: 130px;
+            min-width: 130px;
+            text-align: center;
+            white-space: pre-line;
             font-variant-numeric: tabular-nums;
         }
 
@@ -1876,11 +2164,11 @@
                     <div class="tabs" id="module-menu">
                         <button class="tab active" data-tab="by-vote" onclick="switchTab(event, 'by-vote')" data-tooltip="Select a Town Meeting session and a vote to see how members voted">View by Vote</button>
                         <button class="tab" data-tab="by-member" onclick="switchTab(event, 'by-member')" data-tooltip="Select a Town Meeting session and a member to see how they voted in that session">View by Member</button>
-                        <button class="tab" data-tab="member-networks" onclick="switchTab(event, 'member-networks')" data-tooltip="Select a Town Meeting member to see which members they tend to vote with">Member Networks</button>
-                        <button class="tab" data-tab="outlier-votes" onclick="switchTab(event, 'outlier-votes')" data-tooltip="See votes where members diverged from their closest voting peers across Town Meeting sessions">Outlier Votes</button>
                         <button class="tab" data-tab="vote-history" onclick="switchTab(event, 'vote-history')" data-tooltip="See vote outcomes in each Town Meeting session and links to more information about each vote">Vote History</button>
                         <button class="tab" data-tab="precinct-votes" onclick="switchTab(event, 'precinct-votes')" data-tooltip="View how precincts voted in aggregate on each vote">Precinct Votes</button>
                         <button class="tab" data-tab="contentious-votes" onclick="switchTab(event, 'contentious-votes')" data-tooltip="See what the closest votes at Town Meeting were (since 2021)">Closest Votes</button>
+                        <button class="tab" data-tab="member-networks" onclick="switchTab(event, 'member-networks')" data-tooltip="Select a Town Meeting member to see which members they tend to vote with">TMM Networks</button>
+                        <button class="tab" data-tab="outlier-votes" onclick="switchTab(event, 'outlier-votes')" data-tooltip="View a selected member's votes with precinct and Town Meeting splits across all loaded sessions">TMM Outlier Votes</button>
                         <button class="tab" data-tab="tmm-history" onclick="switchTab(event, 'tmm-history')" data-tooltip="View all the members at Town Meeting (since 2021) and statistics on their votes">TMM History</button>
                         <button class="tab" type="button" onclick="openPcaInNewTab()" data-tooltip="View a principal component analysis of Town Meeting votes (opens in a new window)">PCA</button>
                     </div>
@@ -1931,7 +2219,7 @@
 
             <!-- TAB: View by Vote -->
             <div id="by-vote" class="tab-content active">
-                <div class="controls">
+                <div id="by-vote-controls" class="controls">
                     <div class="control-group">
                         <label for="vote-select">Select Vote:</label>
                         <!-- Populated dynamically with article titles from the spreadsheet -->
@@ -1949,7 +2237,7 @@
 
             <!-- TAB: View by Member -->
             <div id="by-member" class="tab-content">
-                <div class="controls">
+                <div id="by-member-controls" class="controls">
                     <div class="control-group">
                         <label for="member-select">Select Member:</label>
                         <!-- Populated dynamically with "Name (Precinct X)" options -->
@@ -2015,29 +2303,35 @@
             <!-- TAB: Outlier Votes -->
             <div id="outlier-votes" class="tab-content">
                 <div class="controls outlier-votes-controls">
-                    <div class="control-group">
-                        <label for="outlier-member-select">Select Member:</label>
-                        <select id="outlier-member-select" onchange="renderOutlierVotes()"></select>
+                    <div class="control-row">
+                        <div class="control-group outlier-member-group">
+                            <label for="outlier-member-select">Select Member:</label>
+                            <select id="outlier-member-select" class="outlier-member-select" onchange="renderOutlierVotes()"></select>
+                        </div>
+                        <div class="checkbox-group">
+                            <input
+                                type="checkbox"
+                                id="sort-by-precinct-outlier"
+                                checked
+                                onchange="populateOutlierMemberDropdown(outlierVotesAnalysisState); renderOutlierVotes()">
+                            <label for="sort-by-precinct-outlier">Sort by precinct, then name</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input
+                                type="checkbox"
+                                id="outlier-ignore-terminate"
+                                checked
+                                onchange="renderOutlierVotes()">
+                            <label for="outlier-ignore-terminate" data-tooltip="Procedural motions to terminate debate are generally less consequential and not indicative of how the member will vote on the main issue">Ignore motions to terminate debate</label>
+                        </div>
                     </div>
-                    <div class="checkbox-group">
-                        <input
-                            type="checkbox"
-                            id="outlier-ignore-terminate"
-                            checked
-                            onchange="renderOutlierVotes()">
-                        <label for="outlier-ignore-terminate" data-tooltip="Procedural motions to terminate debate are generally less consequential and not indicative of how the member will vote on the main issue">Ignore motions to terminate debate</label>
-                    </div>
-                    <div class="control-group">
-                        <label for="outlier-peer-group-size">Peer group size:</label>
-                        <select id="outlier-peer-group-size" onchange="renderOutlierVotes()"></select>
-                    </div>
-                    <div class="control-group">
-                        <label for="outlier-min-comparable-peers">Minimum comparable peers:</label>
-                        <select id="outlier-min-comparable-peers" onchange="renderOutlierVotes()"></select>
-                    </div>
-                    <div class="control-group">
-                        <label for="outlier-min-shared-history">Minimum shared vote history:</label>
-                        <select id="outlier-min-shared-history" onchange="renderOutlierVotes()"></select>
+                    <div class="control-row outlier-sort-toggle-row">
+                        <span class="outlier-sort-toggle-label">Sort votes:</span>
+                        <div class="outlier-sort-toggle-group" role="group" aria-label="Sort outlier votes">
+                            <button type="button" id="outlier-sort-precinct" class="outlier-sort-toggle" onclick="setOutlierVotesSortMode('precinct')">Precinct Outlier</button>
+                            <button type="button" id="outlier-sort-session" class="outlier-sort-toggle active" onclick="setOutlierVotesSortMode('session')">Session Outlier</button>
+                            <button type="button" id="outlier-sort-chronological" class="outlier-sort-toggle" onclick="setOutlierVotesSortMode('chronological')">Chronologically</button>
+                        </div>
                     </div>
                 </div>
                 <div id="outlier-votes-results" class="vote-history-message">Open this module to load all sessions.</div>
@@ -2174,7 +2468,7 @@
 
         <footer class="page-footer">
             <div class="page-footer-text">
-                <p>If you find any bugs or errors, please report them to: robschoen.robschoen at gmail dot com</p>
+                <p>If you find any bugs or errors, please report them to: robschoen dot robschoen at gmail dot com</p>
                 <p class="page-footer-credit">created by Rob Schoen TMM P1 // <a href="https://entangledparticles.xyz/" target="_blank" rel="noopener noreferrer">Entangled Particles</a> // <a href="https://www.longwoodmall.org" target="_blank" rel="noopener noreferrer">www.longwoodmall.org</a></p>
             </div>
         </footer>
@@ -2244,7 +2538,6 @@
         let memberNetworkCurrentData = null;
         let memberNetworkSortState = { key: 'baseRank', direction: 'asc' };
         let outlierVotesAnalysisState = null;
-        let outlierVotesControlsInitialized = false;
         let selectedOutlierMemberKey = '';
 
         let clusteringSessionsCache = null;
@@ -2255,7 +2548,8 @@
         let selectedClusterMemberKey = null;
         const clusterMemberSearchLabelToKey = new Map();
         const clusterMemberSearchKeyToLabel = new Map();
-        const ENABLE_OUTLIER_VOTES = false;
+        const ENABLE_OUTLIER_VOTES = true;
+        let selectedOutlierSortMode = 'session';
         const APP_MODE = new URLSearchParams(window.location.search).get('app') === 'vote-analyzer'
             ? 'vote-analyzer'
             : 'tmmvotes';
@@ -4873,7 +5167,7 @@
                     populateMemberNetworkDropdown();
                     updateMemberNetworkResults();
                 } catch (err) {
-                    handleModuleError(err, null, 'Member Networks');
+                    handleModuleError(err, null, 'TMM Networks');
                     memberNetworkProfilesCache = null;
                     memberNetworkProfileByKey = new Map();
                     setMemberNetworkStatus(`Error loading member network data: ${err.message}`, true);
@@ -5220,84 +5514,21 @@
             outlierVotesResultsEl.classList.toggle('error', isError);
         }
 
-        function initializeOutlierVotesControls() {
-            if (outlierVotesControlsInitialized) return;
-
-            const peerGroupSelect = document.getElementById('outlier-peer-group-size');
-            const minComparableSelect = document.getElementById('outlier-min-comparable-peers');
-            const minSharedHistorySelect = document.getElementById('outlier-min-shared-history');
-            if (!peerGroupSelect || !minComparableSelect || !minSharedHistorySelect) return;
-
-            [5, 6, 7, 8, 9, 10, 12].forEach(value => {
-                const option = document.createElement('option');
-                option.value = String(value);
-                option.textContent = String(value);
-                if (value === 8) option.selected = true;
-                peerGroupSelect.appendChild(option);
-            });
-
-            [3, 4, 5, 6, 7, 8, 9, 10, 12].forEach(value => {
-                const option = document.createElement('option');
-                option.value = String(value);
-                option.textContent = String(value);
-                if (value === 5) option.selected = true;
-                minComparableSelect.appendChild(option);
-            });
-
-            [8, 10, 12, 15, 18, 20, 24, 30].forEach(value => {
-                const option = document.createElement('option');
-                option.value = String(value);
-                option.textContent = String(value);
-                if (value === 12) option.selected = true;
-                minSharedHistorySelect.appendChild(option);
-            });
-
-            outlierVotesControlsInitialized = true;
-            syncOutlierVotesComparableOptions();
-        }
-
-        function syncOutlierVotesComparableOptions() {
-            const peerGroupSelect = document.getElementById('outlier-peer-group-size');
-            const minComparableSelect = document.getElementById('outlier-min-comparable-peers');
-            if (!peerGroupSelect || !minComparableSelect) return;
-
-            const peerGroupSize = Number(peerGroupSelect.value) || 8;
-            const currentValue = Number(minComparableSelect.value) || 5;
-
-            Array.from(minComparableSelect.options).forEach(option => {
-                option.disabled = Number(option.value) > peerGroupSize;
-            });
-
-            if (currentValue > peerGroupSize) {
-                minComparableSelect.value = String(peerGroupSize);
-            }
-        }
-
         function getOutlierVotesOptions() {
-            initializeOutlierVotesControls();
-
             const ignoreTerminateCheckbox = document.getElementById('outlier-ignore-terminate');
-            const peerGroupSelect = document.getElementById('outlier-peer-group-size');
-            const minComparableSelect = document.getElementById('outlier-min-comparable-peers');
-            const minSharedHistorySelect = document.getElementById('outlier-min-shared-history');
-
-            const peerGroupSize = Number(peerGroupSelect && peerGroupSelect.value) || 8;
-            const minComparablePeers = Math.min(
-                Number(minComparableSelect && minComparableSelect.value) || 5,
-                peerGroupSize
-            );
 
             return {
                 ignoreTerminateDebate: ignoreTerminateCheckbox ? ignoreTerminateCheckbox.checked : true,
-                peerGroupSize,
-                minComparablePeers,
-                minSharedVoteHistory: Number(minSharedHistorySelect && minSharedHistorySelect.value) || 12
+                peerGroupSize: 8,
+                minComparablePeers: 5,
+                minSharedVoteHistory: 12
             };
         }
 
         function buildOutlierVotesContext(sessionDataList) {
             const voteMetaById = new Map();
             const meetingMajorityByVoteId = new Map();
+            const sessionCountsByVoteId = new Map();
             const precinctCountsByVoteId = new Map();
 
             (sessionDataList || []).forEach(session => {
@@ -5305,8 +5536,10 @@
 
                 (session.votes || []).forEach(vote => {
                     if (!vote) return;
+                    const counts = computeVoteBreakdownFromSession(session, vote);
                     voteMetaById.set(vote.id, vote);
-                    meetingMajorityByVoteId.set(vote.id, getMajorityVoteValue(computeVoteBreakdownFromSession(session, vote)));
+                    meetingMajorityByVoteId.set(vote.id, getMajorityVoteValue(counts));
+                    sessionCountsByVoteId.set(vote.id, counts);
                 });
 
                 Object.values(session.canonicalMembers || {}).forEach(memberEntry => {
@@ -5315,14 +5548,14 @@
 
                     Object.entries(memberEntry.votesById || {}).forEach(([voteId, voteValue]) => {
                         const normalizedVote = normalizeVote(voteValue);
-                        if (normalizedVote !== 'YES' && normalizedVote !== 'NO') return;
+                        if (normalizedVote !== 'YES' && normalizedVote !== 'NO' && normalizedVote !== 'ABSTAIN') return;
 
                         if (!precinctCountsByVoteId.has(voteId)) {
                             precinctCountsByVoteId.set(voteId, new Map());
                         }
                         const precinctMap = precinctCountsByVoteId.get(voteId);
                         if (!precinctMap.has(precinctKey)) {
-                            precinctMap.set(precinctKey, { YES: 0, NO: 0 });
+                            precinctMap.set(precinctKey, { YES: 0, NO: 0, ABSTAIN: 0 });
                         }
                         precinctMap.get(precinctKey)[normalizedVote] += 1;
                     });
@@ -5332,6 +5565,7 @@
             return {
                 voteMetaById,
                 meetingMajorityByVoteId,
+                sessionCountsByVoteId,
                 precinctCountsByVoteId
             };
         }
@@ -5339,22 +5573,23 @@
         function getOutlierPrecinctComparison(profile, voteId, memberVote, precinctCountsByVoteId) {
             const precinctKey = String(profile && profile.precinct || '').trim().toUpperCase();
             if (!precinctKey || memberVote !== 'YES' && memberVote !== 'NO') {
-                return { qualifies: false, againstMajority: false, peerYes: 0, peerNo: 0 };
+                return { qualifies: false, againstMajority: false, peerYes: 0, peerNo: 0, peerAbstain: 0 };
             }
 
             const precinctMap = precinctCountsByVoteId.get(voteId);
             if (!precinctMap || !precinctMap.has(precinctKey)) {
-                return { qualifies: false, againstMajority: false, peerYes: 0, peerNo: 0 };
+                return { qualifies: false, againstMajority: false, peerYes: 0, peerNo: 0, peerAbstain: 0 };
             }
 
             let yes = Number(precinctMap.get(precinctKey).YES) || 0;
             let no = Number(precinctMap.get(precinctKey).NO) || 0;
+            const abstain = Number(precinctMap.get(precinctKey).ABSTAIN) || 0;
             if (memberVote === 'YES') yes = Math.max(0, yes - 1);
             if (memberVote === 'NO') no = Math.max(0, no - 1);
 
             const comparablePeers = yes + no;
             if (comparablePeers < 2) {
-                return { qualifies: false, againstMajority: false, peerYes: yes, peerNo: no };
+                return { qualifies: false, againstMajority: false, peerYes: yes, peerNo: no, peerAbstain: abstain };
             }
 
             const majorityVote = yes > no ? 'YES' : (no > yes ? 'NO' : '');
@@ -5363,12 +5598,14 @@
                 againstMajority: Boolean(majorityVote) && memberVote !== majorityVote,
                 peerYes: yes,
                 peerNo: no,
+                peerAbstain: abstain,
                 majorityVote
             };
         }
 
         function sortOutlierVoteEntries(entries) {
             return [...entries].sort((a, b) => {
+                if (a.isOutlier !== b.isOutlier) return Number(b.isOutlier) - Number(a.isOutlier);
                 if (b.outlierScore !== a.outlierScore) return b.outlierScore - a.outlierScore;
                 const sessionCmp = getSessionOrderIndex(b.sessionId) - getSessionOrderIndex(a.sessionId);
                 if (sessionCmp !== 0) return sessionCmp;
@@ -5377,6 +5614,84 @@
                 const titleCmp = String(a.voteTitle || '').localeCompare(String(b.voteTitle || ''));
                 if (titleCmp !== 0) return titleCmp;
                 return String(a.memberName || '').localeCompare(String(b.memberName || ''));
+            });
+        }
+
+        function formatOutlierSplit(yesCount, noCount, abstainCount) {
+            return `${Number(yesCount) || 0} YES\n${Number(noCount) || 0} NO\n${Number(abstainCount) || 0} ABSTAIN`;
+        }
+
+        function computeAgreementOutlierScore(memberVote, yesCount, noCount) {
+            if (memberVote !== 'YES' && memberVote !== 'NO') return null;
+
+            const yes = Number(yesCount) || 0;
+            const no = Number(noCount) || 0;
+            const comparableVotes = yes + no;
+            if (comparableVotes <= 0) return null;
+
+            const oppositeVotes = memberVote === 'YES' ? no : yes;
+            return oppositeVotes / comparableVotes;
+        }
+
+        function formatOutlierScore(score) {
+            if (!Number.isFinite(score)) return '—';
+            return `${(score * 100).toFixed(1)}%`;
+        }
+
+        function getOutlierVotesSortMode() {
+            return selectedOutlierSortMode === 'precinct' ||
+                selectedOutlierSortMode === 'session' ||
+                selectedOutlierSortMode === 'chronological'
+                ? selectedOutlierSortMode
+                : 'session';
+        }
+
+        function updateOutlierSortButtonsState() {
+            const sortMode = getOutlierVotesSortMode();
+            const buttonMap = {
+                precinct: document.getElementById('outlier-sort-precinct'),
+                session: document.getElementById('outlier-sort-session'),
+                chronological: document.getElementById('outlier-sort-chronological')
+            };
+
+            Object.entries(buttonMap).forEach(([mode, button]) => {
+                if (!button) return;
+                button.classList.toggle('active', mode === sortMode);
+                button.setAttribute('aria-pressed', mode === sortMode ? 'true' : 'false');
+            });
+        }
+
+        function setOutlierVotesSortMode(mode) {
+            if (mode !== 'precinct' && mode !== 'session' && mode !== 'chronological') return;
+            selectedOutlierSortMode = mode;
+            updateOutlierSortButtonsState();
+            renderOutlierVotes();
+        }
+
+        function sortSelectedMemberOutlierEntries(entries, sortMode = getOutlierVotesSortMode()) {
+            return [...entries].sort((a, b) => {
+                if (sortMode === 'precinct') {
+                    const precinctCmp = (b.precinctOutlierScore ?? -1) - (a.precinctOutlierScore ?? -1);
+                    if (precinctCmp !== 0) return precinctCmp;
+                    const sessionCmp = (b.sessionOutlierScore ?? -1) - (a.sessionOutlierScore ?? -1);
+                    if (sessionCmp !== 0) return sessionCmp;
+                } else if (sortMode === 'session') {
+                    const sessionCmp = (b.sessionOutlierScore ?? -1) - (a.sessionOutlierScore ?? -1);
+                    if (sessionCmp !== 0) return sessionCmp;
+                    const precinctCmp = (b.precinctOutlierScore ?? -1) - (a.precinctOutlierScore ?? -1);
+                    if (precinctCmp !== 0) return precinctCmp;
+                } else if (sortMode === 'chronological') {
+                    const sessionCmp = getSessionOrderIndex(a.sessionId) - getSessionOrderIndex(b.sessionId);
+                    if (sessionCmp !== 0) return sessionCmp;
+                    const colCmp = (a.colIndex || 0) - (b.colIndex || 0);
+                    if (colCmp !== 0) return colCmp;
+                }
+
+                const recentSessionCmp = getSessionOrderIndex(b.sessionId) - getSessionOrderIndex(a.sessionId);
+                if (recentSessionCmp !== 0) return recentSessionCmp;
+                const colCmp = (a.colIndex || 0) - (b.colIndex || 0);
+                if (colCmp !== 0) return colCmp;
+                return String(a.voteTitle || '').localeCompare(String(b.voteTitle || ''));
             });
         }
 
@@ -5440,6 +5755,7 @@
 
                 const peerGroup = comparisons.slice(0, options.peerGroupSize);
                 const entries = [];
+                let outlierVoteCount = 0;
 
                 eligibleVoteIds.forEach(voteId => {
                     const memberVote = normalizeVote(profile.votesById[voteId]);
@@ -5447,12 +5763,17 @@
 
                     let peerYes = 0;
                     let peerNo = 0;
+                    let peerAbstain = 0;
                     let comparablePeers = 0;
                     let overlapSum = 0;
                     const comparablePeerRows = [];
 
                     peerGroup.forEach(peerEntry => {
                         const peerVote = normalizeVote(peerEntry.profile.votesById[voteId]);
+                        if (peerVote === 'ABSTAIN') {
+                            peerAbstain += 1;
+                            return;
+                        }
                         if (peerVote !== 'YES' && peerVote !== 'NO') return;
 
                         comparablePeers += 1;
@@ -5465,26 +5786,46 @@
                         }
                     });
 
-                    if (comparablePeers < options.minComparablePeers) return;
-
                     const peerMajority = peerYes > peerNo ? 'YES' : (peerNo > peerYes ? 'NO' : '');
-                    if (!peerMajority || memberVote === peerMajority) return;
-
                     const voteMeta = context.voteMetaById.get(voteId);
                     if (!voteMeta) return;
 
-                    const cohesion = Math.max(peerYes, peerNo) / comparablePeers;
-                    const coverage = comparablePeers / options.peerGroupSize;
-                    const outlierScore = cohesion * coverage;
+                    const meetingCounts = context.sessionCountsByVoteId.get(voteId) || {
+                        YES: 0,
+                        NO: 0,
+                        ABSTAIN: 0,
+                        NoVote: 0
+                    };
+                    const qualifiesForOutlier = comparablePeers >= options.minComparablePeers && Boolean(peerMajority);
+                    const cohesion = comparablePeers > 0 ? Math.max(peerYes, peerNo) / comparablePeers : 0;
+                    const coverage = options.peerGroupSize > 0 ? comparablePeers / options.peerGroupSize : 0;
+                    const isOutlier = qualifiesForOutlier && memberVote !== peerMajority;
+                    const outlierScore = isOutlier ? cohesion * coverage : 0;
                     const precinctComparison = getOutlierPrecinctComparison(
                         profile,
                         voteId,
                         memberVote,
                         context.precinctCountsByVoteId
                     );
+                    const sessionYesOthers = memberVote === 'YES'
+                        ? Math.max(0, (Number(meetingCounts.YES) || 0) - 1)
+                        : (Number(meetingCounts.YES) || 0);
+                    const sessionNoOthers = memberVote === 'NO'
+                        ? Math.max(0, (Number(meetingCounts.NO) || 0) - 1)
+                        : (Number(meetingCounts.NO) || 0);
                     const meetingMajority = context.meetingMajorityByVoteId.get(voteId) || '';
                     const sameVotePeers = memberVote === 'YES' ? peerYes : peerNo;
                     const oppositeVotePeers = comparablePeers - sameVotePeers;
+                    const precinctOutlierScore = computeAgreementOutlierScore(
+                        memberVote,
+                        precinctComparison.peerYes,
+                        precinctComparison.peerNo
+                    );
+                    const sessionOutlierScore = computeAgreementOutlierScore(
+                        memberVote,
+                        sessionYesOthers,
+                        sessionNoOthers
+                    );
 
                     const entry = {
                         canonicalKey: profile.canonicalKey,
@@ -5499,9 +5840,11 @@
                         colIndex: voteMeta.colIndex || 0,
                         voteTitle: voteMeta.title,
                         voteDescription: voteMeta.description || '—',
+                        isOutlier,
                         outlierScore,
                         peerYes,
                         peerNo,
+                        peerAbstain,
                         comparablePeers,
                         peerMajority,
                         cohesion,
@@ -5509,30 +5852,44 @@
                         sameVotePeers,
                         oppositeVotePeers,
                         sharedHistoryWithPeerGroup: comparablePeerRows.length > 0 ? overlapSum / comparablePeerRows.length : 0,
+                        precinctYes: precinctComparison.peerYes,
+                        precinctNo: precinctComparison.peerNo,
+                        precinctAbstain: precinctComparison.peerAbstain,
+                        precinctComparablePeers: (precinctComparison.peerYes || 0) + (precinctComparison.peerNo || 0),
+                        precinctOutlierScore,
+                        sessionYes: Number(meetingCounts.YES) || 0,
+                        sessionNo: Number(meetingCounts.NO) || 0,
+                        sessionAbstain: Number(meetingCounts.ABSTAIN) || 0,
+                        sessionNoVote: Number(meetingCounts.NoVote) || 0,
+                        sessionOutlierScore,
                         againstPrecinctMajority: precinctComparison.qualifies && precinctComparison.againstMajority,
                         againstMeetingMajority: Boolean(meetingMajority) && memberVote !== meetingMajority,
                         isTerminateDebate: Boolean(voteMeta.isTerminateDebate)
                     };
 
                     entries.push(entry);
-                    allEntries.push(entry);
+                    if (isOutlier) {
+                        outlierVoteCount += 1;
+                        allEntries.push(entry);
+                    }
                 });
 
                 const sortedEntries = sortOutlierVoteEntries(entries);
                 const averageSimilarity = peerGroup.length > 0
                     ? peerGroup.reduce((sum, peerEntry) => sum + peerEntry.similarity, 0) / peerGroup.length
                     : 0;
+                const scoredEntries = sortedEntries.filter(entry => entry.isOutlier);
 
                 memberDataByKey.set(profile.canonicalKey, {
                     profile,
                     eligibleVoteCount: eligibleVoteIds.length,
                     peerGroup,
                     entries: sortedEntries,
-                    outlierVoteCount: sortedEntries.length,
-                    averageOutlierScore: sortedEntries.length > 0
-                        ? sortedEntries.reduce((sum, entry) => sum + entry.outlierScore, 0) / sortedEntries.length
+                    outlierVoteCount,
+                    averageOutlierScore: scoredEntries.length > 0
+                        ? scoredEntries.reduce((sum, entry) => sum + entry.outlierScore, 0) / scoredEntries.length
                         : 0,
-                    maxOutlierScore: sortedEntries.length > 0 ? sortedEntries[0].outlierScore : 0,
+                    maxOutlierScore: scoredEntries.length > 0 ? Math.max(...scoredEntries.map(entry => entry.outlierScore)) : 0,
                     averagePeerSimilarity: averageSimilarity
                 });
             });
@@ -5561,15 +5918,30 @@
             if (!memberSelect) return;
 
             const currentValue = memberSelect.value || selectedOutlierMemberKey;
+            const sortByPrecinctCheckbox = document.getElementById('sort-by-precinct-outlier');
+            const sortByPrecinct = sortByPrecinctCheckbox ? sortByPrecinctCheckbox.checked : false;
+            const sortedProfiles = [...((analysis && analysis.profiles) || [])];
+
+            sortedProfiles.sort((a, b) => {
+                if (sortByPrecinct) {
+                    const pa = precinctSortValue(a.precinct);
+                    const pb = precinctSortValue(b.precinct);
+                    if (pa !== pb) return pa - pb;
+                }
+
+                const lastA = getLastNameForSort(a.name);
+                const lastB = getLastNameForSort(b.name);
+                if (lastA !== lastB) return lastA.localeCompare(lastB);
+                return a.name.localeCompare(b.name);
+            });
+
             memberSelect.replaceChildren();
 
-            (analysis && analysis.profiles || []).forEach(profile => {
-                const memberData = analysis.memberDataByKey.get(profile.canonicalKey);
+            sortedProfiles.forEach(profile => {
                 const option = document.createElement('option');
                 option.value = profile.canonicalKey;
                 const precinctLabel = profile.precinct ? formatPrecinctLabel(profile.precinct) : 'MULTI';
-                const outlierCount = memberData ? memberData.outlierVoteCount : 0;
-                option.textContent = `${profile.name} (${precinctLabel}) - ${outlierCount} outlier votes`;
+                option.textContent = `${profile.name} (${precinctLabel})`;
                 memberSelect.appendChild(option);
             });
 
@@ -5580,15 +5952,7 @@
                 return;
             }
 
-            const firstWithEntries = (analysis && analysis.profiles || []).find(profile => {
-                const memberData = analysis.memberDataByKey.get(profile.canonicalKey);
-                return memberData && memberData.outlierVoteCount > 0;
-            });
-
-            if (firstWithEntries) {
-                memberSelect.value = firstWithEntries.canonicalKey;
-                selectedOutlierMemberKey = firstWithEntries.canonicalKey;
-            } else if (memberSelect.options.length > 0) {
+            if (memberSelect.options.length > 0) {
                 memberSelect.value = memberSelect.options[0].value;
                 selectedOutlierMemberKey = memberSelect.value;
             } else {
@@ -5599,33 +5963,44 @@
         function renderOutlierVotesSummaryTable(container, analysis) {
             const summaryEl = document.createElement('div');
             summaryEl.className = 'vote-history-message outlier-votes-summary';
-            if (analysis.totalEntries === 0) {
-                summaryEl.textContent = 'No outlier votes match the current filters.';
+            if (!selectedOutlierMemberKey || !analysis.memberDataByKey.has(selectedOutlierMemberKey)) {
+                summaryEl.textContent = 'Select a member to see all of their eligible YES/NO votes across loaded sessions.';
                 container.appendChild(summaryEl);
                 return;
             }
 
-            const displayedEntries = analysis.topEntries.slice(0, MAX_CONTENTIOUS_DISPLAY);
-            summaryEl.textContent = `Showing ${displayedEntries.length} of ${analysis.totalEntries} scored outlier votes across all loaded sessions.`;
+            const memberData = analysis.memberDataByKey.get(selectedOutlierMemberKey);
+            const profile = memberData.profile;
+            const displayedEntries = sortSelectedMemberOutlierEntries(memberData.entries);
+            summaryEl.textContent =
+                `${profile.name} (${formatPrecinctLabel(profile.precinct)}): showing ${displayedEntries.length} eligible YES/NO votes ` +
+                `across loaded sessions.`;
             container.appendChild(summaryEl);
+
+            if (displayedEntries.length === 0) {
+                return;
+            }
 
             const tableWrapEl = document.createElement('div');
             tableWrapEl.className = 'outlier-votes-table-wrap';
-
-            const tableEl = document.createElement('table');
-            tableEl.className = 'outlier-votes-table';
+            const tableHeaderEl = document.createElement('div');
+            tableHeaderEl.className = 'outlier-votes-table-header';
+            const tableScrollerEl = document.createElement('div');
+            tableScrollerEl.className = 'outlier-votes-table-scroller';
 
             const headers = [
                 { text: 'Session', className: 'session-col' },
-                { text: 'Vote Title', className: '' },
-                { text: 'Member', className: 'member-col' },
+                { text: 'Vote Title', className: 'vote-title-col' },
                 { text: 'Vote', className: 'vote-col' },
-                { text: 'Peer Split', className: 'peer-split-col' },
-                { text: 'Score', className: 'score-col' },
-                { text: 'Flags', className: '' }
+                { text: 'Precinct Split', className: 'peer-split-col' },
+                { text: 'Precinct Outlier', className: 'score-col' },
+                { text: 'Session Split', className: 'peer-split-col' },
+                { text: 'Session Outlier', className: 'score-col' }
             ];
 
-            const theadEl = document.createElement('thead');
+            const headerTableEl = document.createElement('table');
+            headerTableEl.className = 'outlier-votes-table';
+            const headerTheadEl = document.createElement('thead');
             const headRowEl = document.createElement('tr');
             headers.forEach(header => {
                 const th = document.createElement('th');
@@ -5633,21 +6008,16 @@
                 th.textContent = header.text;
                 headRowEl.appendChild(th);
             });
-            theadEl.appendChild(headRowEl);
-            tableEl.appendChild(theadEl);
+            headerTheadEl.appendChild(headRowEl);
+            headerTableEl.appendChild(headerTheadEl);
+            tableHeaderEl.appendChild(headerTableEl);
+
+            const tableEl = document.createElement('table');
+            tableEl.className = 'outlier-votes-table';
 
             const tbodyEl = document.createElement('tbody');
             displayedEntries.forEach(entry => {
                 const rowEl = document.createElement('tr');
-                if (entry.canonicalKey === selectedOutlierMemberKey) {
-                    rowEl.classList.add('selected');
-                }
-                rowEl.addEventListener('click', () => {
-                    selectedOutlierMemberKey = entry.canonicalKey;
-                    const memberSelect = document.getElementById('outlier-member-select');
-                    if (memberSelect) memberSelect.value = entry.canonicalKey;
-                    renderOutlierVotes();
-                });
 
                 const sessionCell = document.createElement('td');
                 sessionCell.className = 'session-col';
@@ -5655,7 +6025,8 @@
                 rowEl.appendChild(sessionCell);
 
                 const titleCell = document.createElement('td');
-                titleCell.appendChild(createNavigationBubbleButton(
+                titleCell.className = 'vote-title-col';
+                const titleButton = createNavigationBubbleButton(
                     entry.voteTitle,
                     evt => {
                         evt.stopPropagation();
@@ -5663,215 +6034,67 @@
                     },
                     'Open this vote in View by Vote',
                     'vote-title-nav-bubble'
-                ));
+                );
+                if (entry.voteDescription && entry.voteDescription !== '—') {
+                    titleButton.dataset.tooltip = entry.voteDescription;
+                }
+                titleCell.appendChild(titleButton);
                 rowEl.appendChild(titleCell);
-
-                const memberCell = document.createElement('td');
-                memberCell.className = 'member-col';
-                memberCell.textContent = `${entry.memberName} (${formatPrecinctLabel(entry.precinct)})`;
-                rowEl.appendChild(memberCell);
 
                 const voteCell = document.createElement('td');
                 voteCell.className = `vote-col vote-${entry.memberVote.toLowerCase()}`;
                 voteCell.textContent = entry.memberVote;
                 rowEl.appendChild(voteCell);
 
-                const peerSplitCell = document.createElement('td');
-                peerSplitCell.className = 'peer-split-col';
-                peerSplitCell.textContent = `${entry.peerYes} YES / ${entry.peerNo} NO`;
-                rowEl.appendChild(peerSplitCell);
+                const precinctSplitCell = document.createElement('td');
+                precinctSplitCell.className = 'peer-split-col';
+                precinctSplitCell.textContent = entry.precinctComparablePeers > 0
+                    ? formatOutlierSplit(entry.precinctYes, entry.precinctNo, entry.precinctAbstain)
+                    : '—';
+                rowEl.appendChild(precinctSplitCell);
 
-                const scoreCell = document.createElement('td');
-                scoreCell.className = 'score-col';
-                scoreCell.textContent = entry.outlierScore.toFixed(2);
-                rowEl.appendChild(scoreCell);
+                const precinctScoreCell = document.createElement('td');
+                precinctScoreCell.className = 'score-col';
+                precinctScoreCell.textContent = formatOutlierScore(entry.precinctOutlierScore);
+                rowEl.appendChild(precinctScoreCell);
 
-                const flagsCell = document.createElement('td');
-                const badges = document.createElement('div');
-                badges.className = 'outlier-votes-badges';
-                if (entry.againstPrecinctMajority) {
-                    const badge = document.createElement('span');
-                    badge.className = 'outlier-votes-badge precinct';
-                    badge.textContent = 'Against precinct majority';
-                    badges.appendChild(badge);
-                }
-                if (entry.againstMeetingMajority) {
-                    const badge = document.createElement('span');
-                    badge.className = 'outlier-votes-badge meeting';
-                    badge.textContent = 'Against meeting majority';
-                    badges.appendChild(badge);
-                }
-                if (!entry.againstPrecinctMajority && !entry.againstMeetingMajority) {
-                    const badge = document.createElement('span');
-                    badge.className = 'outlier-votes-badge none';
-                    badge.textContent = 'Peer-group outlier';
-                    badges.appendChild(badge);
-                }
-                flagsCell.appendChild(badges);
-                rowEl.appendChild(flagsCell);
+                const sessionSplitCell = document.createElement('td');
+                sessionSplitCell.className = 'peer-split-col';
+                sessionSplitCell.textContent = formatOutlierSplit(
+                    entry.sessionYes,
+                    entry.sessionNo,
+                    entry.sessionAbstain
+                );
+                rowEl.appendChild(sessionSplitCell);
+
+                const sessionScoreCell = document.createElement('td');
+                sessionScoreCell.className = 'score-col';
+                sessionScoreCell.textContent = formatOutlierScore(entry.sessionOutlierScore);
+                rowEl.appendChild(sessionScoreCell);
 
                 tbodyEl.appendChild(rowEl);
             });
 
             tableEl.appendChild(tbodyEl);
-            tableWrapEl.appendChild(tableEl);
+            const syncHeaderScroll = () => {
+                tableHeaderEl.scrollLeft = tableScrollerEl.scrollLeft;
+                tableHeaderEl.style.paddingRight = `${tableScrollerEl.offsetWidth - tableScrollerEl.clientWidth}px`;
+            };
+            tableScrollerEl.addEventListener('scroll', syncHeaderScroll);
+            tableScrollerEl.appendChild(tableEl);
+            tableWrapEl.appendChild(tableHeaderEl);
+            tableWrapEl.appendChild(tableScrollerEl);
             container.appendChild(tableWrapEl);
-        }
-
-        function renderOutlierVotesMemberPanel(container, analysis) {
-            const detailWrap = document.createElement('div');
-            detailWrap.className = 'outlier-votes-panel-grid';
-
-            const detailEl = document.createElement('div');
-            detailEl.className = 'outlier-votes-detail';
-            const helperEl = document.createElement('div');
-            helperEl.className = 'outlier-votes-detail';
-
-            if (!selectedOutlierMemberKey || !analysis.memberDataByKey.has(selectedOutlierMemberKey)) {
-                const message = document.createElement('p');
-                message.className = 'outlier-votes-empty';
-                message.textContent = 'Select a member to inspect their strongest outlier votes.';
-                detailEl.appendChild(message);
-                helperEl.appendChild(document.createTextNode('Click a table row above to jump to a member.'));
-                detailWrap.appendChild(detailEl);
-                detailWrap.appendChild(helperEl);
-                container.appendChild(detailWrap);
-                return;
-            }
-
-            const memberData = analysis.memberDataByKey.get(selectedOutlierMemberKey);
-            const profile = memberData.profile;
-            const titleEl = document.createElement('h3');
-            titleEl.textContent = `${profile.name} (${formatPrecinctLabel(profile.precinct)})`;
-            detailEl.appendChild(titleEl);
-
-            const metaEl = document.createElement('p');
-            metaEl.className = 'outlier-votes-meta';
-            metaEl.textContent =
-                `${memberData.outlierVoteCount} outlier votes from ${memberData.eligibleVoteCount} eligible YES/NO votes, ` +
-                `${memberData.peerGroup.length} peers, average peer similarity ${(memberData.averagePeerSimilarity * 100).toFixed(1)}%.`;
-            detailEl.appendChild(metaEl);
-
-            const actionsEl = document.createElement('div');
-            actionsEl.className = 'outlier-vote-card-row';
-            actionsEl.appendChild(createNavigationBubbleButton(
-                'Open Member in View by Member',
-                () => { void openMemberFromNetworkView(profile.canonicalKey, profile.precinct); },
-                'Open this member in View by Member',
-                'member-network-nav-bubble'
-            ));
-            detailEl.appendChild(actionsEl);
-
-            if (memberData.outlierVoteCount === 0) {
-                const emptyEl = document.createElement('p');
-                emptyEl.className = 'outlier-votes-empty';
-                emptyEl.textContent = memberData.peerGroup.length < analysis.options.minComparablePeers
-                    ? 'Not enough shared voting history to form a reliable peer group under the current filters.'
-                    : 'This member has no scored outlier votes under the current filters.';
-                detailEl.appendChild(emptyEl);
-            } else {
-                const listEl = document.createElement('div');
-                listEl.className = 'outlier-votes-detail-list';
-
-                memberData.entries.slice(0, 5).forEach(entry => {
-                    const cardEl = document.createElement('div');
-                    cardEl.className = 'outlier-vote-card';
-
-                    const headerEl = document.createElement('div');
-                    headerEl.className = 'outlier-vote-card-header';
-
-                    const titleWrapEl = document.createElement('div');
-                    titleWrapEl.className = 'outlier-vote-card-title';
-                    titleWrapEl.textContent = `${entry.sessionLabel}: ${entry.voteTitle}`;
-                    headerEl.appendChild(titleWrapEl);
-
-                    const scoreEl = document.createElement('div');
-                    scoreEl.className = 'outlier-vote-card-score';
-                    scoreEl.textContent = `Score ${entry.outlierScore.toFixed(2)}`;
-                    headerEl.appendChild(scoreEl);
-                    cardEl.appendChild(headerEl);
-
-                    const bodyEl = document.createElement('div');
-                    bodyEl.className = 'outlier-vote-card-body';
-
-                    const voteRowEl = document.createElement('div');
-                    voteRowEl.className = 'outlier-vote-card-row';
-                    voteRowEl.textContent =
-                        `Vote: ${entry.memberVote}. Peer split: ${entry.peerYes} YES / ${entry.peerNo} NO ` +
-                        `(${entry.comparablePeers} comparable peers).`;
-                    bodyEl.appendChild(voteRowEl);
-
-                    const metricsRowEl = document.createElement('div');
-                    metricsRowEl.className = 'outlier-vote-card-row';
-                    metricsRowEl.textContent =
-                        `Cohesion ${(entry.cohesion * 100).toFixed(0)}%, coverage ${(entry.coverage * 100).toFixed(0)}%, ` +
-                        `avg shared history ${entry.sharedHistoryWithPeerGroup.toFixed(1)} votes.`;
-                    bodyEl.appendChild(metricsRowEl);
-
-                    const badgeRowEl = document.createElement('div');
-                    badgeRowEl.className = 'outlier-vote-card-row';
-                    const badgeWrapEl = document.createElement('div');
-                    badgeWrapEl.className = 'outlier-votes-badges';
-                    if (entry.againstPrecinctMajority) {
-                        const badge = document.createElement('span');
-                        badge.className = 'outlier-votes-badge precinct';
-                        badge.textContent = 'Against precinct majority';
-                        badgeWrapEl.appendChild(badge);
-                    }
-                    if (entry.againstMeetingMajority) {
-                        const badge = document.createElement('span');
-                        badge.className = 'outlier-votes-badge meeting';
-                        badge.textContent = 'Against meeting majority';
-                        badgeWrapEl.appendChild(badge);
-                    }
-                    if (badgeWrapEl.children.length === 0) {
-                        const badge = document.createElement('span');
-                        badge.className = 'outlier-votes-badge none';
-                        badge.textContent = 'Peer-group outlier';
-                        badgeWrapEl.appendChild(badge);
-                    }
-                    badgeRowEl.appendChild(badgeWrapEl);
-                    bodyEl.appendChild(badgeRowEl);
-
-                    const actionsRowEl = document.createElement('div');
-                    actionsRowEl.className = 'outlier-vote-card-row';
-                    actionsRowEl.appendChild(createNavigationBubbleButton(
-                        'Open Vote',
-                        () => { void openVoteFromCrossSession(entry.sessionId, entry.voteTitle); },
-                        'Open this vote in View by Vote',
-                        'vote-title-nav-bubble'
-                    ));
-                    cardEl.appendChild(bodyEl);
-                    cardEl.appendChild(actionsRowEl);
-                    listEl.appendChild(cardEl);
-                });
-
-                detailEl.appendChild(listEl);
-            }
-
-            const scoringHeadingEl = document.createElement('strong');
-            scoringHeadingEl.textContent = 'How scoring works';
-            helperEl.replaceChildren(
-                scoringHeadingEl,
-                document.createElement('br'),
-                document.createTextNode(
-                    'Only YES/NO votes are scored. A vote is counted when the member breaks with the YES/NO majority of their closest peers. ' +
-                    'Score = cohesion \u00d7 coverage, so strong peer agreement and broad peer participation both matter.'
-                )
-            );
-
-            detailWrap.appendChild(detailEl);
-            detailWrap.appendChild(helperEl);
-            container.appendChild(detailWrap);
+            syncHeaderScroll();
         }
 
         function renderOutlierVotes() {
             if (!outlierVotesResultsEl) return;
+            updateOutlierSortButtonsState();
 
-            syncOutlierVotesComparableOptions();
             const sessionDataList = getOutlierVotesSessionData();
             if (!Array.isArray(sessionDataList) || sessionDataList.length === 0) {
-                setOutlierVotesStatus('Outlier Votes is unavailable.');
+                setOutlierVotesStatus('TMM Outlier Votes is unavailable.');
                 return;
             }
 
@@ -5889,11 +6112,9 @@
             }
 
             renderOutlierVotesSummaryTable(outlierVotesResultsEl, analysis);
-            renderOutlierVotesMemberPanel(outlierVotesResultsEl, analysis);
         }
 
         async function ensureOutlierVotesDataLoaded() {
-            initializeOutlierVotesControls();
             if (!outlierVotesResultsEl) return;
 
             const existingSessions = getOutlierVotesSessionData();
@@ -5911,14 +6132,14 @@
             }
 
             if (memberNetworkLoadPromise) {
-                setOutlierVotesStatus('Loading Outlier Votes...');
+                setOutlierVotesStatus('Loading TMM Outlier Votes...');
                 await memberNetworkLoadPromise;
                 if (getOutlierVotesSessionData()) renderOutlierVotes();
                 return;
             }
 
             if (voteHistoryLoadPromise) {
-                setOutlierVotesStatus('Loading Outlier Votes...');
+                setOutlierVotesStatus('Loading TMM Outlier Votes...');
                 await voteHistoryLoadPromise;
                 if (getOutlierVotesSessionData()) {
                     if (!memberNetworkProfilesCache || memberNetworkProfilesCache.length === 0) {
@@ -5930,7 +6151,7 @@
             }
 
             if (clusteringLoadPromise) {
-                setOutlierVotesStatus('Loading Outlier Votes...');
+                setOutlierVotesStatus('Loading TMM Outlier Votes...');
                 await clusteringLoadPromise;
                 if (getOutlierVotesSessionData()) {
                     if (!memberNetworkProfilesCache || memberNetworkProfilesCache.length === 0) {
@@ -5943,7 +6164,7 @@
 
             let loadedCount = 0;
             const total = SESSION_FILES.length;
-            setOutlierVotesStatus(`Loading Outlier Votes (0 of ${total})...`);
+            setOutlierVotesStatus(`Loading TMM Outlier Votes (0 of ${total})...`);
 
             outlierVotesLoadPromise = (async () => {
                 try {
@@ -5956,7 +6177,7 @@
                                 throw new Error(`${session.label}: ${err.message}`);
                             } finally {
                                 loadedCount += 1;
-                                setOutlierVotesStatus(`Loading Outlier Votes (${loadedCount} of ${total})...`);
+                                setOutlierVotesStatus(`Loading TMM Outlier Votes (${loadedCount} of ${total})...`);
                             }
                         })
                     );
@@ -5967,9 +6188,9 @@
                     cacheMemberNetworkProfilesFromSessions(sessions);
                     renderOutlierVotes();
                 } catch (err) {
-                    handleModuleError(err, null, 'Outlier Votes');
+                    handleModuleError(err, null, 'TMM Outlier Votes');
                     outlierVotesAnalysisState = null;
-                    setOutlierVotesStatus(`Error loading Outlier Votes: ${err.message}`, true);
+                    setOutlierVotesStatus(`Error loading TMM Outlier Votes: ${err.message}`, true);
                 } finally {
                     outlierVotesLoadPromise = null;
                 }
@@ -7046,17 +7267,26 @@
             moduleContextControlsEl.style.display = SINGLE_SESSION_MODULE_IDS.has(activeModuleId) ? 'block' : 'none';
         }
 
+        function updateByVoteLock(activeModuleId = getActiveModuleId()) {
+            document.body.classList.toggle('by-vote-lock', activeModuleId === 'by-vote');
+            document.body.classList.toggle('by-member-lock', activeModuleId === 'by-member');
+            document.body.classList.toggle('contentious-votes-lock', activeModuleId === 'contentious-votes');
+            document.body.classList.toggle('member-networks-lock', activeModuleId === 'member-networks');
+            document.body.classList.toggle('outlier-votes-lock', activeModuleId === 'outlier-votes');
+            document.body.classList.toggle('tmm-history-lock', activeModuleId === 'tmm-history');
+        }
+
         function updateModuleInstruction(activeModuleId = getActiveModuleId()) {
             if (!moduleInstructionEl) return;
 
             if (activeModuleId === 'member-networks') {
-                moduleInstructionEl.textContent = 'Member Networks uses all Town Meeting sessions attended by the selected member.';
+                moduleInstructionEl.textContent = 'TMM Networks uses all Town Meeting sessions attended by the selected member.';
                 moduleInstructionEl.style.display = 'block';
                 return;
             }
 
             if (activeModuleId === 'outlier-votes') {
-                moduleInstructionEl.textContent = 'Outlier Votes highlights votes where a member diverged from their closest voting peers across all loaded sessions.';
+                moduleInstructionEl.textContent = 'TMM Outlier Votes shows a selected member’s votes across all loaded sessions, alongside precinct and Town Meeting splits.';
                 moduleInstructionEl.style.display = 'block';
                 return;
             }
@@ -7110,6 +7340,7 @@
             const targetTab = document.getElementById(tabName);
             if (targetTab) targetTab.classList.add('active');
             updateModuleContextControls(tabName);
+            updateByVoteLock(tabName);
             updateModuleInstruction(tabName);
 
             // Lazy-load cross-session modules only when activated.
@@ -7144,6 +7375,8 @@
             if (tabName === 'voter-clustering') {
                 ensureClusteringDataLoaded();
             }
+
+            syncPinnedLayoutOffsets();
         }
 
         function openPcaInNewTab() {
@@ -7174,6 +7407,7 @@
             }
 
             updateModuleContextControls('voter-clustering');
+            updateByVoteLock('voter-clustering');
             updateModuleInstruction('voter-clustering');
 
             const tabsBar = document.getElementById('module-menu');
@@ -7254,6 +7488,7 @@
             updateSingleSessionAISummaryButtons();
 
             updateModuleContextControls('by-vote');
+            updateByVoteLock('by-vote');
             updateModuleInstruction('by-vote');
             loadVotingDataFromExcel();
         });
