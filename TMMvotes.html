@@ -286,6 +286,36 @@
             transform: translateX(-50%) translateY(0);
         }
 
+        [data-tooltip]:focus-visible::after {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        [data-tooltip].tooltip-below::after {
+            top: calc(100% + 8px);
+            bottom: auto;
+            transform: translateX(-50%) translateY(-4px);
+        }
+
+        [data-tooltip].tooltip-below:hover::after,
+        [data-tooltip].tooltip-below:focus-visible::after {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        [data-tooltip].tooltip-left::after {
+            top: 50%;
+            right: calc(100% + 8px);
+            bottom: auto;
+            left: auto;
+            transform: translateX(4px) translateY(-50%);
+        }
+
+        [data-tooltip].tooltip-left:hover::after,
+        [data-tooltip].tooltip-left:focus-visible::after {
+            transform: translateX(0) translateY(-50%);
+        }
+
         /* Tab bar container */
         .tabs {
             display: flex;
@@ -2533,7 +2563,7 @@
                     </button>
                     <button
                         type="button"
-                        class="tmm-history-action-btn"
+                        class="tmm-history-action-btn tooltip-left"
                         onclick="openTmmEmailsInNewTab()"
                         data-tooltip="You will need to log in to the Town website in order to download TMM emails"
                         aria-label="TMM emails. You will need to log in to the Town website in order to download TMM emails">
