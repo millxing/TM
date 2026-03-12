@@ -7352,18 +7352,6 @@
         function updateModuleInstruction(activeModuleId = getActiveModuleId()) {
             if (!moduleInstructionEl) return;
 
-            if (activeModuleId === 'member-networks') {
-                moduleInstructionEl.textContent = 'TMM Networks uses all Town Meeting sessions attended by the selected member.';
-                moduleInstructionEl.style.display = 'block';
-                return;
-            }
-
-            if (activeModuleId === 'outlier-votes') {
-                moduleInstructionEl.textContent = 'TMM Outlier Votes shows a selected member’s votes across all loaded sessions, alongside precinct and Town Meeting splits.';
-                moduleInstructionEl.style.display = 'block';
-                return;
-            }
-
             if (activeModuleId === 'vote-history') {
                 moduleInstructionEl.textContent = 'Click on a Town Meeting session to see the details about the votes in that session.';
                 moduleInstructionEl.style.display = 'block';
@@ -7376,11 +7364,6 @@
                 return;
             }
 
-            if (activeModuleId === 'tmm-history') {
-                moduleInstructionEl.textContent = 'TMM History summarizes each member across all loaded Town Meeting sessions.';
-                moduleInstructionEl.style.display = 'block';
-                return;
-            }
             moduleInstructionEl.textContent = '';
             moduleInstructionEl.style.display = 'none';
         }
