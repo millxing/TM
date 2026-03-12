@@ -136,6 +136,21 @@
             align-items: center;
         }
 
+        .download-link {
+            color: var(--tm-rose);
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .download-link.hidden {
+            display: none;
+        }
+
+        .download-link:hover {
+            text-decoration: underline;
+        }
+
         .view-label {
             color: var(--tm-plum);
             font-size: 0.92rem;
@@ -362,7 +377,8 @@
             </div>
             <div class="run-actions">
                 <button id="run-analysis" class="primary" type="button">Run PCA</button>
-                <button id="export-pca" type="button">Export PCA</button>
+                <button id="export-pca" type="button">Export to Excel</button>
+                <a id="download-pca-plot-link" class="download-link hidden" href="#" download>Download plot PNG</a>
             </div>
             <div class="view-actions">
                 <span class="view-label">View:</span>
@@ -459,6 +475,7 @@
         let analysisState = null;
         let coeffSortState = { componentIndex: 0 };
         let memberScoresSortState = { componentIndex: 0, direction: 'desc' };
+        let latestPlotImageExport = null;
 
         /****************************************************
          * PCA-SPECIFIC HELPERS
@@ -540,6 +557,12 @@
             const num = Number(value);
             if (!Number.isFinite(num)) return '';
             return num.toFixed(digits);
+        }
+
+        function roundNumber(value, digits = 2) {
+            const num = Number(value);
+            if (!Number.isFinite(num)) return null;
+            return Number(num.toFixed(digits));
         }
 
         function parseVoteGuideRows(rows) {
@@ -1231,154 +1254,285 @@
             return `Parameters -> min sessions: ${settings.minSessions} | ${abstainRule} | ${terminateRule} | ${missingRule}`;
         }
 
-        function downloadJsonFile(filename, payloadObject) {
-            const jsonText = JSON.stringify(payloadObject, null, 2);
-            const blob = new Blob([jsonText], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
+        function getSortedVoteCoefficientsRows() {
+            if (!analysisState || !Array.isArray(analysisState.voteCoefficients)) return [];
+            const componentIndex = coeffSortState.componentIndex;
+            return [...analysisState.voteCoefficients].sort((a, b) => {
+                const av = Math.abs(a.coefficients[componentIndex] || 0);
+                const bv = Math.abs(b.coefficients[componentIndex] || 0);
+                if (bv !== av) return bv - av;
+                return a.title.localeCompare(b.title);
+            });
+        }
 
+        function getSortedMemberScoresRows() {
+            if (!analysisState || !Array.isArray(analysisState.memberScores)) return [];
+            const componentIndex = memberScoresSortState.componentIndex;
+            const direction = memberScoresSortState.direction;
+            const directionFactor = direction === 'asc' ? 1 : -1;
+            return [...analysisState.memberScores].sort((a, b) => {
+                const av = a.scores[componentIndex] || 0;
+                const bv = b.scores[componentIndex] || 0;
+                if (av !== bv) return directionFactor * (av - bv);
+
+                const pa = precinctSortValue(a.precinct);
+                const pb = precinctSortValue(b.precinct);
+                if (pa !== pb) return pa - pb;
+                return a.name.localeCompare(b.name);
+            });
+        }
+
+        function buildVoteCoefficientsSheetRows() {
+            return getSortedVoteCoefficientsRows().map(vote => ({
+                Session: vote.sessionLabel,
+                'Vote ID': vote.voteId,
+                'Vote Title': vote.title,
+                'Vote Description': vote.description || '',
+                'Vote Category': vote.category || '',
+                PC1: roundNumber(vote.coefficients[0], 3),
+                PC2: roundNumber(vote.coefficients[1], 3),
+                PC3: roundNumber(vote.coefficients[2], 3),
+                PC4: roundNumber(vote.coefficients[3], 3),
+                PC5: roundNumber(vote.coefficients[4], 3),
+                'Residual Loading': roundNumber(vote.coefficients[5], 3)
+            }));
+        }
+
+        function buildMemberScoresSheetRows() {
+            return getSortedMemberScoresRows().map(member => ({
+                Member: member.name,
+                Precinct: formatPrecinctLabel(member.precinct),
+                'Sessions Attended': member.sessionsAttended,
+                'Session IDs': Array.isArray(member.sessionIds) ? member.sessionIds.join(', ') : '',
+                PC1: roundNumber(member.scores[0], 3),
+                PC2: roundNumber(member.scores[1], 3),
+                PC3: roundNumber(member.scores[2], 3),
+                PC4: roundNumber(member.scores[3], 3),
+                PC5: roundNumber(member.scores[4], 3),
+                Residual: roundNumber(member.scores[5], 3)
+            }));
+        }
+
+        function buildPcaPlotSheetRows() {
+            if (!analysisState || !Array.isArray(analysisState.memberScores)) return [];
+            return [...analysisState.memberScores]
+                .sort((a, b) => {
+                    const pa = precinctSortValue(a.precinct);
+                    const pb = precinctSortValue(b.precinct);
+                    if (pa !== pb) return pa - pb;
+                    return a.name.localeCompare(b.name);
+                })
+                .map(member => ({
+                    Member: member.name,
+                    Precinct: formatPrecinctLabel(member.precinct),
+                    'Sessions Attended': member.sessionsAttended,
+                    'Session IDs': Array.isArray(member.sessionIds) ? member.sessionIds.join(', ') : '',
+                    PC1: roundNumber(member.scores[0], 3),
+                    PC2: roundNumber(member.scores[1], 3)
+                }));
+        }
+
+        function buildWorksheetWithAutoWidths(rows) {
+            const worksheet = XLSX.utils.json_to_sheet(rows);
+            const headers = rows.length ? Object.keys(rows[0]) : [];
+            if (!headers.length) return worksheet;
+
+            const preferredColumnWidths = {
+                'Vote Description': 90
+            };
+
+            worksheet['!cols'] = headers.map(header => {
+                const maxContentWidth = rows.reduce((maxWidth, row) => {
+                    const rawValue = row && Object.prototype.hasOwnProperty.call(row, header) ? row[header] : '';
+                    const cellText = rawValue == null ? '' : String(rawValue);
+                    return Math.max(maxWidth, cellText.length);
+                }, String(header).length);
+
+                const autoWidth = Math.min(Math.max(maxContentWidth + 2, 10), 60);
+                const preferredWidth = preferredColumnWidths[header];
+                return { wch: preferredWidth ? Math.max(autoWidth, preferredWidth) : autoWidth };
+            });
+
+            return worksheet;
+        }
+
+        function downloadDataUrlFile(filename, dataUrl) {
             const link = document.createElement('a');
-            link.href = url;
+            link.href = dataUrl;
             link.download = filename;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-            URL.revokeObjectURL(url);
         }
 
-        function buildPcaExportPayload() {
-            if (!analysisState) return null;
+        function setPlotDownloadLink(filename, dataUrl) {
+            latestPlotImageExport = filename && dataUrl ? { filename, dataUrl } : null;
+            const link = document.getElementById('download-pca-plot-link');
+            if (!link) return;
 
-            const componentLabels = ['PC1', 'PC2', 'PC3', 'PC4', 'PC5', 'Residual'];
-            const varianceByComponent = componentLabels.map((component, idx) => ({
-                component,
-                variance_percent: Number(formatFloat(analysisState.variancePercents[idx])),
-                cumulative_percent: Number(formatFloat(analysisState.cumulativePercents[idx]))
-            }));
+            if (!latestPlotImageExport) {
+                link.href = '#';
+                link.removeAttribute('download');
+                link.classList.add('hidden');
+                return;
+            }
 
-            const sessionFileById = new Map(SESSION_FILES.map(session => [session.id, session.file]));
-            const includedSessions = analysisState.selectedSessions.map((session, index) => ({
-                order: index + 1,
-                session_id: session.id,
-                session_label: session.label,
-                source_file: session.file || sessionFileById.get(session.id) || ''
-            }));
+            link.href = dataUrl;
+            link.download = filename;
+            link.classList.remove('hidden');
+        }
 
-            const votes = analysisState.voteCoefficients.map((vote, index) => {
-                const sessionId = String(vote.voteId || '').split('::')[0] || '';
-                return {
-                    vote_index: index + 1,
-                    vote_id: vote.voteId,
-                    session_id: sessionId,
-                    session_label: vote.sessionLabel,
-                    title: vote.title,
-                    description: vote.description || '',
-                    vote_category: vote.category || '',
-                    coefficients: {
-                        pc1: Number(formatFloat(vote.coefficients[0], 3)),
-                        pc2: Number(formatFloat(vote.coefficients[1], 3)),
-                        pc3: Number(formatFloat(vote.coefficients[2], 3)),
-                        pc4: Number(formatFloat(vote.coefficients[3], 3)),
-                        pc5: Number(formatFloat(vote.coefficients[4], 3)),
-                        residual_loading: Number(formatFloat(vote.coefficients[5], 3))
-                    }
-                };
-            });
+        function buildScoresPlotConfig() {
+            if (!analysisState || !Array.isArray(analysisState.memberScores) || analysisState.memberScores.length === 0) {
+                return null;
+            }
 
-            const members = analysisState.memberScores.map((member, index) => ({
-                member_index: index + 1,
-                canonical_key: member.canonicalKey,
-                name: member.name,
-                precinct: member.precinct,
-                sessions_attended: member.sessionsAttended,
-                session_ids: member.sessionIds || [],
-                scores: {
-                    pc1: Number(formatFloat(member.scores[0])),
-                    pc2: Number(formatFloat(member.scores[1])),
-                    pc3: Number(formatFloat(member.scores[2])),
-                    pc4: Number(formatFloat(member.scores[3])),
-                    pc5: Number(formatFloat(member.scores[4])),
-                    residual: Number(formatFloat(member.scores[5]))
-                }
-            }));
-
-            const settings = analysisState.settings;
-            const settingsForExport = {
-                first_session_id: includedSessions.length ? includedSessions[0].session_id : '',
-                last_session_id: includedSessions.length ? includedSessions[includedSessions.length - 1].session_id : '',
-                selected_session_count: includedSessions.length,
-                min_sessions_required: settings.minSessions,
-                ignore_abstain_votes: settings.ignoreAbstain,
-                ignore_terminate_debate_votes: settings.ignoreTerminate,
-                missing_vote_imputation: settings.missingStrategy === 'column-mean' ? 'column_mean' : 'neutral'
-            };
-
+            const members = analysisState.memberScores;
             return {
-                export_info: {
-                    exported_at_utc: new Date().toISOString(),
-                    source_app: 'TMMpca.html',
-                    purpose: 'PCA export for LLM interpretation of Town Meeting voting patterns.'
-                },
-                assumptions: [
-                    'Vote encoding is YES=+1, NO=-1, ABSTAIN=0.',
-                    'If "ignore abstain" is enabled, abstain is treated as missing before imputation.',
-                    'If "ignore motions to terminate debate" is enabled, those vote columns are removed.',
-                    'Missing values are imputed per selected strategy: neutral or vote-column mean.',
-                    'Members with sessions attended below minimum are excluded.',
-                    'Principal components are computed for top 5 components; residual captures remaining variance magnitude.'
-                ],
-                parameters: settingsForExport,
-                instructions: {
-                    readme_text:
-                        'This file exports PCA results for Town Meeting voting data. ' +
-                        'First review parameters and assumptions, then variance_explained, then vote coefficients and member scores. ' +
-                        'Votes with larger absolute coefficients are more influential for a component; members with larger absolute scores are more strongly aligned to that component.',
-                    how_to_read: [
-                        'Use variance_explained to assess component importance.',
-                        'Use votes[].coefficients to understand which motions load strongly onto each component.',
-                        'Use members[].scores to locate members on each component axis (positive vs negative direction).',
-                        'PC signs are relative and can flip; interpret relative magnitude and group separation.',
-                        'Residual score summarizes unexplained member variation after PC1-PC5.'
-                    ],
-                    analyst_notes: [
-                        'Large absolute vote coefficient means that vote is influential for that component.',
-                        'Large absolute member score means that member is strongly associated with that component.',
-                        'Compare member score distributions by precinct or session participation when interpreting clusters.'
-                    ]
-                },
-                summary: {
-                    member_count: analysisState.memberCount,
-                    vote_count: analysisState.voteCount,
-                    session_count: includedSessions.length,
-                    parameter_summary_line: buildSettingsSummaryLine(settings)
-                },
-                data: {
-                    sessions: includedSessions,
-                    variance_explained: varianceByComponent,
-                    votes,
-                    members
+                traces: [{
+                    type: 'scattergl',
+                    mode: 'markers',
+                    showlegend: false,
+                    x: members.map(member => member.scores[0] || 0),
+                    y: members.map(member => member.scores[1] || 0),
+                    text: members.map(member => member.name),
+                    customdata: members.map(member => [
+                        formatPrecinctLabel(member.precinct),
+                        member.sessionsAttended
+                    ]),
+                    hovertemplate:
+                        '<b>%{text}</b><br>' +
+                        'Precinct: %{customdata[0]}<br>' +
+                        'Sessions: %{customdata[1]}<br>' +
+                        'PC1: %{x:.2f}<br>' +
+                        'PC2: %{y:.2f}<extra></extra>',
+                    marker: {
+                        size: 9,
+                        opacity: 0.85,
+                        color: '#1f77b4'
+                    }
+                }],
+                layout: {
+                    margin: { l: 60, r: 20, t: 20, b: 55 },
+                    plot_bgcolor: '#ffffff',
+                    paper_bgcolor: '#ffffff',
+                    xaxis: {
+                        title: 'PC1',
+                        gridcolor: '#e9ecef',
+                        zeroline: true,
+                        zerolinecolor: '#ced4da'
+                    },
+                    yaxis: {
+                        title: 'PC2',
+                        gridcolor: '#e9ecef',
+                        zeroline: true,
+                        zerolinecolor: '#ced4da'
+                    }
                 }
             };
         }
 
-        function exportPcaAnalysis() {
+        async function exportScoresPlotImage(baseFileName) {
+            if (typeof Plotly === 'undefined') {
+                throw new Error('Plotly is unavailable; unable to export chart image.');
+            }
+
+            const fileName = `${baseFileName}_plot.png`;
+            const existingPlotEl = document.getElementById('pc-plot');
+            const canUseExistingPlot =
+                existingPlotEl &&
+                typeof existingPlotEl.data !== 'undefined' &&
+                Array.isArray(existingPlotEl.data) &&
+                existingPlotEl.data.length > 0;
+
+            if (canUseExistingPlot) {
+                const dataUrl = await Plotly.toImage(existingPlotEl, {
+                    format: 'png',
+                    width: 1200,
+                    height: 800,
+                    scale: 2
+                });
+                setPlotDownloadLink(fileName, dataUrl);
+                downloadDataUrlFile(fileName, dataUrl);
+                return fileName;
+            }
+
+            const plotConfig = buildScoresPlotConfig();
+            if (!plotConfig) {
+                throw new Error('No PCA plot data is available to export.');
+            }
+
+            const tempPlotEl = document.createElement('div');
+            tempPlotEl.style.position = 'fixed';
+            tempPlotEl.style.left = '-10000px';
+            tempPlotEl.style.top = '0';
+            tempPlotEl.style.width = '1200px';
+            tempPlotEl.style.height = '800px';
+            document.body.appendChild(tempPlotEl);
+
+            try {
+                await Plotly.newPlot(tempPlotEl, plotConfig.traces, plotConfig.layout, {
+                    responsive: false,
+                    displayModeBar: false,
+                    displaylogo: false
+                });
+                const dataUrl = await Plotly.toImage(tempPlotEl, {
+                    format: 'png',
+                    width: 1200,
+                    height: 800,
+                    scale: 2
+                });
+                setPlotDownloadLink(fileName, dataUrl);
+                downloadDataUrlFile(fileName, dataUrl);
+                return fileName;
+            } finally {
+                if (typeof Plotly !== 'undefined') Plotly.purge(tempPlotEl);
+                tempPlotEl.remove();
+            }
+        }
+
+        async function exportPcaAnalysis() {
             if (!analysisState) {
                 setStatus('Run PCA before exporting.', true);
                 return;
             }
 
-            const payload = buildPcaExportPayload();
-            if (!payload) {
-                setStatus('Unable to build export payload.', true);
+            if (typeof XLSX === 'undefined') {
+                setStatus('Excel export is unavailable because the XLSX library did not load.', true);
                 return;
             }
 
-            const sessions = payload.data.sessions || [];
-            const firstSessionId = sessions.length ? sessions[0].session_id : 'start';
-            const lastSessionId = sessions.length ? sessions[sessions.length - 1].session_id : 'end';
+            const voteRows = buildVoteCoefficientsSheetRows();
+            const memberRows = buildMemberScoresSheetRows();
+            const plotRows = buildPcaPlotSheetRows();
+            if (!voteRows.length || !memberRows.length || !plotRows.length) {
+                setStatus('Unable to build Excel export from the current PCA results.', true);
+                return;
+            }
+
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, buildWorksheetWithAutoWidths(voteRows), 'Vote Coefficients');
+            XLSX.utils.book_append_sheet(workbook, buildWorksheetWithAutoWidths(memberRows), 'Member Scores');
+            XLSX.utils.book_append_sheet(workbook, buildWorksheetWithAutoWidths(plotRows), 'PCA Plot');
+
+            const sessions = analysisState.selectedSessions || [];
+            const firstSessionId = sessions.length ? sessions[0].id : 'start';
+            const lastSessionId = sessions.length ? sessions[sessions.length - 1].id : 'end';
             const stamp = new Date().toISOString().replace(/[:.]/g, '-');
-            const fileName = `tm_pca_export_${firstSessionId}_to_${lastSessionId}_${stamp}.json`;
-            downloadJsonFile(fileName, payload);
-            setStatus(`Exported PCA JSON: ${fileName}`);
+            const baseFileName = `tm_pca_export_${firstSessionId}_to_${lastSessionId}_${stamp}`;
+            const workbookFileName = `${baseFileName}.xlsx`;
+            XLSX.writeFile(workbook, workbookFileName);
+
+            try {
+                const plotFileName = await exportScoresPlotImage(baseFileName);
+                setStatus(
+                    `Exported PCA workbook and plot image: ${workbookFileName}, ${plotFileName}\n` +
+                    'If your browser blocked the PNG download, use the Download plot PNG link next to the export button.'
+                );
+            } catch (err) {
+                console.error(err);
+                setStatus(`Exported PCA workbook: ${workbookFileName}\nPlot image export skipped: ${err.message}`, true);
+            }
         }
 
         function renderVarianceTable() {
@@ -1401,14 +1555,7 @@
             const tbody = clearTableBody('coeff-table');
             if (!tbody) return;
 
-            const componentIndex = coeffSortState.componentIndex;
-
-            const rows = [...analysisState.voteCoefficients].sort((a, b) => {
-                const av = Math.abs(a.coefficients[componentIndex] || 0);
-                const bv = Math.abs(b.coefficients[componentIndex] || 0);
-                if (bv !== av) return bv - av;
-                return a.title.localeCompare(b.title);
-            });
+            const rows = getSortedVoteCoefficientsRows();
 
             rows.forEach(entry => {
                 const row = document.createElement('tr');
@@ -1451,19 +1598,7 @@
             const tbody = clearTableBody('scores-table');
             if (!tbody) return;
 
-            const componentIndex = memberScoresSortState.componentIndex;
-            const direction = memberScoresSortState.direction;
-            const directionFactor = direction === 'asc' ? 1 : -1;
-            const rows = [...analysisState.memberScores].sort((a, b) => {
-                const av = a.scores[componentIndex] || 0;
-                const bv = b.scores[componentIndex] || 0;
-                if (av !== bv) return directionFactor * (av - bv);
-
-                const pa = precinctSortValue(a.precinct);
-                const pb = precinctSortValue(b.precinct);
-                if (pa !== pb) return pa - pb;
-                return a.name.localeCompare(b.name);
-            });
+            const rows = getSortedMemberScoresRows();
 
             rows.forEach(entry => {
                 const row = document.createElement('tr');
@@ -1524,50 +1659,14 @@
                 return;
             }
 
-            const members = analysisState.memberScores;
-            const traces = [{
-                type: 'scattergl',
-                mode: 'markers',
-                showlegend: false,
-                x: members.map(member => member.scores[0] || 0),
-                y: members.map(member => member.scores[1] || 0),
-                text: members.map(member => member.name),
-                customdata: members.map(member => [
-                    formatPrecinctLabel(member.precinct),
-                    member.sessionsAttended
-                ]),
-                hovertemplate:
-                    '<b>%{text}</b><br>' +
-                    'Precinct: %{customdata[0]}<br>' +
-                    'Sessions: %{customdata[1]}<br>' +
-                    'PC1: %{x:.2f}<br>' +
-                    'PC2: %{y:.2f}<extra></extra>',
-                marker: {
-                    size: 9,
-                    opacity: 0.85,
-                    color: '#1f77b4'
-                }
-            }];
+            const plotConfig = buildScoresPlotConfig();
+            if (!plotConfig) {
+                statusEl.textContent = 'No PCA plot data is available.';
+                if (typeof Plotly !== 'undefined') Plotly.purge(plotEl);
+                return;
+            }
 
-            const layout = {
-                margin: { l: 60, r: 20, t: 20, b: 55 },
-                plot_bgcolor: '#ffffff',
-                paper_bgcolor: '#ffffff',
-                xaxis: {
-                    title: 'PC1',
-                    gridcolor: '#e9ecef',
-                    zeroline: true,
-                    zerolinecolor: '#ced4da'
-                },
-                yaxis: {
-                    title: 'PC2',
-                    gridcolor: '#e9ecef',
-                    zeroline: true,
-                    zerolinecolor: '#ced4da'
-                }
-            };
-
-            Plotly.react(plotEl, traces, layout, {
+            Plotly.react(plotEl, plotConfig.traces, plotConfig.layout, {
                 responsive: true,
                 displayModeBar: true,
                 displaylogo: false
@@ -1685,6 +1784,7 @@
             }
 
             analysisState = analysis;
+            setPlotDownloadLink('', '');
             renderVarianceTable();
             renderCoefficientsTable();
             renderScoresTable();
