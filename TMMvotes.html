@@ -7434,18 +7434,6 @@
         function updateModuleInstruction(activeModuleId = getActiveModuleId()) {
             if (!moduleInstructionEl) return;
 
-            if (activeModuleId === 'vote-history') {
-                moduleInstructionEl.textContent = 'Click on a Town Meeting session to see the details about the votes in that session.';
-                moduleInstructionEl.style.display = 'block';
-                return;
-            }
-            
-            if (activeModuleId === 'precinct-votes') {
-                moduleInstructionEl.textContent = 'Click on a Town Meeting session to see how each precinct voted in that session.';
-                moduleInstructionEl.style.display = 'block';
-                return;
-            }
-
             moduleInstructionEl.textContent = '';
             moduleInstructionEl.style.display = 'none';
         }
