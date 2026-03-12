@@ -1,0 +1,264 @@
+precinct,name,member_key,brookline_by_design,brookline_by_design_source_name,brookline_for_everyone,brookline_for_everyone_source_name,endorsement_bucket
+1,"Albuquerque, Ana","Albuquerque, Ana (Precinct 1)",yes,Ana Albuquerque,no,,brookline_by_design
+1,"Albuquerque, Rui","Albuquerque, Rui (Precinct 1)",no,,no,,neither
+1,"Cavell, Cathleen C.","Cavell, Cathleen C. (Precinct 1)",no,,yes,Cathleen Cavell,brookline_for_everyone
+1,"Daley, Susan Helms","Daley, Susan Helms (Precinct 1)",yes,Susan Helms Daley,no,,brookline_by_design
+1,"Ericsson, Sarah","Ericsson, Sarah (Precinct 1)",no,,no,,neither
+1,"Evenson, Amy R.","Evenson, Amy R. (Precinct 1)",no,,no,,neither
+1,"Gordon, Neil R.","Gordon, Neil R. (Precinct 1)",no,,no,,neither
+1,"Hillman, Carol B.","Hillman, Carol B. (Precinct 1)",no,,no,,neither
+1,"Ingraham, Katherine A","Ingraham, Katherine A (Precinct 1)",no,,no,,neither
+1,"Kimball, Bradford","Kimball, Bradford (Precinct 1)",no,,yes,Bradford Kimball,brookline_for_everyone
+1,"King, Louise","King, Louise (Precinct 1)",no,,no,,neither
+1,"Lynn-Jones, Sean M.","Lynn-Jones, Sean M. (Precinct 1)",yes,Sean M. Lynn-Jones,no,,brookline_by_design
+1,"Moghtader, Sarah","Moghtader, Sarah (Precinct 1)",no,,no,,neither
+1,"Neuefeind, Bettina","Neuefeind, Bettina (Precinct 1)",no,,no,,neither
+1,"Schoen, Robert","Schoen, Robert (Precinct 1)",no,,no,,neither
+2,"Couture-Stone, Elise","Couture-Stone, Elise (Precinct 2)",no,,yes,Elise Couture-Stone,brookline_for_everyone
+2,"Franco, James F.","Franco, James F. (Precinct 2)",no,,no,,neither
+2,"Gladstone, Carol W.","Gladstone, Carol W. (Precinct 2)",no,,no,,neither
+2,"Hochberg, Brenda","Hochberg, Brenda (Precinct 2)",yes,Brenda Hochberg,yes,Brenda Hochberg,both
+2,"Miller, Robert M.","Miller, Robert M. (Precinct 2)",no,,no,,neither
+2,"Newsome, Colleen","Newsome, Colleen (Precinct 2)",no,,yes,Colleen Newsome,brookline_for_everyone
+2,"Penzel, Markus L.","Penzel, Markus L. (Precinct 2)",no,,no,,neither
+2,"Richardson, Kimberley","Richardson, Kimberley (Precinct 2)",no,,no,,neither
+2,"Roberts, Pamela L.","Roberts, Pamela L. (Precinct 2)",yes,Pamela L. Roberts,no,,brookline_by_design
+2,"Scotto, Barbara C.","Scotto, Barbara C. (Precinct 2)",yes,Barbara C. Scotto,no,,brookline_by_design
+2,"Seidman, Katha R.","Seidman, Katha R. (Precinct 2)",no,,no,,neither
+2,"Snyder, Richard","Snyder, Richard (Precinct 2)",no,,no,,neither
+2,"Soiffer, Ariel","Soiffer, Ariel (Precinct 2)",no,,no,,neither
+2,"Toomey, Maura","Toomey, Maura (Precinct 2)",yes,Maura Toomey,no,,brookline_by_design
+2,"Trevvett, David","Trevvett, David (Precinct 2)",no,,no,,neither
+3,"Becker, Kathryn M.","Becker, Kathryn M. (Precinct 3)",no,,yes,Kathryn Becker,brookline_for_everyone
+3,"Bohrs, Harry K.","Bohrs, Harry K. (Precinct 3)",yes,Harry K. Bohrs,no,,brookline_by_design
+3,"Dewart, Mary D.","Dewart, Mary D. (Precinct 3)",no,,no,,neither
+3,"Dewart, Murray","Dewart, Murray (Precinct 3)",no,,no,,neither
+3,"Doughty, Dennis L.","Doughty, Dennis L. (Precinct 3)",yes,Dennis L. Doughty,no,,brookline_by_design
+3,"Frumkin, Peter","Frumkin, Peter (Precinct 3)",no,,yes,Peter Frumkin,brookline_for_everyone
+3,"Hahn, Gina Marie","Hahn, Gina Marie (Precinct 3)",no,,no,,neither
+3,"Heyman, Leigh","Heyman, Leigh (Precinct 3)",no,,yes,Leigh Heyman,brookline_for_everyone
+3,"Leka, Donald G.","Leka, Donald G. (Precinct 3)",no,,no,,neither
+3,"Liautaud, Joanne","Liautaud, Joanne (Precinct 3)",no,,no,,neither
+3,"Robotham, Margaret","Robotham, Margaret (Precinct 3)",no,,yes,Margaret Robotham,brookline_for_everyone
+3,"Scanlon, Kathleen M.","Scanlon, Kathleen M. (Precinct 3)",no,,no,,neither
+3,"Steinfield, Frank R.","Steinfield, Frank R. (Precinct 3)",no,,yes,Frank Steinfield,brookline_for_everyone
+3,"Stone, Rebecca E.","Stone, Rebecca E. (Precinct 3)",no,,no,,neither
+3,"Turner, Anne L.","Turner, Anne L. (Precinct 3)",no,,no,,neither
+4,"Aziz, Arslan Ahmad","Aziz, Arslan Ahmad (Precinct 4)",no,,yes,Arslan Aziz,brookline_for_everyone
+4,"Barstow, Lisa","Barstow, Lisa (Precinct 4)",no,,no,,neither
+4,"Childs, Elizabeth","Childs, Elizabeth (Precinct 4)",no,,no,,neither
+4,"Christ, Alan","Christ, Alan (Precinct 4)",no,,no,,neither
+4,"Daves, Robert S.","Daves, Robert S. (Precinct 4)",no,,no,,neither
+4,"Dempsey, Christopher","Dempsey, Christopher (Precinct 4)",no,,no,,neither
+4,"Gonzalez, Massiel","Gonzalez, Massiel (Precinct 4)",no,,yes,Massiel Gonzalez,brookline_for_everyone
+4,"Hyatt, Matthew","Hyatt, Matthew (Precinct 4)",no,,no,,neither
+4,"Linder, Liz","Linder, Liz (Precinct 4)",no,,no,,neither
+4,"Machmuller, Wendy S.","Machmuller, Wendy S. (Precinct 4)",no,,no,,neither
+4,"O'Neal, Sr., Donelle S.","O'Neal, Sr., Donelle S. (Precinct 4)",no,,no,,neither
+4,"Priestly, Vena","Priestly, Vena (Precinct 4)",yes,Vena Priestly,no,,brookline_by_design
+4,"Raitt, Jennifer Maris","Raitt, Jennifer Maris (Precinct 4)",no,,yes,Jennifer Raitt,brookline_for_everyone
+4,"Sears, Lisamarie","Sears, Lisamarie (Precinct 4)",no,,no,,neither
+4,"Teame, Awet","Teame, Awet (Precinct 4)",no,,no,,neither
+5,"Bastien, Bonnie M.","Bastien, Bonnie M. (Precinct 5)",no,,no,,neither
+5,"England, Kevin Allen","England, Kevin Allen (Precinct 5)",no,,no,,neither
+5,"Flint, Anthony Evans","Flint, Anthony Evans (Precinct 5)",no,,no,,neither
+5,"Friedman, Wendy","Friedman, Wendy (Precinct 5)",no,,no,,neither
+5,"Grossman, Perry","Grossman, Perry (Precinct 5)",no,,no,,neither
+5,"Gruzman, Ariel","Gruzman, Ariel (Precinct 5)",no,,no,,neither
+5,"Huntington, Ian","Huntington, Ian (Precinct 5)",no,,no,,neither
+5,"Mabrouk, Omar S.","Mabrouk, Omar S. (Precinct 5)",no,,no,,neither
+5,"Mattison, Hugh","Mattison, Hugh (Precinct 5)",no,,no,,neither
+5,"Milhem, Jessica","Milhem, Jessica (Precinct 5)",no,,yes,Jessica Milhem,brookline_for_everyone
+5,"Miller, Beth","Miller, Beth (Precinct 5)",no,,no,,neither
+5,"O'Leary, Paul","O'Leary, Paul (Precinct 5)",no,,no,,neither
+5,"O'Leary, Phyllis R.","O'Leary, Phyllis R. (Precinct 5)",no,,no,,neither
+5,"Reyelt, William E.","Reyelt, William E. (Precinct 5)",no,,yes,William Reyelt,brookline_for_everyone
+5,"Stahl, Wendy","Stahl, Wendy (Precinct 5)",no,,no,,neither
+6,"Anderson, Catherine C.","Anderson, Catherine C. (Precinct 6)",no,,no,,neither
+6,"Bassett, John","Bassett, John (Precinct 6)",no,,no,,neither
+6,"Conquest, III, Arthur Wellington","Conquest, III, Arthur Wellington (Precinct 6)",no,,no,,neither
+6,"Correa, Patricia Ann","Correa, Patricia Ann (Precinct 6)",no,,no,,neither
+6,"Englander, Scott L.","Englander, Scott L. (Precinct 6)",no,,no,,neither
+6,"Fishman, Daniel","Fishman, Daniel (Precinct 6)",no,,yes,Daniel Fishman,brookline_for_everyone
+6,"Kitov, Ruvi","Kitov, Ruvi (Precinct 6)",no,,no,,neither
+6,"Perlman, Bitsy","Perlman, Bitsy (Precinct 6)",no,,no,,neither
+6,"Porter, David","Porter, David (Precinct 6)",no,,no,,neither
+6,"Richmond, Clinton Q.","Richmond, Clinton Q. (Precinct 6)",no,,no,,neither
+6,"Rudolph, Jeffrey David","Rudolph, Jeffrey David (Precinct 6)",no,,no,,neither
+6,"Sheinin, Maxim","Sheinin, Maxim (Precinct 6)",no,,yes,Maxim Sheinin,brookline_for_everyone
+6,"Smith, Kim","Smith, Kim (Precinct 6)",yes,Kim Smith,yes,Kim Smith,both
+6,"Smith, Virginia A.","Smith, Virginia A. (Precinct 6)",yes,Virginia A. Smith,no,,brookline_by_design
+6,"Vogt, Marissa F.","Vogt, Marissa F. (Precinct 6)",no,,no,,neither
+7,"Eber, David Gordon","Eber, David Gordon (Precinct 7)",no,,no,,neither
+7,"Falke, Roberta M.","Falke, Roberta M. (Precinct 7)",no,,no,,neither
+7,"Frey, Ernest A.","Frey, Ernest A. (Precinct 7)",no,,no,,neither
+7,"Hardebeck, Kelly A.","Hardebeck, Kelly A. (Precinct 7)",no,,no,,neither
+7,"Hebert, John P.","Hebert, John P. (Precinct 7)",no,,no,,neither
+7,"Levy, Mark E.","Levy, Mark E. (Precinct 7)",no,,no,,neither
+7,"Maher, Patricia","Maher, Patricia (Precinct 7)",no,,no,,neither
+7,"Margolis, Jonathan J.","Margolis, Jonathan J. (Precinct 7)",no,,no,,neither
+7,"Newell, Amy Isikoff","Newell, Amy Isikoff (Precinct 7)",no,,no,,neither
+7,"Schultz, Aylit","Schultz, Aylit (Precinct 7)",yes,Aylit Schultz,yes,Aylit Schultz,both
+7,"Silberberg, Isaac","Silberberg, Isaac (Precinct 7)",no,,yes,Isaac Silberberg,brookline_for_everyone
+7,"Stokes, Colin S.","Stokes, Colin S. (Precinct 7)",no,,yes,Colin Stokes,brookline_for_everyone
+7,"Stokes, Jessica W.","Stokes, Jessica W. (Precinct 7)",no,,no,,neither
+7,"Wu, Chi Chi","Wu, Chi Chi (Precinct 7)",no,,yes,Chi Chi Wu,brookline_for_everyone
+7,"Zimmerman, Amanda","Zimmerman, Amanda (Precinct 7)",no,,yes,Amanda Zimmerman,brookline_for_everyone
+8,"Burns, Tracie","Burns, Tracie (Precinct 8)",yes,Tracie Burns,yes,Tracie Burns,both
+8,"Carlson, Nels Richard","Carlson, Nels Richard (Precinct 8)",no,,no,,neither
+8,"Egozy, Yukiko Ueno","Egozy, Yukiko Ueno (Precinct 8)",no,,yes,Yukiko Ueno Egozy,brookline_for_everyone
+8,"Harris, John","Harris, John (Precinct 8)",no,,no,,neither
+8,"Heinemann, William W.","Heinemann, William W. (Precinct 8)",no,,no,,neither
+8,"Heller, Nancy","Heller, Nancy (Precinct 8)",no,,no,,neither
+8,"Homer, Charles","Homer, Charles (Precinct 8)",no,,no,,neither
+8,"Johnson, Anita","Johnson, Anita (Precinct 8)",yes,Anita L. Johnson,no,,brookline_by_design
+8,"Lebovitz, Alexander","Lebovitz, Alexander (Precinct 8)",no,,no,,neither
+8,"Mark, Daria","Mark, Daria (Precinct 8)",no,,no,,neither
+8,"Perler, Francine B.","Perler, Francine B. (Precinct 8)",no,,no,,neither
+8,"Sievers, Mary","Sievers, Mary (Precinct 8)",yes,Mary Sievers,yes,Mary Sievers,both
+8,"Stone, Eric C.","Stone, Eric C. (Precinct 8)",no,,no,,neither
+8,"Toffel, Michael W.","Toffel, Michael W. (Precinct 8)",yes,Michael W. Toffel,yes,Michael Toffel,both
+8,"Tytell, David Edward","Tytell, David Edward (Precinct 8)",no,,no,,neither
+9,"Biernbaum, Lee L.","Biernbaum, Lee L. (Precinct 9)",no,,no,,neither
+9,"Buono, Anthony J.","Buono, Anthony J. (Precinct 9)",no,,yes,Anthony Buono,brookline_for_everyone
+9,"Caldeira, Matthew","Caldeira, Matthew (Precinct 9)",no,,no,,neither
+9,"Freedman-Gurspan, Marion","Freedman-Gurspan, Marion (Precinct 9)",no,,no,,neither
+9,"Howards, Susan K.","Howards, Susan K. (Precinct 9)",no,,no,,neither
+9,"Katz, Joseph P.","Katz, Joseph P. (Precinct 9)",no,,no,,neither
+9,"Kitterman, Sarah B","Kitterman, Sarah B (Precinct 9)",no,,no,,neither
+9,"Mark, Amanda","Mark, Amanda (Precinct 9)",no,,no,,neither
+9,"Mutty, Christopher S.","Mutty, Christopher S. (Precinct 9)",yes,Christopher Mutty,yes,Christopher Mutty,both
+9,"Rosenthal, Martin R.","Rosenthal, Martin R. (Precinct 9)",no,,no,,neither
+9,"Shiffman, Gary Adam","Shiffman, Gary Adam (Precinct 9)",no,,no,,neither
+9,"Simansky, Harold","Simansky, Harold (Precinct 9)",no,,yes,Harold Simansky,brookline_for_everyone
+9,"Tuckman, Gerald M","Tuckman, Gerald M (Precinct 9)",no,,no,,neither
+9,"Vanderkay, Judith A.","Vanderkay, Judith A. (Precinct 9)",no,,no,,neither
+9,"Weintraub, Robert J.","Weintraub, Robert J. (Precinct 9)",yes,Robert J. Weintraub,no,,brookline_by_design
+10,"Abbott, Suzette","Abbott, Suzette (Precinct 10)",no,,no,,neither
+10,"Ananian, C. Scott","Ananian, C. Scott (Precinct 10)",no,,no,,neither
+10,"Barenbaum, Rachel","Barenbaum, Rachel (Precinct 10)",no,,no,,neither
+10,"Bowman, John L.","Bowman, John L. (Precinct 10)",no,,yes,John Bowman,brookline_for_everyone
+10,"Erdman, Elizabeth","Erdman, Elizabeth (Precinct 10)",no,,yes,Elizabeth Erdman,brookline_for_everyone
+10,"Florio, Katherine","Florio, Katherine (Precinct 10)",no,,no,,neither
+10,"Isikoff, Jeremy Mark","Isikoff, Jeremy Mark (Precinct 10)",no,,no,,neither
+10,"Kernan, Elizabeth","Kernan, Elizabeth (Precinct 10)",no,,yes,Elizabeth Kernan,brookline_for_everyone
+10,"Klafter, David B","Klafter, David B (Precinct 10)",no,,no,,neither
+10,"Loscalzo, Kimberly Elizabeth","Loscalzo, Kimberly Elizabeth (Precinct 10)",no,,no,,neither
+10,"Maddocks, Ariel C.","Maddocks, Ariel C. (Precinct 10)",no,,no,,neither
+10,"Sheehan, Conor","Sheehan, Conor (Precinct 10)",no,,no,,neither
+10,"Stephens, Nicole E.","Stephens, Nicole E. (Precinct 10)",no,,no,,neither
+10,"Sweitzer, Naomi","Sweitzer, Naomi (Precinct 10)",no,,yes,Naomi Sweitzer,brookline_for_everyone
+10,"Weaver, Karin L.","Weaver, Karin L. (Precinct 10)",no,,no,,neither
+11,"Fischer, Shira H.","Fischer, Shira H. (Precinct 11)",no,,yes,Shira Fischer,brookline_for_everyone
+11,"Garfinkel, Benjamin Philip","Garfinkel, Benjamin Philip (Precinct 11)",no,,no,,neither
+11,"Giora-Gorfajn, Shanna","Giora-Gorfajn, Shanna (Precinct 11)",no,,yes,Shanna Giora-Gorfajn,brookline_for_everyone
+11,"Golden, Jonathan Joseph","Golden, Jonathan Joseph (Precinct 11)",no,,no,,neither
+11,"Gray, Martha E.","Gray, Martha E. (Precinct 11)",no,,no,,neither
+11,"Hilliard, John Franklin","Hilliard, John Franklin (Precinct 11)",no,,no,,neither
+11,"Leibowitz, Akiva","Leibowitz, Akiva (Precinct 11)",no,,no,,neither
+11,"Lescohier, David","Lescohier, David (Precinct 11)",no,,no,,neither
+11,"Lewis, Kenneth G.","Lewis, Kenneth G. (Precinct 11)",no,,no,,neither
+11,"Lowe, David J.","Lowe, David J. (Precinct 11)",no,,no,,neither
+11,"Mautner, Rebecca","Mautner, Rebecca (Precinct 11)",no,,yes,Rebecca Mautner,brookline_for_everyone
+11,"Pollak, David M.","Pollak, David M. (Precinct 11)",yes,David M. Pollak,yes,David Pollak,both
+11,"Rumpler, John A.","Rumpler, John A. (Precinct 11)",no,,no,,neither
+11,"Shatz, Lisa F.","Shatz, Lisa F. (Precinct 11)",no,,yes,Lisa Shatz,brookline_for_everyone
+11,"Wholey, Leonard N.","Wholey, Leonard N. (Precinct 11)",no,,no,,neither
+12,"Bignami, Petra Gospodnetic","Bignami, Petra Gospodnetic (Precinct 12)",yes,Petra Gospodnetic Bignami,no,,brookline_by_design
+12,"Bruce, Stephanie A.","Bruce, Stephanie A. (Precinct 12)",no,,no,,neither
+12,"Burstein, Michael A.","Burstein, Michael A. (Precinct 12)",no,,no,,neither
+12,"Cavanaugh, Nancy Daly","Cavanaugh, Nancy Daly (Precinct 12)",no,,no,,neither
+12,"Cooke-Childs, Lee","Cooke-Childs, Lee (Precinct 12)",no,,no,,neither
+12,"Dolbear, Emily","Dolbear, Emily (Precinct 12)",yes,Emily Dolbear,no,,brookline_by_design
+12,"Friedman, Harry K.","Friedman, Harry K. (Precinct 12)",no,,no,,neither
+12,"Hummel, Amy","Hummel, Amy (Precinct 12)",yes,Amy Hummel,no,,brookline_by_design
+12,"Jaret, Mazal","Jaret, Mazal (Precinct 12)",no,,no,,neither
+12,"Karon, Jonathan A.","Karon, Jonathan A. (Precinct 12)",no,,no,,neither
+12,"Lowenstein, Mark","Lowenstein, Mark (Precinct 12)",yes,Mark Lowenstein,yes,Mark Lowenstein,both
+12,"McNulty, Eric J.","McNulty, Eric J. (Precinct 12)",no,,no,,neither
+12,"Molloy, Margaret B.","Molloy, Margaret B. (Precinct 12)",no,,yes,Margaret Molloy,brookline_for_everyone
+12,"Phillips, Jonathan","Phillips, Jonathan (Precinct 12)",no,,yes,Jonathan Phillips,brookline_for_everyone
+12,"Redburn, Jeremy A.","Redburn, Jeremy A. (Precinct 12)",no,,yes,Jeremy Redburn,brookline_for_everyone
+13,"Best, Michael Thomas","Best, Michael Thomas (Precinct 13)",no,,no,,neither
+13,"Cuniberti, Leigha","Cuniberti, Leigha (Precinct 13)",no,,no,,neither
+13,"Fernandez, Victoria","Fernandez, Victoria (Precinct 13)",no,,no,,neither
+13,"Fine, Jonathan S.","Fine, Jonathan S. (Precinct 13)",no,,no,,neither
+13,"Finkenbinder, Anne","Finkenbinder, Anne (Precinct 13)",no,,yes,Anne Finkenbinder,brookline_for_everyone
+13,"Fischer, Andrew M.","Fischer, Andrew M. (Precinct 13)",no,,yes,Andrew Fischer,brookline_for_everyone
+13,"Khan, Faiza","Khan, Faiza (Precinct 13)",no,,no,,neither
+13,"Knott, Laura","Knott, Laura (Precinct 13)",no,,no,,neither
+13,"Ladd, Brian","Ladd, Brian (Precinct 13)",no,,no,,neither
+13,"Lohe, Werner","Lohe, Werner (Precinct 13)",no,,no,,neither
+13,"MacKenzie, Kevin Thomas","MacKenzie, Kevin Thomas (Precinct 13)",no,,yes,Kevin MacKenzie,brookline_for_everyone
+13,"Mendels, David","Mendels, David (Precinct 13)",no,,no,,neither
+13,"Renkes, Thomas George","Renkes, Thomas George (Precinct 13)",no,,no,,neither
+13,"Saner, Paul A.","Saner, Paul A. (Precinct 13)",no,,no,,neither
+13,"Segel, Jennifer Ellen","Segel, Jennifer Ellen (Precinct 13)",no,,yes,Jennifer Segel,brookline_for_everyone
+14,"Benka, Carla Wyman","Benka, Carla Wyman (Precinct 14)",yes,Carla Wyman Benka,no,,brookline_by_design
+14,"Benka, Richard Dick","Benka, Richard Dick (Precinct 14)",yes,Richard Dick Benka,no,,brookline_by_design
+14,"Eisenberg, David E.","Eisenberg, David E. (Precinct 14)",no,,no,,neither
+14,"Fredkin, Richard","Fredkin, Richard (Precinct 14)",no,,no,,neither
+14,"Hefter, Brenda","Hefter, Brenda (Precinct 14)",no,,no,,neither
+14,"Hefter, Jesse","Hefter, Jesse (Precinct 14)",yes,Jesse Hefter,no,,brookline_by_design
+14,"Lipson, Roger R.","Lipson, Roger R. (Precinct 14)",no,,no,,neither
+14,"Lodish, Pamela C.","Lodish, Pamela C. (Precinct 14)",no,,no,,neither
+14,"O'Connell, Kathleen M","O'Connell, Kathleen M (Precinct 14)",no,,yes,Kathleen O'Connell,brookline_for_everyone
+14,"Ridruejo, Carlos","Ridruejo, Carlos (Precinct 14)",no,,no,,neither
+14,"Roseman, Lynda E","Roseman, Lynda E (Precinct 14)",yes,Lynda E Roseman,no,,brookline_by_design
+14,"Samih, Youkavet","Samih, Youkavet (Precinct 14)",no,,no,,neither
+14,"Schoffmann, Sharon R.","Schoffmann, Sharon R. (Precinct 14)",no,,no,,neither
+14,"Zelkha, Sami","Zelkha, Sami (Precinct 14)",no,,no,,neither
+14,"Zelkha, Sassan","Zelkha, Sassan (Precinct 14)",no,,no,,neither
+15,"Berger, Eileen Connell","Berger, Eileen Connell (Precinct 15)",yes,Eileen Connell Berger,no,,brookline_by_design
+15,"Berger, Michael","Berger, Michael (Precinct 15)",no,,no,,neither
+15,"Boit, Arisa Susan","Boit, Arisa Susan (Precinct 15)",no,,no,,neither
+15,"Flanagan, Jane M.","Flanagan, Jane M. (Precinct 15)",no,,no,,neither
+15,"Hallowell, Benedicte J.","Hallowell, Benedicte J. (Precinct 15)",no,,no,,neither
+15,"Hallowell, Rory","Hallowell, Rory (Precinct 15)",yes,Rory Hallowell,no,,brookline_by_design
+15,"Hatzieleftheriadis, Deborah","Hatzieleftheriadis, Deborah (Precinct 15)",no,,no,,neither
+15,"Joseph, Hugh","Joseph, Hugh (Precinct 15)",yes,Hugh Joseph,no,,brookline_by_design
+15,"Kahn, Janice S.","Kahn, Janice S. (Precinct 15)",yes,Janice S. Kahn,no,,brookline_by_design
+15,"Knauf, Kristine L.","Knauf, Kristine L. (Precinct 15)",no,,no,,neither
+15,"Krepchin, Ira P.","Krepchin, Ira P. (Precinct 15)",no,,no,,neither
+15,"Nangle, Richard","Nangle, Richard (Precinct 15)",yes,Richard Nangle,no,,brookline_by_design
+15,"Oge, Wadner","Oge, Wadner (Precinct 15)",yes,Wadner Oge,no,,brookline_by_design
+15,"Rourke, James C.","Rourke, James C. (Precinct 15)",no,,no,,neither
+15,"Senat-Fleury, Jean","Senat-Fleury, Jean (Precinct 15)",no,,no,,neither
+16,"Abner, Deborah Moore","Abner, Deborah Moore (Precinct 16)",no,,no,,neither
+16,"Baines-Walsh, Laura Kathryn","Baines-Walsh, Laura Kathryn (Precinct 16)",yes,Laura Kathryn Baines-Walsh,no,,brookline_by_design
+16,"Bowman, Adrienne S.","Bowman, Adrienne S. (Precinct 16)",no,,no,,neither
+16,"Chiumenti, Stephen","Chiumenti, Stephen (Precinct 16)",no,,no,,neither
+16,"Day, David S.","Day, David S. (Precinct 16)",no,,no,,neither
+16,"Frawley, Regina M.","Frawley, Regina M. (Precinct 16)",no,,no,,neither
+16,"Gladstone, Scott C.","Gladstone, Scott C. (Precinct 16)",no,,no,,neither
+16,"Harrington, Michael","Harrington, Michael (Precinct 16)",no,,no,,neither
+16,"Jette, Julie A.","Jette, Julie A. (Precinct 16)",no,,no,,neither
+16,"Jonas, Alisa G.","Jonas, Alisa G. (Precinct 16)",no,,no,,neither
+16,"Leichtner, Judith","Leichtner, Judith (Precinct 16)",no,,no,,neither
+16,"Murphy, Joslin","Murphy, Joslin (Precinct 16)",yes,Joslin Murphy,no,,brookline_by_design
+16,"Murphy, Richard Myles","Murphy, Richard Myles (Precinct 16)",no,,no,,neither
+16,"Ross, A. Joseph","Ross, A. Joseph (Precinct 16)",no,,no,,neither
+16,"Thall, Carolyn R.","Thall, Carolyn R. (Precinct 16)",yes,Carolyn R. Thall,no,,brookline_by_design
+17,"Chaky, Christopher Joseph","Chaky, Christopher Joseph (Precinct 17)",no,,yes,Christopher Chaky,brookline_for_everyone
+17,"Davis, Jonathan H.","Davis, Jonathan H. (Precinct 17)",yes,Jonathan H. Davis,no,,brookline_by_design
+17,"Dubin, Benjamin","Dubin, Benjamin (Precinct 17)",yes,Benjamin Dubin,yes,Ben Dubin,both
+17,"Haenschen, Katherine Elizabeth","Haenschen, Katherine Elizabeth (Precinct 17)",no,,no,,neither
+17,"Hudson, Elizabeth","Hudson, Elizabeth (Precinct 17)",no,,no,,neither
+17,"Klein, Jonathan","Klein, Jonathan (Precinct 17)",no,,no,,neither
+17,"Levin, Bruce","Levin, Bruce (Precinct 17)",yes,Bruce Levin,no,,brookline_by_design
+17,"Park, Susan Kay","Park, Susan Kay (Precinct 17)",yes,Susan Kay Park,yes,Susan Park,both
+17,"Paul, Rhea","Paul, Rhea (Precinct 17)",no,,yes,Rhea Paul,brookline_for_everyone
+17,"Pehlke, Linda Olson","Pehlke, Linda Olson (Precinct 17)",yes,Linda Olson Pehlke,no,,brookline_by_design
+17,"Reale, Chrisopher","Reale, Chrisopher (Precinct 17)",no,,no,,neither
+17,"Roberts, Susan M.","Roberts, Susan M. (Precinct 17)",no,,no,,neither
+17,"Schachter-Kahl, Livia","Schachter-Kahl, Livia (Precinct 17)",no,,no,,neither
+17,"Schafer, Elizabeth A.","Schafer, Elizabeth A. (Precinct 17)",no,,no,,neither
+17,"Valencia, Joseph","Valencia, Joseph (Precinct 17)",no,,yes,Joseph Valencia,brookline_for_everyone
+AL,"Greene, Bernard W.","Greene, Bernard W. (Precinct AL)",no,,no,,neither
+AL,"Kaufman, Ben","Kaufman, Ben (Precinct AL)",no,,no,,neither
+AL,"Pearlman, David Arenas","Pearlman, David Arenas (Precinct AL)",no,,no,,neither
+AL,"Rubenstein, Michael","Rubenstein, Michael (Precinct AL)",no,,no,,neither
+AL,"VanScoyoc, John R.","VanScoyoc, John R. (Precinct AL)",no,,no,,neither
+AL,"Vitolo, Hon. Tommy","Vitolo, Hon. Tommy (Precinct AL)",no,,no,,neither
+AL,"Warren, Paul J.","Warren, Paul J. (Precinct AL)",no,,no,,neither
+AL,"Wishinsky, Neil Alan","Wishinsky, Neil Alan (Precinct AL)",no,,no,,neither
