@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <!-- Make layout responsive on mobile -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Brookline Town Meeting Voting Analysis</title>
+    <title>Brookline Town Meeting Vote Analyzer</title>
     <link rel="icon" type="image/jpeg" href="https://raw.githubusercontent.com/millxing/TM/main/entangledParticlesLogo3.jpg">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Varela+Round&display=swap">
 
@@ -2079,14 +2079,15 @@
         }
 
         body.phone-layout .page-header-main {
-            flex-direction: row;
-            align-items: flex-start;
+            flex-direction: column;
+            align-items: stretch;
             gap: 8px;
         }
 
         body.phone-layout h1 {
             font-size: 1.45rem;
             margin-bottom: 4px;
+            line-height: 1.15;
         }
 
         body.phone-layout .page-header-copy {
@@ -2100,6 +2101,11 @@
         body.phone-layout .disclaimer-button {
             padding: 6px 10px;
             font-size: 11px;
+        }
+
+        body.phone-layout .disclaimer-hover-wrap {
+            margin-left: 0;
+            align-self: flex-start;
         }
 
         body.phone-layout .page-header-nav {
@@ -2129,6 +2135,82 @@
 
         body.phone-layout .container {
             padding: 18px 14px;
+        }
+
+        body.phone-layout .page-footer {
+            display: none;
+        }
+
+        body.phone-layout.by-vote-lock,
+        body.phone-layout.by-member-lock,
+        body.phone-layout.contentious-votes-lock,
+        body.phone-layout.member-networks-lock,
+        body.phone-layout.outlier-votes-lock,
+        body.phone-layout.tmm-history-lock {
+            overflow: auto;
+        }
+
+        body.phone-layout.by-vote-lock .page,
+        body.phone-layout.by-member-lock .page,
+        body.phone-layout.contentious-votes-lock .page,
+        body.phone-layout.member-networks-lock .page,
+        body.phone-layout.outlier-votes-lock .page,
+        body.phone-layout.tmm-history-lock .page,
+        body.phone-layout.by-vote-lock .container,
+        body.phone-layout.by-member-lock .container,
+        body.phone-layout.contentious-votes-lock .container,
+        body.phone-layout.member-networks-lock .container,
+        body.phone-layout.outlier-votes-lock .container,
+        body.phone-layout.tmm-history-lock .container,
+        body.phone-layout.by-vote-lock #main-content,
+        body.phone-layout.by-member-lock #main-content,
+        body.phone-layout.contentious-votes-lock #main-content,
+        body.phone-layout.member-networks-lock #main-content,
+        body.phone-layout.outlier-votes-lock #main-content,
+        body.phone-layout.tmm-history-lock #main-content,
+        body.phone-layout.by-vote-lock #by-vote.tab-content.active,
+        body.phone-layout.by-member-lock #by-member.tab-content.active,
+        body.phone-layout.contentious-votes-lock #contentious-votes.tab-content.active,
+        body.phone-layout.member-networks-lock #member-networks.tab-content.active,
+        body.phone-layout.outlier-votes-lock #outlier-votes.tab-content.active,
+        body.phone-layout.tmm-history-lock #tmm-history.tab-content.active {
+            height: auto;
+            overflow: visible;
+        }
+
+        body.phone-layout.by-vote-lock #main-content,
+        body.phone-layout.by-member-lock #main-content,
+        body.phone-layout.contentious-votes-lock #main-content,
+        body.phone-layout.member-networks-lock #main-content,
+        body.phone-layout.outlier-votes-lock #main-content,
+        body.phone-layout.tmm-history-lock #main-content,
+        body.phone-layout.by-vote-lock #by-vote.tab-content.active,
+        body.phone-layout.by-member-lock #by-member.tab-content.active,
+        body.phone-layout.contentious-votes-lock #contentious-votes.tab-content.active,
+        body.phone-layout.member-networks-lock #member-networks.tab-content.active,
+        body.phone-layout.outlier-votes-lock #outlier-votes.tab-content.active,
+        body.phone-layout.tmm-history-lock #tmm-history.tab-content.active {
+            display: block !important;
+        }
+
+        body.phone-layout.by-vote-lock .vote-results-container,
+        body.phone-layout.contentious-votes-lock #contentious-votes-results,
+        body.phone-layout.outlier-votes-lock #outlier-votes-results,
+        body.phone-layout.tmm-history-lock #tmm-history-results,
+        body.phone-layout.member-networks-lock .cluster-panels,
+        body.phone-layout.member-networks-lock .cluster-panel-body {
+            overflow: visible;
+            min-height: auto;
+            max-height: none;
+            flex: initial;
+        }
+
+        body.phone-layout.contentious-votes-lock .contentious-votes-table-wrap,
+        body.phone-layout.outlier-votes-lock .outlier-votes-table-wrap,
+        body.phone-layout.outlier-votes-lock .outlier-votes-table-scroller,
+        body.phone-layout.tmm-history-lock .tmm-history-table-wrap,
+        body.phone-layout.tmm-history-lock .tmm-history-table-scroller {
+            max-height: none;
         }
 
         @media (max-width: 900px) {
@@ -2207,7 +2289,7 @@
             <div class="page-header-card">
                 <div class="page-header-main">
                     <div class="page-header-copy">
-                        <h1>Brookline Town Meeting Voting Analysis</h1>
+                        <h1>Brookline Town Meeting Vote Analyzer</h1>
                         <p class="subtitle">Research voting patterns at Brookline's Town Meeting</p>
                     </div>
                     <div class="disclaimer-hover-wrap">
