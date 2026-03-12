@@ -2069,6 +2069,68 @@
             font-weight: 700;
         }
 
+        body.phone-layout .page-header-shell {
+            width: min(calc(100vw - 12px), var(--page-max-width));
+        }
+
+        body.phone-layout .page-header-card {
+            padding: 10px 12px 8px;
+            border-radius: 10px;
+        }
+
+        body.phone-layout .page-header-main {
+            flex-direction: row;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        body.phone-layout h1 {
+            font-size: 1.45rem;
+            margin-bottom: 4px;
+        }
+
+        body.phone-layout .page-header-copy {
+            flex: 1 1 auto;
+        }
+
+        body.phone-layout .subtitle {
+            display: none;
+        }
+
+        body.phone-layout .disclaimer-button {
+            padding: 6px 10px;
+            font-size: 11px;
+        }
+
+        body.phone-layout .page-header-nav {
+            margin-top: 6px;
+            padding-top: 8px;
+        }
+
+        body.phone-layout #module-menu {
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            overflow-y: hidden;
+            gap: 8px;
+            padding-bottom: 8px;
+            scrollbar-width: thin;
+        }
+
+        body.phone-layout .tab {
+            flex: 0 0 auto;
+            padding: 7px 10px;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+        body.phone-layout .module-instruction {
+            display: none !important;
+        }
+
+        body.phone-layout .container {
+            padding: 18px 14px;
+        }
+
         @media (max-width: 900px) {
             select {
                 min-width: 220px;
@@ -2570,6 +2632,11 @@
         const clusterMemberDetailEl = document.getElementById('cluster-member-detail');
         const clusterNeighborsEl = document.getElementById('cluster-neighbors');
         const clusterAxisInfoEl = document.getElementById('cluster-axis-info');
+        const PHONE_LAYOUT_QUERY = window.matchMedia('(max-width: 640px)');
+
+        function updatePhoneLayout() {
+            document.body.classList.toggle('phone-layout', PHONE_LAYOUT_QUERY.matches);
+        }
 
         function syncPinnedLayoutOffsets() {
             window.requestAnimationFrame(() => {
@@ -2583,8 +2650,14 @@
             });
         }
 
-        window.addEventListener('resize', syncPinnedLayoutOffsets);
-        window.addEventListener('load', syncPinnedLayoutOffsets);
+        window.addEventListener('resize', () => {
+            updatePhoneLayout();
+            syncPinnedLayoutOffsets();
+        });
+        window.addEventListener('load', () => {
+            updatePhoneLayout();
+            syncPinnedLayoutOffsets();
+        });
 
         /****************************************************
          * ERROR HELPERS
@@ -7442,6 +7515,7 @@
 
         window.addEventListener('DOMContentLoaded', () => {
             applyFeatureFlags();
+            updatePhoneLayout();
             syncPinnedLayoutOffsets();
 
             if (APP_MODE === 'vote-analyzer') {
