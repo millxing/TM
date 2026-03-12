@@ -2495,7 +2495,7 @@
                                 type="checkbox"
                                 id="outlier-ignore-terminate"
                                 checked
-                                onchange="renderOutlierVotes()">
+                                onchange="handleOutlierIgnoreTerminateChange()">
                             <label for="outlier-ignore-terminate" data-tooltip="Procedural motions to terminate debate are generally less consequential and not indicative of how the member will vote on the main issue">Ignore motions to terminate debate</label>
                         </div>
                     </div>
@@ -2712,6 +2712,8 @@
         let memberNetworkCurrentData = null;
         let memberNetworkSortState = { key: 'baseRank', direction: 'asc' };
         let outlierVotesAnalysisState = null;
+        let outlierVotesAnalysisCache = new Map();
+        let outlierVotesRenderTimer = null;
         let selectedOutlierMemberKey = '';
 
         let clusteringSessionsCache = null;
@@ -5272,6 +5274,7 @@
             memberNetworkProfileByKey = new Map(
                 memberNetworkProfilesCache.map(profile => [profile.canonicalKey, profile])
             );
+            resetOutlierVotesAnalysisCache();
         }
 
         async function ensureMemberNetworkDataLoaded() {
@@ -5699,6 +5702,11 @@
             outlierVotesResultsEl.classList.toggle('error', isError);
         }
 
+        function resetOutlierVotesAnalysisCache() {
+            outlierVotesAnalysisState = null;
+            outlierVotesAnalysisCache = new Map();
+        }
+
         function getOutlierVotesOptions() {
             const ignoreTerminateCheckbox = document.getElementById('outlier-ignore-terminate');
 
@@ -5708,6 +5716,34 @@
                 minComparablePeers: 5,
                 minSharedVoteHistory: 12
             };
+        }
+
+        function getOutlierVotesAnalysisCacheKey(options) {
+            return options && options.ignoreTerminateDebate
+                ? 'ignore-terminate'
+                : 'include-terminate';
+        }
+
+        function getOutlierVotesAnalysis(sessionDataList, options) {
+            const cacheKey = getOutlierVotesAnalysisCacheKey(options);
+            if (!outlierVotesAnalysisCache.has(cacheKey)) {
+                outlierVotesAnalysisCache.set(cacheKey, buildOutlierVotesAnalysis(sessionDataList, options));
+            }
+            return outlierVotesAnalysisCache.get(cacheKey);
+        }
+
+        function queueOutlierVotesRender() {
+            if (outlierVotesRenderTimer !== null) {
+                window.clearTimeout(outlierVotesRenderTimer);
+            }
+            outlierVotesRenderTimer = window.setTimeout(() => {
+                outlierVotesRenderTimer = null;
+                renderOutlierVotes();
+            }, 0);
+        }
+
+        function handleOutlierIgnoreTerminateChange() {
+            queueOutlierVotesRender();
         }
 
         function buildOutlierVotesContext(sessionDataList) {
@@ -6284,7 +6320,7 @@
             }
 
             const options = getOutlierVotesOptions();
-            const analysis = buildOutlierVotesAnalysis(sessionDataList, options);
+            const analysis = getOutlierVotesAnalysis(sessionDataList, options);
             outlierVotesAnalysisState = analysis;
             populateOutlierMemberDropdown(analysis);
 
@@ -6374,7 +6410,7 @@
                     renderOutlierVotes();
                 } catch (err) {
                     handleModuleError(err, null, 'TMM Outlier Votes');
-                    outlierVotesAnalysisState = null;
+                    resetOutlierVotesAnalysisCache();
                     setOutlierVotesStatus(`Error loading TMM Outlier Votes: ${err.message}`, true);
                 } finally {
                     outlierVotesLoadPromise = null;
