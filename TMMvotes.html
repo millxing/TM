@@ -378,6 +378,28 @@
             flex-wrap: wrap;
         }
 
+        .aligned-select-controls {
+            --aligned-label-width: 180px;
+            --aligned-select-width: 540px;
+            row-gap: 12px;
+        }
+
+        .aligned-select-label {
+            flex: 0 0 var(--aligned-label-width);
+            text-align: right;
+        }
+
+        .aligned-select-controls > select {
+            flex: 0 1 var(--aligned-select-width);
+            width: min(100%, var(--aligned-select-width));
+            min-width: min(100%, var(--aligned-select-width));
+        }
+
+        .aligned-select-controls .checkbox-group,
+        .aligned-select-controls .module-ai-summary-actions {
+            flex: 0 1 auto;
+        }
+
         .module-ai-summary-actions {
             display: inline-flex;
             align-items: center;
@@ -2243,6 +2265,21 @@
                 min-width: 180px;
             }
 
+            .aligned-select-controls {
+                gap: 10px;
+            }
+
+            .aligned-select-label {
+                flex-basis: 100%;
+                text-align: left;
+            }
+
+            .aligned-select-controls > select {
+                flex-basis: 100%;
+                width: 100%;
+                min-width: 0;
+            }
+
             .disclaimer-button {
                 font-size: 12px;
                 padding: 8px 12px;
@@ -2329,8 +2366,8 @@
 
             <!-- Context controls shown for modules that operate on a single session -->
             <div id="module-context-controls" class="controls" style="margin-bottom: 20px;">
-                <div id="single-session-controls" class="control-group">
-                    <label for="spreadsheet-select">Select Town Meeting:</label>
+                <div id="single-session-controls" class="control-group aligned-select-controls">
+                    <label for="spreadsheet-select" class="aligned-select-label">Select Town Meeting:</label>
                     <!--
                         value is URL-encoded file name located in:
                         https://github.com/millxing/TM/blob/main/<file>
@@ -2361,8 +2398,8 @@
             <!-- TAB: View by Vote -->
             <div id="by-vote" class="tab-content active">
                 <div id="by-vote-controls" class="controls">
-                    <div class="control-group">
-                        <label for="vote-select">Select Vote:</label>
+                    <div class="control-group aligned-select-controls">
+                        <label for="vote-select" class="aligned-select-label">Select Vote:</label>
                         <!-- Populated dynamically with article titles from the spreadsheet -->
                         <select id="vote-select"></select>
                         <div class="checkbox-group">
@@ -2379,8 +2416,8 @@
             <!-- TAB: View by Member -->
             <div id="by-member" class="tab-content">
                 <div id="by-member-controls" class="controls">
-                    <div class="control-group">
-                        <label for="member-select">Select Member:</label>
+                    <div class="control-group aligned-select-controls">
+                        <label for="member-select" class="aligned-select-label">Select Member:</label>
                         <!-- Populated dynamically with "Name (Precinct X)" options -->
                         <select id="member-select"></select>
                         <div class="checkbox-group">
