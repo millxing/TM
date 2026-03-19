@@ -2099,7 +2099,7 @@
         }
 
         body.phone-layout .page-header-card {
-            padding: 9px 12px 7px;
+            padding: 6px 10px 4px;
             border-radius: 10px;
         }
 
@@ -2129,24 +2129,26 @@
         }
 
         body.phone-layout .page-header-nav {
-            margin-top: 4px;
-            padding-top: 6px;
+            margin-top: 2px;
+            padding-top: 4px;
+            border-top: 1px solid rgba(0,0,0,0.08);
         }
 
         body.phone-layout #module-menu {
-            flex-wrap: nowrap;
-            overflow-x: auto;
-            overflow-y: hidden;
-            gap: 8px;
-            padding-bottom: 8px;
-            scrollbar-width: thin;
+            flex-wrap: wrap;
+            overflow-x: visible;
+            overflow-y: visible;
+            gap: 6px;
+            padding-bottom: 4px;
         }
 
         body.phone-layout .tab {
             flex: 0 0 auto;
-            padding: 7px 10px;
-            font-size: 13px;
+            padding: 6px 9px;
+            font-size: 12px;
             white-space: nowrap;
+            min-height: 32px;
+            border-width: 1.5px;
         }
 
         body.phone-layout .module-instruction {
@@ -2158,7 +2160,17 @@
         }
 
         body.phone-layout .page-footer {
-            display: none;
+            position: static;
+            width: 100%;
+            padding: 12px 14px;
+            margin-top: 24px;
+            font-size: 12px;
+            text-align: center;
+            background: transparent;
+            backdrop-filter: none;
+            border-top: 1px solid var(--tm-line);
+            border-radius: 0;
+            box-shadow: none;
         }
 
         body.phone-layout.by-vote-lock,
@@ -2231,6 +2243,44 @@
         body.phone-layout.tmm-history-lock .tmm-history-table-wrap,
         body.phone-layout.tmm-history-lock .tmm-history-table-scroller {
             max-height: none;
+        }
+
+        /* Touch targets: prevent iOS auto-zoom and meet minimum tap size */
+        body.phone-layout select,
+        body.phone-layout input[type="text"],
+        body.phone-layout input[type="search"],
+        body.phone-layout input[type="number"] {
+            font-size: 16px;
+            min-height: 44px;
+        }
+
+        body.phone-layout button {
+            min-height: 36px;
+        }
+
+        /* Active/tap states for touch feedback */
+        body.phone-layout .tab:active {
+            transform: scale(0.97);
+            opacity: 0.85;
+        }
+
+        body.phone-layout button:active,
+        body.phone-layout select:active {
+            opacity: 0.8;
+        }
+
+        /* Table improvements for small screens */
+        body.phone-layout th,
+        body.phone-layout td {
+            padding: 6px 6px;
+            font-size: 12px;
+        }
+
+        body.phone-layout .vote-history-table-wrap,
+        body.phone-layout .precinct-votes-table-wrap,
+        body.phone-layout .member-network-table-scroller {
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior-x: contain;
         }
 
         @media (max-width: 900px) {
@@ -2647,7 +2697,7 @@
         <footer class="page-footer">
             <div class="page-footer-text">
                 <p>If you find any bugs or errors, please report them to: robschoen dot robschoen at gmail dot com</p>
-                <p class="page-footer-credit">created by Rob Schoen TMM P1 // <a href="https://entangledparticles.xyz/" target="_blank" rel="noopener noreferrer">Entangled Particles</a> // <a href="https://www.longwoodmall.org" target="_blank" rel="noopener noreferrer">www.longwoodmall.org</a></p>
+                <p class="page-footer-credit">created by <a href="mailto:robschoen.robschoen@gmail.com">Rob Schoen TMM P1</a> // <a href="https://entangledparticles.xyz/" target="_blank" rel="noopener noreferrer">Entangled Particles</a> // <a href="https://www.longwoodmall.org" target="_blank" rel="noopener noreferrer">www.longwoodmall.org</a></p>
             </div>
         </footer>
         </div>
@@ -2934,6 +2984,22 @@
             document.addEventListener('keydown', evt => {
                 if (evt.key === 'Escape') hideGlobalTooltip();
             });
+
+            // Touch support: tap to show tooltip, tap elsewhere to dismiss.
+            document.addEventListener('touchstart', evt => {
+                const target = getTooltipTarget(evt.target);
+                if (target) {
+                    if (target === activeTooltipTarget) {
+                        // Second tap on same target — dismiss
+                        hideGlobalTooltip();
+                    } else {
+                        showGlobalTooltip(target, false);
+                    }
+                } else {
+                    // Tapped outside any tooltip target — dismiss
+                    hideGlobalTooltip();
+                }
+            }, { passive: true });
         }
 
         /****************************************************
