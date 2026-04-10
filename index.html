@@ -2765,6 +2765,85 @@
         const DEFAULT_LAST_VOTE_COL = 100;
         const DEFAULT_MIN_SHARED_SESSIONS = 4;
         const MAX_CONTENTIOUS_DISPLAY = 100;
+        // Switch to 'title' to use raw spreadsheet vote titles in the View by Vote dropdown.
+        const VOTE_SELECT_LABEL_MODE = 'compact';
+        const VOTE_TITLE_SUFFIX_PATTERNS = [
+            {
+                key: 'named_amendment_motion_to_terminate_debate',
+                regex: /^((?:(?:STM\d*\s+)?(?:Articles?|Aritlces?|Aritlce|Articels?|Articel)\s+.+?)(?:\s+Bond Item\s+\d+)?)\s+(.+?) Amendment Motion to Terminate De(?:bate|abte)$/i,
+                getMotionLabel: match => `${String(match[2] || '').trim()} amendment, motion to end debate`
+            },
+            {
+                key: 'first_motion_to_terminate_debate',
+                regex: /^(.*?)\s+First Motion to Terminate De(?:bate|abte)$/i,
+                motionLabel: 'first motion to end debate'
+            },
+            {
+                key: 'second_motion_to_terminate_debate',
+                regex: /^(.*?)\s+Second Motion to Terminate De(?:bate|abte)$/i,
+                motionLabel: 'second motion to end debate'
+            },
+            {
+                key: 'motion_to_terminate_debate_numbered',
+                regex: /^(.*?)\s+Motion to Terminate De(?:bate|abte)\s+(\d+)$/i,
+                getMotionLabel: match => `motion to end debate ${match[2]}`
+            },
+            {
+                key: 'motion_to_terminate_debate',
+                regex: /^(.*?)\s+Motion to Terminate De(?:bate|abte)$/i,
+                motionLabel: 'motion to end debate'
+            },
+            {
+                key: 'main_motion_to_table',
+                regex: /^(.*?)\s+Main Motion to Table$/i,
+                motionLabel: 'main motion to table'
+            },
+            {
+                key: 'motion_to_refer',
+                regex: /^(.*?)\s+Motion to Refer$/i,
+                motionLabel: 'motion to refer'
+            },
+            {
+                key: 'motion_to_rescind',
+                regex: /^(.*?)\s+Motion to Rescind$/i,
+                motionLabel: 'motion to rescind'
+            },
+            {
+                key: 'ac_amendment',
+                regex: /^(.*?)\s+AC Amendment$/i,
+                motionLabel: 'AC amendment'
+            },
+            {
+                key: 'advisory_committee_amendment',
+                regex: /^(.*?)\s+Advisory Committee Amendment$/i,
+                motionLabel: 'Advisory Committee amendment'
+            },
+            {
+                key: 'named_amendment',
+                regex: /^((?:(?:STM\d*\s+)?(?:Articles?|Aritlces?|Aritlce|Articels?|Articel)\s+.+?)(?:\s+Bond Item\s+\d+)?)\s+(.+?) Amendment$/i,
+                getMotionLabel: match => `${String(match[2] || '').trim()} amendment`
+            },
+            {
+                key: 'fisher_amendment',
+                regex: /^(.*?)\s+Fisher Amendment$/i,
+                motionLabel: 'Fisher amendment'
+            },
+            {
+                key: 'select_board_substitute_motion',
+                regex: /^(.*?)\s+Select Board Substitute Motion$/i,
+                motionLabel: 'Select Board substitute motion'
+            },
+            {
+                key: 'substitute_motion',
+                regex: /^(.*?)\s+Substitute Motion$/i,
+                motionLabel: 'substitute motion'
+            },
+            {
+                key: 'main_motion',
+                regex: /^(.*?)\s+Main Motion$/i,
+                motionLabel: 'main motion'
+            }
+        ];
 
         /****************************************************
          * GLOBAL STATE
@@ -3377,6 +3456,251 @@
                 .trim()
                 .toLowerCase()
                 .replace(/\s+/g, ' ');
+        }
+
+        function normalizeCompactArticleIdentifier(articleText) {
+            return String(articleText || '')
+                .trim()
+                .replace(/\band\b/gi, '&')
+                .replace(/\s*&\s*/g, ' & ')
+                .replace(/\s+/g, ' ')
+                .trim();
+        }
+
+        function getVoteTitleMotionParts(title) {
+            const rawTitle = String(title || '').trim();
+            if (!rawTitle) return { stem: '', motionLabel: '' };
+
+            for (const pattern of VOTE_TITLE_SUFFIX_PATTERNS) {
+                const match = rawTitle.match(pattern.regex);
+                if (!match) continue;
+
+                return {
+                    stem: String(match[1] || '').trim(),
+                    motionLabel: pattern.getMotionLabel ? pattern.getMotionLabel(match) : pattern.motionLabel
+                };
+            }
+
+            return {
+                stem: rawTitle,
+                motionLabel: ''
+            };
+        }
+
+        function parseVoteTitleForCompactLabel(title) {
+            const rawTitle = String(title || '').trim();
+            if (!rawTitle) return null;
+
+            const motionParts = getVoteTitleMotionParts(rawTitle);
+            let stem = motionParts.stem;
+            let titleSubject = '';
+            let useDescriptionSubject = true;
+
+            const standaloneVirtualMeetingMatch = rawTitle.match(/^Motion to Hold (?:a\s+)?Virtual Town Meeting$/i);
+            if (standaloneVirtualMeetingMatch) {
+                return {
+                    articleLabel: 'Virtual Town Meeting',
+                    motionLabel: 'motion to hold',
+                    titleSubject: '',
+                    useDescriptionSubject: false
+                };
+            }
+
+            const standaloneDeferMatch = rawTitle.match(/^Motion to Defer\s+((?:Article|Aritlce|Articel)\s+.+|STM\d+)$/i);
+            if (standaloneDeferMatch) {
+                const deferTarget = String(standaloneDeferMatch[1] || '').trim();
+                const articleTargetMatch = deferTarget.match(/^(?:Article|Aritlce|Articel)\s+(.+)$/i);
+                return {
+                    articleLabel: articleTargetMatch
+                        ? normalizeCompactArticleIdentifier(articleTargetMatch[1])
+                        : deferTarget.toUpperCase(),
+                    motionLabel: 'motion to defer',
+                    titleSubject: '',
+                    useDescriptionSubject: false
+                };
+            }
+
+            const prefixTerminateDebateAmendmentMatch = rawTitle.match(
+                /^Terminate Debate\s+Article\s+(.+?)\s+Item\s+(\d+)\s+(.+?) Amendment$/i
+            );
+            if (prefixTerminateDebateAmendmentMatch) {
+                return {
+                    articleLabel: `${normalizeCompactArticleIdentifier(prefixTerminateDebateAmendmentMatch[1])} Item ${prefixTerminateDebateAmendmentMatch[2]}`,
+                    motionLabel: `${String(prefixTerminateDebateAmendmentMatch[3] || '').trim()} amendment, motion to end debate`,
+                    titleSubject: '',
+                    useDescriptionSubject: false
+                };
+            }
+
+            const standaloneBondItemMatch = rawTitle.match(/^Bond Item\s+(\d+)$/i);
+            if (standaloneBondItemMatch) {
+                return {
+                    articleLabel: `Bond Item ${standaloneBondItemMatch[1]}`,
+                    motionLabel: '',
+                    titleSubject: '',
+                    useDescriptionSubject: true
+                };
+            }
+
+            const bondItemMatch = stem.match(/^(.*?)\s+Bond Item\s+(\d+)$/i);
+            if (bondItemMatch) {
+                stem = String(bondItemMatch[1] || '').trim();
+                titleSubject = `Bond Item ${bondItemMatch[2]}`;
+            }
+
+            const articleMatch = stem.match(
+                /^(?:(STM\d*)\s+)?(?:Articles?|Aritlces?|Aritlce|Articels?|Articel)\s+(.+)$/i
+            );
+            if (!articleMatch) return null;
+
+            const stmPrefix = String(articleMatch[1] || '').trim().toUpperCase();
+            const articleId = normalizeCompactArticleIdentifier(articleMatch[2]);
+            if (!articleId) return null;
+
+            return {
+                articleLabel: stmPrefix ? `${stmPrefix} ${articleId}` : articleId,
+                motionLabel: motionParts.motionLabel || '',
+                titleSubject,
+                useDescriptionSubject
+            };
+        }
+
+        function removeLeadingArticle(text) {
+            return String(text || '')
+                .trim()
+                .replace(/^(?:a|an|the)\s+/i, '')
+                .trim();
+        }
+
+        function capitalizeCompactWord(word) {
+            if (!word) return '';
+            if (/[A-Z]{2,}/.test(word) || /\d/.test(word)) return word;
+
+            return word.replace(/(^|[-/])([a-z])/g, (_, prefix, char) => `${prefix}${char.toUpperCase()}`);
+        }
+
+        function toCompactTitleCase(text) {
+            const words = String(text || '').trim().split(/\s+/).filter(Boolean);
+            if (words.length === 0) return '';
+
+            const stopWords = new Set([
+                'a', 'an', 'and', 'as', 'at', 'by', 'for', 'from', 'in', 'of', 'on', 'or', 'the', 'to', 'via', 'with'
+            ]);
+
+            return words.map((word, index) => {
+                const lower = word.toLowerCase();
+                if (index > 0 && index < words.length - 1 && stopWords.has(lower)) {
+                    return lower;
+                }
+                return capitalizeCompactWord(word);
+            }).join(' ');
+        }
+
+        function shortenCompactVoteSubject(text) {
+            let subject = String(text || '').trim();
+            if (!subject) return '';
+
+            const leadingSentence = subject.split(/[.;]/)[0].trim();
+            if (leadingSentence) subject = leadingSentence;
+            if (subject.length <= 44) return subject;
+
+            const breakTokens = [' to ', ' when ', ' for ', ' by ', ' and ', ', '];
+            const lower = subject.toLowerCase();
+            for (const token of breakTokens) {
+                const index = lower.indexOf(token);
+                if (index > 12) {
+                    const candidate = subject.slice(0, index).trim();
+                    if (candidate.length >= 10) return candidate;
+                }
+            }
+
+            const words = subject.split(/\s+/);
+            let compact = '';
+            words.forEach(word => {
+                const next = compact ? `${compact} ${word}` : word;
+                if (next.length <= 44) compact = next;
+            });
+            return compact || subject.slice(0, 44).trim();
+        }
+
+        function extractCompactVoteSubject(description) {
+            const rawDescription = String(description || '')
+                .replace(/\s+/g, ' ')
+                .replace(/^[.\s,:;–-]+/, '')
+                .trim();
+            if (!rawDescription || rawDescription.toLowerCase() === 'none') return '';
+            if (/^motion rescinded\b/i.test(rawDescription)) return '';
+
+            let subject = '';
+            const extractors = [
+                /^bond item \d+ (?:funded|appropriated|allocated|provided|supplied)\s+(.+?)(?:\.|$)/i,
+                /^(?:home rule petition|home-rule petition)\s*[–-]\s*(.+)$/i,
+                /^approval of (.+)$/i,
+                /^(fy\d+\s+budget amendment)$/i,
+                /^remove the (.+)$/i,
+                /^amend .*?\bto create (.+)$/i,
+                /^amend .*?\bto establish (.+)$/i,
+                /^amend .*?\bto comply with .*?\bfor (.+)$/i,
+                /^amend .*?\bto comply with (.+)$/i,
+                /^amend .*?\bto update .*?\bto provide (.+)$/i,
+                /^create .*?\bestablishing (.+)$/i,
+                /^name .*?\bto\s+["“]?([^,"”]+)["”]?(?:,|$)/i,
+                /^resolution regarding (.+)$/i,
+                /^resolution to (.+)$/i,
+                /^the underlying article sought (?:to\s+)?(?:a|an)?\s*(.+?)\./i,
+                /^article(?:s)?\s+[\d\sand]+\s+proposed (.+?)\./i,
+                /^articles?\s+[\d\sand]+\s+(?:aimed|sought) to (.+?)\./i
+            ];
+
+            for (const extractor of extractors) {
+                const match = rawDescription.match(extractor);
+                if (match && match[1]) {
+                    subject = String(match[1]).trim();
+                    break;
+                }
+            }
+
+            if (!subject) {
+                subject = rawDescription.split(/\.\s+This motion\b/i)[0].trim();
+            }
+
+            subject = subject
+                .replace(/\s*\([^)]*\)\s*$/g, '')
+                .replace(/^adding /i, '')
+                .replace(/^amending the General By-Laws to let /i, '')
+                .replace(/^allow Advisory Committee members to serve on /i, 'Advisory Committee on ')
+                .replace(/^Advisory Committee members serve on /i, 'Advisory Committee on ')
+                .replace(/^special building committees$/i, 'special building committees')
+                .replace(/^the celebration of (?:LGBTQIA\s*\+\s*)?/i, '')
+                .replace(/^encourage bringing a professional women['’]s basketball franchise to (.+)$/i, "women's basketball franchise in $1")
+                .replace(/^contact information for /i, 'contact info for ')
+                .replace(/^recordings of /i, 'recordings of ')
+                .replace(/^remove /i, 'remove ')
+                .trim();
+
+            subject = removeLeadingArticle(subject);
+            subject = shortenCompactVoteSubject(subject);
+            return toCompactTitleCase(subject);
+        }
+
+        function getVoteSelectLabel(vote) {
+            if (!vote || !vote.title || VOTE_SELECT_LABEL_MODE === 'title') {
+                return vote && vote.title ? vote.title : '';
+            }
+
+            const titleParts = parseVoteTitleForCompactLabel(vote.title);
+            if (!titleParts) return vote.title;
+
+            const descriptionSubject = extractCompactVoteSubject(vote.description);
+            const subject = titleParts.titleSubject || (
+                titleParts.useDescriptionSubject === false ? '' : descriptionSubject
+            );
+            if (subject && titleParts.motionLabel) {
+                return `${titleParts.articleLabel}: ${subject}, ${titleParts.motionLabel}`;
+            }
+            if (subject) return `${titleParts.articleLabel}: ${subject}`;
+            if (titleParts.motionLabel) return `${titleParts.articleLabel}: ${titleParts.motionLabel}`;
+            return vote.title;
         }
 
         function getCountedVoteOverride(sessionId, voteTitle) {
@@ -4930,7 +5254,7 @@
             votes.forEach(vote => {
                 const option = document.createElement('option');
                 option.value = vote.title;
-                option.textContent = vote.title;
+                option.textContent = getVoteSelectLabel(vote);
                 voteSelect.appendChild(option);
             });
 
