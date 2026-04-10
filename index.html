@@ -2099,7 +2099,7 @@
         }
 
         body.phone-layout .page-header-card {
-            padding: 9px 12px 7px;
+            padding: 6px 10px 4px;
             border-radius: 10px;
         }
 
@@ -2129,24 +2129,38 @@
         }
 
         body.phone-layout .page-header-nav {
-            margin-top: 4px;
-            padding-top: 6px;
+            margin-top: 2px;
+            padding-top: 4px;
+            border-top: 1px solid rgba(0,0,0,0.08);
+        }
+
+        /* Desktop: hide mobile dropdown; Phone: hide tab pills, show dropdown */
+        .mobile-tab-menu {
+            display: none;
         }
 
         body.phone-layout #module-menu {
-            flex-wrap: nowrap;
-            overflow-x: auto;
-            overflow-y: hidden;
-            gap: 8px;
-            padding-bottom: 8px;
-            scrollbar-width: thin;
+            display: none;
         }
 
-        body.phone-layout .tab {
-            flex: 0 0 auto;
-            padding: 7px 10px;
-            font-size: 13px;
-            white-space: nowrap;
+        body.phone-layout .mobile-tab-menu {
+            display: block;
+            width: 100%;
+            padding: 10px 14px;
+            font-size: 16px;
+            font-weight: 600;
+            font-family: 'Varela Round', sans-serif;
+            color: var(--tm-navy);
+            background-color: var(--tm-surface-muted);
+            border: 2px solid var(--tm-rose);
+            border-radius: 10px;
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23D02752' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            background-size: 12px 8px;
+            cursor: pointer;
         }
 
         body.phone-layout .module-instruction {
@@ -2158,7 +2172,22 @@
         }
 
         body.phone-layout .page-footer {
-            display: none;
+            position: static;
+            left: auto;
+            bottom: auto;
+            transform: none;
+            width: 100%;
+            padding: 12px 14px;
+            margin-top: 24px;
+            font-size: 12px;
+            text-align: center;
+            background: transparent;
+            backdrop-filter: none;
+            border: none;
+            border-top: 1px solid var(--tm-line);
+            border-radius: 0;
+            box-shadow: none;
+            z-index: auto;
         }
 
         body.phone-layout.by-vote-lock,
@@ -2231,6 +2260,44 @@
         body.phone-layout.tmm-history-lock .tmm-history-table-wrap,
         body.phone-layout.tmm-history-lock .tmm-history-table-scroller {
             max-height: none;
+        }
+
+        /* Touch targets: prevent iOS auto-zoom and meet minimum tap size */
+        body.phone-layout select,
+        body.phone-layout input[type="text"],
+        body.phone-layout input[type="search"],
+        body.phone-layout input[type="number"] {
+            font-size: 16px;
+            min-height: 44px;
+        }
+
+        body.phone-layout button {
+            min-height: 36px;
+        }
+
+        /* Active/tap states for touch feedback */
+        body.phone-layout .tab:active {
+            transform: scale(0.97);
+            opacity: 0.85;
+        }
+
+        body.phone-layout button:active,
+        body.phone-layout select:active {
+            opacity: 0.8;
+        }
+
+        /* Table improvements for small screens */
+        body.phone-layout th,
+        body.phone-layout td {
+            padding: 6px 6px;
+            font-size: 12px;
+        }
+
+        body.phone-layout .vote-history-table-wrap,
+        body.phone-layout .precinct-votes-table-wrap,
+        body.phone-layout .member-network-table-scroller {
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior-x: contain;
         }
 
         @media (max-width: 900px) {
@@ -2350,6 +2417,18 @@
                         <button class="tab" data-tab="tmm-history" onclick="switchTab(event, 'tmm-history')" data-tooltip="View all the members at Town Meeting (since 2021) and statistics on their votes">TMM History</button>
                         <button class="tab" type="button" onclick="openPcaInNewTab()" data-tooltip="View a principal component analysis of Town Meeting votes (opens in a new window)">PCA</button>
                     </div>
+                    <!-- Mobile-only dropdown menu (hidden on desktop/iPad) -->
+                    <select id="mobile-tab-menu" class="mobile-tab-menu" onchange="handleMobileTabSelect(this)">
+                        <option value="by-vote">View by Vote</option>
+                        <option value="by-member">View by Member</option>
+                        <option value="vote-history">Vote History</option>
+                        <option value="precinct-votes">Precinct Votes</option>
+                        <option value="contentious-votes">Closest Votes</option>
+                        <option value="member-networks">TMM Networks</option>
+                        <option value="outlier-votes">TMM Outlier Votes</option>
+                        <option value="tmm-history">TMM History</option>
+                        <option value="pca">PCA (opens new tab)</option>
+                    </select>
                     <div id="module-instruction" class="module-instruction"></div>
                 </div>
             </div>
@@ -2934,6 +3013,22 @@
             document.addEventListener('keydown', evt => {
                 if (evt.key === 'Escape') hideGlobalTooltip();
             });
+
+            // Touch support: tap to show tooltip, tap elsewhere to dismiss.
+            document.addEventListener('touchstart', evt => {
+                const target = getTooltipTarget(evt.target);
+                if (target) {
+                    if (target === activeTooltipTarget) {
+                        // Second tap on same target — dismiss
+                        hideGlobalTooltip();
+                    } else {
+                        showGlobalTooltip(target, false);
+                    }
+                } else {
+                    // Tapped outside any tooltip target — dismiss
+                    hideGlobalTooltip();
+                }
+            }, { passive: true });
         }
 
         /****************************************************
@@ -7688,6 +7783,7 @@
             }
 
             setActiveTabButton(evt, tabName);
+            syncMobileTabMenu(tabName);
 
             document.querySelectorAll('.tab-content').forEach(content => {
                 content.classList.remove('active');
@@ -7738,6 +7834,27 @@
             const openedWindow = window.open('TMMpca.html', '_blank');
             if (openedWindow) {
                 openedWindow.opener = null;
+            }
+        }
+
+        function handleMobileTabSelect(selectEl) {
+            const value = selectEl.value;
+            if (value === 'pca') {
+                openPcaInNewTab();
+                // Reset dropdown to current active tab
+                const activeTab = document.querySelector('.tab.active');
+                if (activeTab && activeTab.dataset.tab) {
+                    selectEl.value = activeTab.dataset.tab;
+                }
+                return;
+            }
+            switchTab(null, value);
+        }
+
+        function syncMobileTabMenu(tabName) {
+            const mobileMenu = document.getElementById('mobile-tab-menu');
+            if (mobileMenu && tabName !== 'pca') {
+                mobileMenu.value = tabName;
             }
         }
 
