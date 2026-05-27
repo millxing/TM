@@ -2453,8 +2453,7 @@
                         which is fetched via the GitHub raw URL.
                     -->
                     <select id="spreadsheet-select">
-                        <option value="Votes/May%202026%20Night%201%20Votes.xlsx" selected>May 2026 Annual Town Meeting, Night 1 only (12 votes)</option>
-                        <option value="Votes/November%202025%20Votes.xlsx">November 2025 Special Town Meeting (19 votes)</option>
+                        <option value="Votes/November%202025%20Votes.xlsx" selected>November 2025 Special Town Meeting (19 votes)</option>
                         <option value="Votes/May%202025%20Votes.xlsx">May 2025 Annual Town Meeting (45 votes)</option>
                         <option value="Votes/November%202024%20Votes.xlsx">November 2024 Special Town Meeting (28 votes)</option>
                         <option value="Votes/May%202024%20Votes.xlsx">May 2024 Annual Town Meeting (34 votes)</option>
@@ -2737,18 +2736,7 @@
     <script src="tm-shared.js"></script>
     <script>
 
-        const TMMVOTES_SESSION_FILES = [
-            ...SESSION_FILES,
-            {
-                id: '2026-05',
-                label: 'May 2026 Annual Town Meeting, Night 1 only',
-                file: 'Votes/May%202026%20Night%201%20Votes.xlsx'
-            }
-        ];
-        const AI_SUMMARY_SESSION_IDS = new Set(SESSION_FILES.map(session => session.id));
-        const SPREADSHEET_SOURCE_MODE = 'github';
-
-        const SESSION_ORDER_INDEX = TMMVOTES_SESSION_FILES.reduce((acc, session, index) => {
+        const SESSION_ORDER_INDEX = SESSION_FILES.reduce((acc, session, index) => {
             acc[session.id] = index;
             return acc;
         }, {});
@@ -3141,45 +3129,11 @@
 
         function getSelectedSpreadsheetURL() {
             const select = document.getElementById('spreadsheet-select');
-            const file = select ? select.value : 'Votes/May%202026%20Night%201%20Votes.xlsx';
+            const file = select ? select.value : 'Votes/November%202025%20Votes.xlsx';
             return getSpreadsheetRawURL(file);
         }
 
-        function getSpreadsheetFetchURLs(file) {
-            const localURL = String(file || '').trim();
-            const rawURL = getSpreadsheetRawURL(localURL);
-            if (!localURL) return [rawURL];
-
-            if (SPREADSHEET_SOURCE_MODE === 'local') return [localURL];
-            if (SPREADSHEET_SOURCE_MODE === 'github') return [rawURL];
-
-            const urls = window.location.protocol === 'file:'
-                ? [rawURL, localURL]
-                : [localURL, rawURL];
-            return Array.from(new Set(urls));
-        }
-
-        async function fetchSpreadsheetArrayBuffer(file) {
-            const attemptErrors = [];
-            for (const url of getSpreadsheetFetchURLs(file)) {
-                try {
-                    const response = await fetch(url);
-                    if (!response.ok) {
-                        attemptErrors.push(`${url}: HTTP ${response.status} ${response.statusText}`);
-                        continue;
-                    }
-                    return await response.arrayBuffer();
-                } catch (err) {
-                    attemptErrors.push(`${url}: ${err && err.message ? err.message : 'load error'}`);
-                }
-            }
-
-            throw new Error(attemptErrors.join(' | ') || `Unable to load ${file}`);
-        }
-
         function getAISummaryFileForSession(sessionId) {
-            if (!AI_SUMMARY_SESSION_IDS.has(String(sessionId || '').trim())) return '';
-
             const match = String(sessionId || '').trim().match(/^(\d{4})-(\d{2})$/);
             if (!match) return '';
 
@@ -3214,10 +3168,10 @@
             const select = document.getElementById('spreadsheet-select');
             const selectedIndex = select ? select.selectedIndex : -1;
             const option = select && selectedIndex >= 0 ? select.options[selectedIndex] : null;
-            const file = option ? option.value : 'Votes/May%202026%20Night%201%20Votes.xlsx';
+            const file = option ? option.value : 'Votes/November%202025%20Votes.xlsx';
             const labelText = option ? option.textContent : 'Selected Session';
             const label = labelText ? labelText.split('(')[0].trim() : 'Selected Session';
-            const knownSession = TMMVOTES_SESSION_FILES.find(session => session.file === file);
+            const knownSession = SESSION_FILES.find(session => session.file === file);
 
             return {
                 id: knownSession ? knownSession.id : 'single-session',
@@ -3752,25 +3706,6 @@
         function getCountedVoteOverride(sessionId, voteTitle) {
             const key = `${String(sessionId || '').trim()}::${normalizeVoteTitleKey(voteTitle)}`;
             return COUNTED_VOTE_OVERRIDES[key] || null;
-        }
-
-        function getTmmvotesSessionIdFromGuideLabel(sessionLabel) {
-            const normalized = String(sessionLabel || '').toLowerCase().trim();
-            if (!normalized) return null;
-
-            const direct = TMMVOTES_SESSION_FILES.find(session =>
-                normalized.includes(session.label.toLowerCase()) ||
-                session.label.toLowerCase().includes(normalized)
-            );
-            if (direct) return direct.id;
-
-            const match = normalized.match(/\b(january|may|october|november)\s+(20\d{2})\b/i);
-            if (!match) return null;
-            const monthMap = { january: '01', may: '05', october: '10', november: '11' };
-            const month = monthMap[match[1].toLowerCase()];
-            const year = match[2];
-            const candidate = `${year}-${month}`;
-            return TMMVOTES_SESSION_FILES.some(session => session.id === candidate) ? candidate : null;
         }
 
         function computeVoteBreakdownFromSession(sessionData, voteMeta) {
@@ -4435,11 +4370,11 @@
 
             // No cached data and no in-flight load — perform the actual fetch.
             let loadedCount = 0;
-            const total = TMMVOTES_SESSION_FILES.length;
+            const total = SESSION_FILES.length;
             onProgress(`Loading ${moduleName} (0 of ${total})...`);
 
             const results = await Promise.all(
-                TMMVOTES_SESSION_FILES.map(async session => {
+                SESSION_FILES.map(async session => {
                     try {
                         return await fetchAndParseSpreadsheet(session);
                     } catch (err) {
@@ -4815,7 +4750,12 @@
                 const candidateFiles = buildMemberAliasesCandidateFiles();
                 for (const aliasFile of candidateFiles) {
                     try {
-                        const arrayBuffer = await fetchSpreadsheetArrayBuffer(aliasFile);
+                        const response = await fetch(getSpreadsheetRawURL(aliasFile));
+                        if (!response.ok) {
+                            throw new Error(`HTTP ${response.status}`);
+                        }
+
+                        const arrayBuffer = await response.arrayBuffer();
                         const workbook = XLSX.read(arrayBuffer, { type: 'array' });
                         const sheetName = workbook.SheetNames[0];
                         const sheet = workbook.Sheets[sheetName];
@@ -4920,7 +4860,7 @@
                 const voteTitle = String(row[voteCol] || '').trim();
                 if (!sessionLabel || !voteTitle) continue;
 
-                const sessionId = getTmmvotesSessionIdFromGuideLabel(sessionLabel);
+                const sessionId = getSessionIdFromGuideLabel(sessionLabel);
                 if (!sessionId) continue;
 
                 const description = descriptionCol >= 0 ? String(row[descriptionCol] || '').trim() : '';
@@ -4972,7 +4912,13 @@
                         let loadedPlan = false;
                         for (const guideFile of plan.files) {
                             try {
-                                const arrayBuffer = await fetchSpreadsheetArrayBuffer(guideFile);
+                                const response = await fetch(getSpreadsheetRawURL(guideFile));
+                                if (!response.ok) {
+                                    attemptErrors.push(`${guideFile}: HTTP ${response.status} ${response.statusText}`);
+                                    continue;
+                                }
+
+                                const arrayBuffer = await response.arrayBuffer();
                                 const workbook = XLSX.read(arrayBuffer, { type: 'array' });
                                 const sheetName = workbook.SheetNames[0];
                                 const sheet = workbook.Sheets[sheetName];
@@ -5198,7 +5144,11 @@
 
         async function fetchAndParseSpreadsheet(sessionMeta) {
             await ensureMemberAliasesLoaded();
-            const arrayBuffer = await fetchSpreadsheetArrayBuffer(sessionMeta.file);
+            const response = await fetch(getSpreadsheetRawURL(sessionMeta.file));
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status} ${response.statusText}`);
+            }
+            const arrayBuffer = await response.arrayBuffer();
             return parseWorkbookArrayBuffer(arrayBuffer, sessionMeta);
         }
 
@@ -5331,7 +5281,7 @@
         }
 
         function getSessionMetaById(sessionId) {
-            return TMMVOTES_SESSION_FILES.find(session => session.id === sessionId) || null;
+            return SESSION_FILES.find(session => session.id === sessionId) || null;
         }
 
         async function loadSessionByIdIfNeeded(sessionId) {
@@ -5962,7 +5912,7 @@
             }
 
             let loadedCount = 0;
-            const total = TMMVOTES_SESSION_FILES.length;
+            const total = SESSION_FILES.length;
             setMemberNetworkStatus(`Loading member network data (0 of ${total})...`);
             setPanelMessage(memberNetworkNeighborsEl, 'Loading all sessions for member network analysis...');
 
@@ -5970,7 +5920,7 @@
                 try {
                     await ensureVoteGuideLoaded();
                     const sessions = await Promise.all(
-                        TMMVOTES_SESSION_FILES.map(async session => {
+                        SESSION_FILES.map(async session => {
                             try {
                                 return await fetchAndParseSpreadsheet(session);
                             } finally {
@@ -7016,14 +6966,14 @@
             }
 
             let loadedCount = 0;
-            const total = TMMVOTES_SESSION_FILES.length;
+            const total = SESSION_FILES.length;
             setOutlierVotesStatus(`Loading TMM Outlier Votes (0 of ${total})...`);
 
             outlierVotesLoadPromise = (async () => {
                 try {
                     await ensureVoteGuideLoaded();
                     const sessions = await Promise.all(
-                        TMMVOTES_SESSION_FILES.map(async session => {
+                        SESSION_FILES.map(async session => {
                             try {
                                 return await fetchAndParseSpreadsheet(session);
                             } catch (err) {
@@ -7103,10 +7053,10 @@
                 return;
             }
 
-            const defaultSelectedSessionCount = Math.min(4, TMMVOTES_SESSION_FILES.length);
-            const defaultMinimumSessions = Math.min(4, TMMVOTES_SESSION_FILES.length);
+            const defaultSelectedSessionCount = Math.min(4, SESSION_FILES.length);
+            const defaultMinimumSessions = Math.min(4, SESSION_FILES.length);
 
-            [...TMMVOTES_SESSION_FILES].reverse().forEach((session, index) => {
+            [...SESSION_FILES].reverse().forEach((session, index) => {
                 const optionLabel = document.createElement('label');
                 optionLabel.className = 'session-option';
 
@@ -7125,7 +7075,7 @@
             });
 
             minSessionsSelect.replaceChildren();
-            for (let i = 1; i <= TMMVOTES_SESSION_FILES.length; i++) {
+            for (let i = 1; i <= SESSION_FILES.length; i++) {
                 const option = document.createElement('option');
                 option.value = String(i);
                 option.textContent = String(i);
@@ -7224,7 +7174,7 @@
                 }
             }
 
-            const total = TMMVOTES_SESSION_FILES.length;
+            const total = SESSION_FILES.length;
             let loadedCount = 0;
             setClusteringStatus(`Loading clustering data (0 of ${total})...`);
             setPanelMessage(clusterMemberDetailEl, 'Loading all sessions...');
@@ -7232,7 +7182,7 @@
             await ensureVoteGuideLoaded();
 
             clusteringLoadPromise = Promise.all(
-                TMMVOTES_SESSION_FILES.map(async session => {
+                SESSION_FILES.map(async session => {
                     try {
                         return await fetchAndParseSpreadsheet(session);
                     } catch (err) {
