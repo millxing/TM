@@ -2453,7 +2453,7 @@
                         which is fetched via the GitHub raw URL.
                     -->
                     <select id="spreadsheet-select">
-                        <option value="Votes/May%202026%20Night%201%20Votes.xlsx" selected>May 2026 Annual Town Meeting, Night 1 only (12 votes)</option>
+                        <option value="Votes/May%202026%20Votes.xlsx" selected>May 2026 Annual Town Meeting, Night 1 only (12 votes)</option>
                         <option value="Votes/November%202025%20Votes.xlsx">November 2025 Special Town Meeting (19 votes)</option>
                         <option value="Votes/May%202025%20Votes.xlsx">May 2025 Annual Town Meeting (45 votes)</option>
                         <option value="Votes/November%202024%20Votes.xlsx">November 2024 Special Town Meeting (28 votes)</option>
@@ -2742,7 +2742,7 @@
             {
                 id: '2026-05',
                 label: 'May 2026 Annual Town Meeting, Night 1 only',
-                file: 'Votes/May%202026%20Night%201%20Votes.xlsx'
+                file: 'Votes/May%202026%20Votes.xlsx'
             }
         ];
         const AI_SUMMARY_SESSION_IDS = new Set(SESSION_FILES.map(session => session.id));
@@ -3141,7 +3141,7 @@
 
         function getSelectedSpreadsheetURL() {
             const select = document.getElementById('spreadsheet-select');
-            const file = select ? select.value : 'Votes/May%202026%20Night%201%20Votes.xlsx';
+            const file = select ? select.value : 'Votes/May%202026%20Votes.xlsx';
             return getSpreadsheetRawURL(file);
         }
 
@@ -3214,7 +3214,7 @@
             const select = document.getElementById('spreadsheet-select');
             const selectedIndex = select ? select.selectedIndex : -1;
             const option = select && selectedIndex >= 0 ? select.options[selectedIndex] : null;
-            const file = option ? option.value : 'Votes/May%202026%20Night%201%20Votes.xlsx';
+            const file = option ? option.value : 'Votes/May%202026%20Votes.xlsx';
             const labelText = option ? option.textContent : 'Selected Session';
             const label = labelText ? labelText.split('(')[0].trim() : 'Selected Session';
             const knownSession = TMMVOTES_SESSION_FILES.find(session => session.file === file);
