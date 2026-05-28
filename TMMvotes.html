@@ -2816,6 +2816,11 @@
                 motionLabel: 'motion to refer'
             },
             {
+                key: 'motion_to_divide_question',
+                regex: /^(.*?)\s+Motion to Divide the Question$/i,
+                motionLabel: 'motion to divide the question'
+            },
+            {
                 key: 'motion_to_rescind',
                 regex: /^(.*?)\s+Motion to Rescind$/i,
                 motionLabel: 'motion to rescind'
@@ -2849,6 +2854,11 @@
                 key: 'substitute_motion',
                 regex: /^(.*?)\s+Substitute Motion$/i,
                 motionLabel: 'substitute motion'
+            },
+            {
+                key: 'named_main_motion',
+                regex: /^(.*?)\s+Main Motion--(.+)$/i,
+                getMotionLabel: match => `${String(match[2] || '').trim()} main motion`
             },
             {
                 key: 'main_motion',
@@ -3650,7 +3660,7 @@
             if (leadingSentence) subject = leadingSentence;
             if (subject.length <= 44) return subject;
 
-            const breakTokens = [' to ', ' when ', ' for ', ' by ', ' and ', ', '];
+            const breakTokens = [' to ', ' when ', ' for ', ' by ', ' in ', ' and ', ', '];
             const lower = subject.toLowerCase();
             for (const token of breakTokens) {
                 const index = lower.indexOf(token);
@@ -3682,16 +3692,23 @@
                 /^bond item \d+ (?:funded|appropriated|allocated|provided|supplied)\s+(.+?)(?:\.|$)/i,
                 /^(?:home rule petition|home-rule petition)\s*[–-]\s*(.+)$/i,
                 /^approval of (.+)$/i,
+                /^annual authorization of (.+)$/i,
+                /^annual \(fy\d+\)\s+(.+)$/i,
                 /^(fy\d+\s+budget amendment)$/i,
                 /^remove the (.+)$/i,
+                /^establish an? (.+)$/i,
                 /^amend .*?\bto create (.+)$/i,
                 /^amend .*?\bto establish (.+)$/i,
+                /^amend .*?\bto clarify (.+)$/i,
                 /^amend .*?\bto comply with .*?\bfor (.+)$/i,
                 /^amend .*?\bto comply with (.+)$/i,
                 /^amend .*?\bto update .*?\bto provide (.+)$/i,
+                /^create a new article .*?\bin order to require (.+)$/i,
                 /^create .*?\bestablishing (.+)$/i,
                 /^name .*?\bto\s+["“]?([^,"”]+)["”]?(?:,|$)/i,
                 /^resolution regarding (.+)$/i,
+                /^resolution calling for (.+)$/i,
+                /^resolution calling to (.+)$/i,
                 /^resolution to (.+)$/i,
                 /^the underlying article sought (?:to\s+)?(?:a|an)?\s*(.+?)\./i,
                 /^article(?:s)?\s+[\d\sand]+\s+proposed (.+?)\./i,
