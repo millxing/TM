@@ -50,7 +50,8 @@ const SESSION_FILES = [
     { id: '2024-05', label: 'May 2024 Annual Town Meeting', file: 'Votes/May%202024%20Votes.xlsx' },
     { id: '2024-11', label: 'November 2024 Special Town Meeting', file: 'Votes/November%202024%20Votes.xlsx' },
     { id: '2025-05', label: 'May 2025 Annual Town Meeting', file: 'Votes/May%202025%20Votes.xlsx' },
-    { id: '2025-11', label: 'November 2025 Special Town Meeting', file: 'Votes/November%202025%20Votes.xlsx' }
+    { id: '2025-11', label: 'November 2025 Special Town Meeting', file: 'Votes/November%202025%20Votes.xlsx' },
+    { id: '2026-05', label: 'May 2026 Annual Town Meeting', file: 'Votes/May%202026%20Votes.xlsx' }
 ];
 
 /****************************************************

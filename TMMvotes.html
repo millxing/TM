@@ -2737,17 +2737,9 @@
     <script src="tm-shared.js"></script>
     <script>
 
-        const TMMVOTES_SESSION_FILES = [
-            ...SESSION_FILES,
-            {
-                id: '2026-05',
-                label: 'May 2026 Annual Town Meeting',
-                file: 'Votes/May%202026%20Votes.xlsx'
-            }
-        ];
+        const TMMVOTES_SESSION_FILES = [...SESSION_FILES];
         const AI_SUMMARY_SESSION_IDS = new Set([
-            ...SESSION_FILES.map(session => session.id),
-            '2026-05'
+            ...SESSION_FILES.map(session => session.id)
         ]);
         const SPREADSHEET_SOURCE_MODE = 'github';
 
