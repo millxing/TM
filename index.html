@@ -2453,7 +2453,7 @@
                         which is fetched via the GitHub raw URL.
                     -->
                     <select id="spreadsheet-select">
-                        <option value="Votes/May%202026%20Votes.xlsx" selected>May 2026 Annual Town Meeting (21 votes so far)</option>
+                        <option value="Votes/May%202026%20Votes.xlsx" selected>May 2026 Annual Town Meeting (38 votes)</option>
                         <option value="Votes/November%202025%20Votes.xlsx">November 2025 Special Town Meeting (19 votes)</option>
                         <option value="Votes/May%202025%20Votes.xlsx">May 2025 Annual Town Meeting (45 votes)</option>
                         <option value="Votes/November%202024%20Votes.xlsx">November 2024 Special Town Meeting (28 votes)</option>
@@ -2745,7 +2745,10 @@
                 file: 'Votes/May%202026%20Votes.xlsx'
             }
         ];
-        const AI_SUMMARY_SESSION_IDS = new Set(SESSION_FILES.map(session => session.id));
+        const AI_SUMMARY_SESSION_IDS = new Set([
+            ...SESSION_FILES.map(session => session.id),
+            '2026-05'
+        ]);
         const SPREADSHEET_SOURCE_MODE = 'github';
 
         const SESSION_ORDER_INDEX = TMMVOTES_SESSION_FILES.reduce((acc, session, index) => {
@@ -2819,6 +2822,16 @@
                 key: 'motion_to_divide_question',
                 regex: /^(.*?)\s+Motion to Divide the Question$/i,
                 motionLabel: 'motion to divide the question'
+            },
+            {
+                key: 'motion_to_approve_consent_agenda',
+                regex: /^(.*?)\s+Motion to Approve as a Consent Agenda$/i,
+                motionLabel: 'consent agenda'
+            },
+            {
+                key: 'motion_to_amend',
+                regex: /^(.*?)\s+Motion to Amend$/i,
+                motionLabel: 'motion to amend'
             },
             {
                 key: 'motion_to_rescind',
@@ -3697,19 +3710,26 @@
                 /^(fy\d+\s+budget amendment)$/i,
                 /^remove the (.+)$/i,
                 /^establish an? (.+)$/i,
+                /^special town meeting articles? .*?\bconcerned (.+)$/i,
                 /^amend .*?\bto create (.+)$/i,
                 /^amend .*?\bto establish (.+)$/i,
+                /^amend .*?\bto establish and accommodate (.+)$/i,
                 /^amend .*?\bto clarify (.+)$/i,
+                /^amend article .*?\bto change (.+)$/i,
+                /^amend .*?\bto restore (.+)$/i,
                 /^amend .*?\bto comply with .*?\bfor (.+)$/i,
                 /^amend .*?\bto comply with (.+)$/i,
                 /^amend .*?\bto update .*?\bto provide (.+)$/i,
+                /^create a new article .*?\bto prohibit (.+)$/i,
                 /^create a new article .*?\bin order to require (.+)$/i,
                 /^create .*?\bestablishing (.+)$/i,
                 /^name .*?\bto\s+["“]?([^,"”]+)["”]?(?:,|$)/i,
                 /^resolution regarding (.+)$/i,
                 /^resolution calling for (.+)$/i,
                 /^resolution calling to (.+)$/i,
+                /^resolution requesting (.+)$/i,
                 /^resolution to (.+)$/i,
+                /^21\.\s*resolution expressing support for (.+?)\s+22\.\s*resolution supporting (.+)$/i,
                 /^the underlying article sought (?:to\s+)?(?:a|an)?\s*(.+?)\./i,
                 /^article(?:s)?\s+[\d\sand]+\s+proposed (.+?)\./i,
                 /^articles?\s+[\d\sand]+\s+(?:aimed|sought) to (.+?)\./i
@@ -3736,6 +3756,18 @@
                 .replace(/^special building committees$/i, 'special building committees')
                 .replace(/^the celebration of (?:LGBTQIA\s*\+\s*)?/i, '')
                 .replace(/^encourage bringing a professional women['’]s basketball franchise to (.+)$/i, "women's basketball franchise in $1")
+                .replace(/^and accommodate /i, '')
+                .replace(/^state requirements regarding Accessory Dwelling Units.*$/i, 'Accessory Dwelling Units')
+                .replace(/^the more permissive threshold allowing a Cash in Lieu.*$/i, 'cash in lieu affordable housing payment threshold')
+                .replace(/^the appointing structure and charge of the Committee on Town Organization & Structure$/i, 'Committee on Town Organization & Structure')
+                .replace(/^appointing structure and charge of the Committee on Town Organization & Structure$/i, 'Committee on Town Organization & Structure')
+                .replace(/^civil immigration enforcement activities on Town facilities$/i, 'immigration enforcement on Town facilities')
+                .replace(/^civil immigration enforcement on Town facilities$/i, 'immigration enforcement on Town facilities')
+                .replace(/^the discontinuance of state and local collaboration with Federal Immigration Enforcement.*$/i, 'Federal immigration enforcement collaboration')
+                .replace(/^establish an official annual Town-wide commemoration of September 11, 2011 and a memorial.*$/i, 'September 11 commemoration and memorial')
+                .replace(/^an official annual Town-wide commemoration of September 11, 2011 and a memorial.*$/i, 'September 11 commemoration and memorial')
+                .replace(/^Massachusetts Medicare for All legislation$/i, 'Medicare for All and Proposition 2½ modernization')
+                .replace(/^Massachusetts Medicare for All legislation\s+modernization of Proposition 2½$/i, 'Medicare for All and Proposition 2½ modernization')
                 .replace(/^contact information for /i, 'contact info for ')
                 .replace(/^recordings of /i, 'recordings of ')
                 .replace(/^remove /i, 'remove ')
