@@ -3914,8 +3914,8 @@
             background: none;
         }
 
-        body.phone-layout .member-list:not(.is-expanded) > .member-item:nth-child(n+13),
-        body.phone-layout .article-list:not(.is-expanded) > .article-item-with-desc:nth-child(n+13) { display: none; }
+        body.phone-layout .has-more .member-list:not(.is-expanded) > .member-item:nth-child(n+13),
+        body.phone-layout .has-more .article-list:not(.is-expanded) > .article-item-with-desc:nth-child(n+13) { display: none; }
 
         body.phone-layout .show-all-toggle {
             display: block;
@@ -4132,7 +4132,10 @@
         /* Precinct Votes: no nested vertical scroll box; horizontal scroll only */
         .precinct-votes-table-wrap { max-height: none; overflow-x: auto; overflow-y: hidden; overscroll-behavior: auto; }
         body.phone-layout .precinct-votes-table-wrap { max-height: none; }
-        .precinct-votes-table { --precinct-col-1-width: 124px; --precinct-col-2-width: 186px; }
+        .precinct-votes-table { --precinct-col-1-width: 124px; --precinct-col-2-width: 176px; --precinct-col-3-width: 110px; }
+        @media (max-width: 1099px) {
+            body:not(.phone-layout) .aligned-select-label { flex-basis: auto; text-align: left; }
+        }
         .precinct-votes-table .vote-title-nav-bubble { text-wrap: balance; }
         body.phone-layout .precinct-votes-table { --precinct-col-1-width: 120px; --precinct-col-3-width: 92px; }
 
@@ -4282,6 +4285,73 @@
         .tmm-history-table-scroller,
         .outlier-votes-table-scroller { scrollbar-gutter: auto; }
 
+        /* ---- Task-test fixes ---- */
+        .precinct-filter-group { display: inline-flex; align-items: center; gap: 8px; }
+        .precinct-filter-group label { font-weight: 600; color: var(--ink-2); white-space: nowrap; }
+        .aligned-select-controls .precinct-filter-group select.precinct-filter-select { flex: 0 0 auto; width: auto; min-width: 170px; max-width: 220px; }
+        body.phone-layout .precinct-filter-group { display: flex; flex-basis: 100%; }
+        body.phone-layout .aligned-select-controls .precinct-filter-group select.precinct-filter-select { flex: 1 1 auto; max-width: none; }
+        .precinct-filter-notice {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px 16px;
+            margin: 0 0 12px;
+            padding: 10px 14px;
+            border: 1px solid var(--border);
+            border-left: 3px solid var(--ink);
+            border-radius: 10px;
+            background: var(--surface-2);
+            font-size: var(--fs-sm);
+            color: var(--ink-2);
+        }
+        .precinct-filter-clear {
+            min-height: 36px;
+            padding: 6px 12px;
+            border: 1px solid var(--border-strong);
+            border-radius: 8px;
+            background: var(--surface);
+            color: var(--ink);
+            font: inherit;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .precinct-filter-clear:hover { border-color: var(--ink); }
+
+        .article-links-heading { list-style: none; font-weight: 600; color: var(--ink-2); }
+        .article-links li.article-links-heading::after { content: none; display: none; }
+        .article-links-empty { margin-top: 6px; font-size: var(--fs-sm); color: var(--ink-muted); }
+
+        .precinct-votes-table td.is-drilldown { cursor: pointer; }
+        .precinct-votes-table td.is-drilldown:hover { box-shadow: inset 0 0 0 2px var(--accent); }
+        html body .precinct-votes-table td.heat-diverge[data-precinct]::before {
+            content: attr(data-precinct);
+            display: block;
+            margin: 0 0 1px;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            text-transform: none;
+            color: var(--ink-muted);
+        }
+
+        /* Precinct header row sticks below the page header when the table fits the width */
+        .precinct-votes-table-wrap.fits { overflow: visible; }
+        /* clip (not hidden) keeps rounded corners without creating a scroll container, so headers can stick */
+        .vote-history-session { overflow: clip; }
+        .precinct-votes-table-wrap.fits .precinct-votes-table th { top: calc(var(--page-header-height, 0px) - 1px); }
+
+        /* Phone: keep the town-wide (ALL) column pinned next to the vote title */
+        body.phone-layout .precinct-votes-table th:nth-child(4),
+        body.phone-layout .precinct-votes-table td:nth-child(4) {
+            position: sticky;
+            left: var(--precinct-col-1-width);
+            z-index: 3;
+            box-shadow: 3px 0 0 var(--border-strong);
+        }
+        body.phone-layout .precinct-votes-table th:nth-child(4) { z-index: 8; background-color: var(--surface-2); }
+
         /* Bigger touch targets for description toggles */
         .desc-toggle { min-height: 32px; padding: 4px 2px; }
     </style>
@@ -4302,7 +4372,7 @@
                         </div>
                     </div>
                     <div class="disclaimer-hover-wrap">
-                        <button type="button" class="disclaimer-button" aria-describedby="important-disclaimer" aria-expanded="false" aria-controls="important-disclaimer">
+                        <button type="button" class="disclaimer-button" aria-label="About: read before you interpret votes" aria-describedby="important-disclaimer" aria-expanded="false" aria-controls="important-disclaimer">
                             <svg class="disclaimer-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
                             <span class="disclaimer-label-long">Read before you interpret votes</span>
                             <span class="disclaimer-label-short" aria-hidden="true">About</span>
@@ -4410,6 +4480,19 @@
                         <label for="vote-select" class="aligned-select-label">Select Vote:</label>
                         <!-- Populated dynamically with article titles from the spreadsheet -->
                         <select id="vote-select"></select>
+                        <div class="precinct-filter-group">
+                        <label for="vote-precinct-filter">Show precinct:</label>
+                        <select id="vote-precinct-filter" class="precinct-filter-select" onchange="updateVoteResults()">
+                            <option value="">All precincts</option>
+                            <option value="P1">Precinct 1</option><option value="P2">Precinct 2</option><option value="P3">Precinct 3</option>
+                            <option value="P4">Precinct 4</option><option value="P5">Precinct 5</option><option value="P6">Precinct 6</option>
+                            <option value="P7">Precinct 7</option><option value="P8">Precinct 8</option><option value="P9">Precinct 9</option>
+                            <option value="P10">Precinct 10</option><option value="P11">Precinct 11</option><option value="P12">Precinct 12</option>
+                            <option value="P13">Precinct 13</option><option value="P14">Precinct 14</option><option value="P15">Precinct 15</option>
+                            <option value="P16">Precinct 16</option><option value="P17">Precinct 17</option>
+                            <option value="AL">At-large (AL)</option>
+                        </select>
+                        </div>
                         <div class="checkbox-group">
                             <!-- When checked, sorts by last name only instead of precinct+name -->
                             <input type="checkbox" id="sort-by-name-vote" onchange="updateVoteResults()">
@@ -4903,6 +4986,7 @@
 
         window.addEventListener('resize', () => {
             updatePhoneLayout();
+            updateByVoteLock();
             syncPinnedLayoutOffsets();
         });
         window.addEventListener('load', () => {
@@ -5042,7 +5126,16 @@
             document.addEventListener('focusin', evt => {
                 const target = getTooltipTarget(evt.target);
                 if (!target) return;
+                // Mouse/touch focus (e.g. clicking a tab) shouldn't leave a tooltip covering the page.
+                let keyboardFocus = true;
+                try { keyboardFocus = evt.target.matches(':focus-visible'); } catch (err) { /* older browsers */ }
+                if (!keyboardFocus) return;
                 showGlobalTooltip(target, true);
+            });
+
+            document.addEventListener('click', evt => {
+                const tabTarget = evt.target instanceof Element ? evt.target.closest('#module-menu .tab') : null;
+                if (tabTarget && activeTooltipTarget) hideGlobalTooltip();
             });
 
             document.addEventListener('focusout', evt => {
@@ -5351,15 +5444,22 @@
         }
 
         function buildArticleLinksElement(links) {
-            if (!Array.isArray(links) || links.length === 0) return null;
-
-            const sanitizedLinks = links
+            const sanitizedLinks = (Array.isArray(links) ? links : [])
                 .map(link => String(link || '').trim())
                 .filter(link => /^https?:\/\//i.test(link));
-            if (sanitizedLinks.length === 0) return null;
+            if (sanitizedLinks.length === 0) {
+                const emptyEl = document.createElement('p');
+                emptyEl.className = 'article-links-empty';
+                emptyEl.textContent = 'Source documents: none linked for this vote yet.';
+                return emptyEl;
+            }
 
             const listEl = document.createElement('ul');
             listEl.className = 'article-links';
+            const headingEl = document.createElement('li');
+            headingEl.className = 'article-links-heading';
+            headingEl.textContent = 'Source documents (warrant, reports, results):';
+            listEl.appendChild(headingEl);
 
             sanitizedLinks.forEach((url, index) => {
                 const itemEl = document.createElement('li');
@@ -5367,7 +5467,8 @@
                 linkEl.href = url;
                 linkEl.target = '_blank';
                 linkEl.rel = 'noopener noreferrer';
-                linkEl.textContent = `Reference ${index + 1}`;
+                linkEl.textContent = `Source ${index + 1}`;
+                linkEl.setAttribute('aria-label', `Source document ${index + 1} (opens in new tab)`);
                 itemEl.appendChild(linkEl);
                 listEl.appendChild(itemEl);
             });
@@ -6650,6 +6751,13 @@
 
                     STANDARD_PRECINCTS.forEach(precinct => {
                         addCell(precinctPercentages[precinct] || '—', 'pct-col');
+                        const cellEl = rowEl.lastChild;
+                        if (voteTitle) {
+                            cellEl.classList.add('is-drilldown');
+                            cellEl.addEventListener('click', () => {
+                                void openVoteForPrecinct(session.id, voteTitle, `P${precinct}`);
+                            });
+                        }
                     });
 
                     tbodyEl.appendChild(rowEl);
@@ -6665,6 +6773,8 @@
                     const fullWidth = Math.max(tableEl.scrollWidth, tableWrapEl.clientWidth);
                     topScrollInnerEl.style.width = `${fullWidth}px`;
                     topScrollEl.style.display = fullWidth > tableWrapEl.clientWidth ? 'block' : 'none';
+                    // When the table fits, drop the horizontal scroller so the header row can stick to the page.
+                    tableWrapEl.classList.toggle('fits', tableEl.scrollWidth <= tableWrapEl.clientWidth + 1);
                 };
 
                 let syncing = false;
@@ -6772,7 +6882,7 @@
 
             const summaryEl = document.createElement('div');
             summaryEl.className = 'vote-history-message';
-            summaryEl.textContent = `Showing ${topVotes.length} votes closest to 50-50 split across all sessions.`;
+            summaryEl.textContent = `Showing the ${topVotes.length} votes whose Yes share (of Yes + No) came closest to 50%, across all sessions. Margin is Yes minus No.`;
             container.appendChild(summaryEl);
 
             const tableWrapEl = document.createElement('div');
@@ -7501,6 +7611,13 @@
             openVoteFromMemberView(voteTitle);
         }
 
+        // Precinct Votes cell -> View by Vote filtered to that precinct.
+        async function openVoteForPrecinct(sessionId, voteTitle, precinctLabel) {
+            const filterEl = document.getElementById('vote-precinct-filter');
+            if (filterEl) filterEl.value = precinctLabel;
+            await openVoteFromCrossSession(sessionId, voteTitle);
+        }
+
         function openMemberFromVoteView(memberKey) {
             const memberSelect = document.getElementById('member-select');
             if (!setSelectValueIfPresent(memberSelect, memberKey)) return;
@@ -7559,8 +7676,10 @@
 
         // Phone-only (CSS-gated) "Show all" control so long lists don't need a nested scroll area.
         const PHONE_LIST_PREVIEW_COUNT = 12;
+        const PHONE_LIST_LONG_THRESHOLD = 20;
         function appendShowAllToggle(columnEl, listEl, itemCount, noun) {
-            if (itemCount <= PHONE_LIST_PREVIEW_COUNT) return;
+            // Short lists (up to 20) are shown in full; only long lists get the 12-item preview.
+            if (itemCount <= PHONE_LIST_LONG_THRESHOLD) return;
             columnEl.classList.add('has-more');
             const toggleEl = document.createElement('button');
             toggleEl.type = 'button';
@@ -7770,6 +7889,37 @@
                 resultsDiv.appendChild(descriptionEl);
             }
 
+            // Optional precinct filter: columns list only that precinct; the banner keeps town-wide totals.
+            const precinctFilterEl = document.getElementById('vote-precinct-filter');
+            const precinctFilter = precinctFilterEl ? precinctFilterEl.value : '';
+            const precinctFilterName = precinctFilter
+                ? (precinctFilterEl.options[precinctFilterEl.selectedIndex] || {}).textContent || precinctFilter
+                : '';
+            const columnGroups = {};
+            Object.keys(voteGroups).forEach(voteType => {
+                columnGroups[voteType] = precinctFilter
+                    ? voteGroups[voteType].filter(member => formatPrecinctLabel(member.precinct) === precinctFilter)
+                    : voteGroups[voteType];
+            });
+            if (precinctFilter) {
+                const noticeEl = document.createElement('div');
+                noticeEl.className = 'precinct-filter-notice';
+                noticeEl.setAttribute('role', 'status');
+                const textEl = document.createElement('span');
+                textEl.textContent = `Showing ${precinctFilterName} only: ${columnGroups.YES.length} Yes · ${columnGroups.NO.length} No · ${columnGroups.ABSTAIN.length} Abstain · ${columnGroups.NoVote.length} Not recorded. The bar above shows town-wide totals.`;
+                const clearEl = document.createElement('button');
+                clearEl.type = 'button';
+                clearEl.className = 'precinct-filter-clear';
+                clearEl.textContent = 'Show all precincts';
+                clearEl.addEventListener('click', () => {
+                    precinctFilterEl.value = '';
+                    updateVoteResults();
+                    precinctFilterEl.focus({ preventScroll: true });
+                });
+                noticeEl.append(textEl, clearEl);
+                resultsDiv.appendChild(noticeEl);
+            }
+
             const resultsGridEl = document.createElement('div');
             resultsGridEl.className = 'results';
 
@@ -7808,10 +7958,18 @@
                 resultsGridEl.appendChild(columnEl);
             }
 
-            appendMemberColumn('yes', 'Yes', displayCounts.YES, `${percentages.YES}%`, voteGroups.YES, 'No members voted Yes.');
-            appendMemberColumn('no', 'No', displayCounts.NO, `${percentages.NO}%`, voteGroups.NO, 'No members voted No.');
-            appendMemberColumn('abstain', 'Abstain', displayCounts.ABSTAIN, '', voteGroups.ABSTAIN, 'No members abstained.');
-            appendMemberColumn('novote', 'Not Recorded', displayCounts.NoVote, '', voteGroups.NoVote, 'Every member\'s vote was recorded.');
+            if (precinctFilter) {
+                const who = `${precinctFilter} members`;
+                appendMemberColumn('yes', 'Yes', columnGroups.YES.length, `of ${displayCounts.YES}`, columnGroups.YES, `No ${who} voted Yes.`);
+                appendMemberColumn('no', 'No', columnGroups.NO.length, `of ${displayCounts.NO}`, columnGroups.NO, `No ${who} voted No.`);
+                appendMemberColumn('abstain', 'Abstain', columnGroups.ABSTAIN.length, `of ${displayCounts.ABSTAIN}`, columnGroups.ABSTAIN, `No ${who} abstained.`);
+                appendMemberColumn('novote', 'Not Recorded', columnGroups.NoVote.length, `of ${displayCounts.NoVote}`, columnGroups.NoVote, `Every ${precinctFilter} member's vote was recorded.`);
+            } else {
+                appendMemberColumn('yes', 'Yes', displayCounts.YES, `${percentages.YES}%`, voteGroups.YES, 'No members voted Yes.');
+                appendMemberColumn('no', 'No', displayCounts.NO, `${percentages.NO}%`, voteGroups.NO, 'No members voted No.');
+                appendMemberColumn('abstain', 'Abstain', displayCounts.ABSTAIN, '', voteGroups.ABSTAIN, 'No members abstained.');
+                appendMemberColumn('novote', 'Not Recorded', displayCounts.NoVote, '', voteGroups.NoVote, 'Every member\'s vote was recorded.');
+            }
 
             resultsDiv.appendChild(resultsGridEl);
         }
@@ -8278,7 +8436,7 @@
                     ? formatPrecinctLabel(memberProfile.precinct)
                     : 'MULTI';
                 option.textContent =
-                    `${memberProfile.memberLabel} (${precinctLabel}) - ${memberProfile.sessions.size} sessions`;
+                    `${memberProfile.memberLabel} (${precinctLabel}) - ${memberProfile.sessions.size} ${memberProfile.sessions.size === 1 ? 'session' : 'sessions'}`;
                 memberSelect.appendChild(option);
             });
 
@@ -10354,13 +10512,21 @@
             moduleContextControlsEl.style.display = SINGLE_SESSION_MODULE_IDS.has(activeModuleId) ? 'block' : 'none';
         }
 
+        // The fixed-height ("locked") layout needs room; mid-size windows (tablets, split screens)
+        // get the normal scrolling page instead so result lists never collapse.
+        function canUseLockedLayout() {
+            if (document.body.classList.contains('phone-layout')) return true;
+            return window.innerWidth >= 1100 && window.innerHeight >= 680;
+        }
+
         function updateByVoteLock(activeModuleId = getActiveModuleId()) {
-            document.body.classList.toggle('by-vote-lock', activeModuleId === 'by-vote');
-            document.body.classList.toggle('by-member-lock', activeModuleId === 'by-member');
-            document.body.classList.toggle('contentious-votes-lock', activeModuleId === 'contentious-votes');
-            document.body.classList.toggle('member-networks-lock', activeModuleId === 'member-networks');
-            document.body.classList.toggle('outlier-votes-lock', activeModuleId === 'outlier-votes');
-            document.body.classList.toggle('tmm-history-lock', activeModuleId === 'tmm-history');
+            const lock = canUseLockedLayout() ? activeModuleId : '';
+            document.body.classList.toggle('by-vote-lock', lock === 'by-vote');
+            document.body.classList.toggle('by-member-lock', lock === 'by-member');
+            document.body.classList.toggle('contentious-votes-lock', lock === 'contentious-votes');
+            document.body.classList.toggle('member-networks-lock', lock === 'member-networks');
+            document.body.classList.toggle('outlier-votes-lock', lock === 'outlier-votes');
+            document.body.classList.toggle('tmm-history-lock', lock === 'tmm-history');
         }
 
         function updateModuleInstruction(activeModuleId = getActiveModuleId()) {
@@ -10791,13 +10957,21 @@
                             const match = text.match(/^(\d+(?:\.\d+)?)%$/);
                             if (match) {
                                 const percent = parseFloat(match[1]);
+                                const columnLabel = labels[index] || '';
+                                const isTownColumn = index === 3;
+                                cellEl.dataset.precinct = columnLabel;
+                                const cellLabel = isTownColumn
+                                    ? `Town-wide: ${percent}% voted Yes`
+                                    : `${columnLabel}: ${percent}% voted Yes${townYesPercent !== null ? ` (town ${townYesPercent}%)` : ''}`;
+                                cellEl.title = isTownColumn ? cellLabel : `${cellLabel}. Select to see ${columnLabel} members' votes.`;
+                                cellEl.setAttribute('aria-label', cellLabel);
                                 cellEl.classList.add('heat-cell');
                                 cellEl.style.backgroundColor = getYesShareHeatColor(percent);
                                 // Ring precinct cells whose majority differs from the town-wide majority.
                                 if (index >= 4 && townYesPercent !== null && percent !== 50 && townYesPercent !== 50
                                     && (percent > 50) !== (townYesPercent > 50)) {
                                     cellEl.classList.add('heat-diverge');
-                                    cellEl.title = `This precinct's majority differs from the town-wide result (${townYesPercent}% Yes)`;
+                                    cellEl.setAttribute('aria-label', `${cellLabel}, split from the town-wide majority`);
                                 }
                             }
                             return;

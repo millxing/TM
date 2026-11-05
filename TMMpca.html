@@ -397,6 +397,14 @@
         #scores-table th[data-score-component]:hover, #coeff-table th[data-coeff-component]:hover { color: var(--accent); }
         .plot-wrap { border: 0; border-radius: 0; }
         .plot-caveat { margin-top: 4px; }
+        .member-finder { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin: 12px 0 4px; }
+        .member-finder label { font-size: 13px; font-weight: 600; color: var(--ink); }
+        .member-finder input { flex: 0 1 300px; min-width: 0; min-height: 38px; padding: 6px 12px; border: 1px solid var(--border-strong); border-radius: 8px; font: inherit; font-size: 14px; color: var(--ink); background: #fff; }
+        .member-finder input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+        .member-finder-clear { min-height: 38px; padding: 6px 12px; border: 1px solid var(--border-strong); border-radius: 8px; background: #fff; font: inherit; font-size: 13px; font-weight: 600; color: var(--ink); cursor: pointer; }
+        .member-finder-result { flex-basis: 100%; font-size: 13px; color: var(--ink-2); }
+        .member-finder-result:empty { display: none; }
+        @media (max-width: 640px) { .member-finder input { flex: 1 1 100%; font-size: 16px; } }
         .site-footer { margin: 28px auto 0; padding: 14px 0 4px; border-top: 1px solid var(--border); display: flex; flex-wrap: wrap; justify-content: center; gap: 2px 20px; font-size: 13px; color: var(--ink-muted); text-align: center; }
         .site-footer p { margin: 0; }
         .site-footer a { color: var(--ink-2); text-underline-offset: 2px; white-space: nowrap; }
@@ -562,6 +570,13 @@
         <section id="plot-view" class="card active">
             <p class="note">Each dot is a Town Meeting member, placed by their scores on the first two principal components. Nearby dots vote alike. Hover or tap a dot to see the member; for exact values, switch to the Member Scores view.</p>
             <p class="note plot-caveat">These two axes capture only part of the variation in voting (see the percentages in the axis titles). They describe voting patterns, not political or ideological labels.</p>
+            <div class="member-finder">
+                <label for="pca-member-find">Find a member</label>
+                <input id="pca-member-find" type="text" list="pca-member-names" placeholder="Start typing a name…" autocomplete="off">
+                <datalist id="pca-member-names"></datalist>
+                <button type="button" id="pca-member-clear" class="member-finder-clear" hidden>Clear</button>
+                <span id="pca-member-find-result" class="member-finder-result" role="status" aria-live="polite"></span>
+            </div>
             <div id="pc-plot-status" class="note" aria-live="polite"></div>
             <div id="pc-plot" class="plot-wrap"></div>
         </section>
@@ -600,6 +615,7 @@
         let coeffSortState = { componentIndex: 0 };
         let memberScoresSortState = { componentIndex: 0, direction: 'desc' };
         let latestPlotImageExport = null;
+        let highlightedMemberName = '';
 
         /****************************************************
          * PCA-SPECIFIC HELPERS
@@ -1515,6 +1531,21 @@
             }
 
             const members = analysisState.memberScores;
+            const highlighted = highlightedMemberName
+                ? members.find(member => member.name === highlightedMemberName)
+                : null;
+            const highlightTraces = highlighted ? [{
+                type: 'scatter',
+                mode: 'markers+text',
+                showlegend: false,
+                hoverinfo: 'skip',
+                x: [highlighted.scores[0] || 0],
+                y: [highlighted.scores[1] || 0],
+                text: [highlighted.name],
+                textposition: 'top center',
+                textfont: { color: '#111F35', size: 13, family: "'Public Sans', sans-serif" },
+                marker: { size: 18, color: 'rgba(255,255,255,0)', line: { width: 3, color: '#111F35' } }
+            }] : [];
             return {
                 traces: [{
                     type: 'scattergl',
@@ -1539,7 +1570,7 @@
                         color: '#8A244B',
                         line: { width: 1, color: '#ffffff' }
                     }
-                }],
+                }, ...highlightTraces],
                 layout: {
                     margin: { l: 60, r: 20, t: 20, b: 55 },
                     plot_bgcolor: '#ffffff',
@@ -1813,6 +1844,89 @@
 
             statusEl.textContent =
                 `Showing ${analysisState.memberScores.length} members from ${analysisState.selectedSessions.length} sessions.`;
+            populateMemberFinder();
+        }
+
+        /****************************************************
+         * MEMBER FINDER (highlights one member on the plot)
+         ****************************************************/
+        function populateMemberFinder() {
+            const listEl = document.getElementById('pca-member-names');
+            if (!listEl || !analysisState || !Array.isArray(analysisState.memberScores)) return;
+            const names = analysisState.memberScores.map(member => member.name).sort((a, b) => a.localeCompare(b));
+            listEl.replaceChildren(...names.map(name => {
+                const optionEl = document.createElement('option');
+                optionEl.value = name;
+                return optionEl;
+            }));
+            if (highlightedMemberName && !names.includes(highlightedMemberName)) setHighlightedMember('');
+        }
+
+        function setHighlightedMember(name) {
+            const inputEl = document.getElementById('pca-member-find');
+            const resultEl = document.getElementById('pca-member-find-result');
+            const clearEl = document.getElementById('pca-member-clear');
+            const members = analysisState && Array.isArray(analysisState.memberScores) ? analysisState.memberScores : [];
+            const query = String(name || '').trim().toLowerCase();
+            // Order-independent matching: "Bettina Neuefeind" and "Neuefeind, Bettina" both work.
+            const tokens = query.split(/[\s,]+/).filter(Boolean);
+            const matchesAll = member => {
+                const nameLower = member.name.toLowerCase();
+                return tokens.every(token => nameLower.includes(token));
+            };
+            const candidates = tokens.length ? members.filter(matchesAll) : [];
+            let match = null;
+            if (query) {
+                match = members.find(member => member.name.toLowerCase() === query)
+                    || (candidates.length === 1 ? candidates[0] : null);
+            }
+            highlightedMemberName = match ? match.name : '';
+            if (clearEl) clearEl.hidden = !highlightedMemberName;
+            if (resultEl) {
+                if (match) {
+                    const precinctText = /^\d+$/.test(String(match.precinct || '')) ? `P${match.precinct}` : formatPrecinctLabel(match.precinct);
+                    resultEl.textContent = `${match.name} (${precinctText}): PC1 ${formatFloat(match.scores[0] || 0, 2)}, PC2 ${formatFloat(match.scores[1] || 0, 2)}. Circled on the plot.`;
+                } else if (query) {
+                    resultEl.textContent = candidates.length > 1
+                        ? `${candidates.length} members match. Keep typing or pick a name from the list.`
+                        : 'No match. Try the last name only; members who attended fewer sessions than the minimum are not included.';
+                } else {
+                    resultEl.textContent = '';
+                }
+            }
+            if (inputEl && match && inputEl.value !== match.name && document.activeElement !== inputEl) inputEl.value = match.name;
+            const plotView = document.getElementById('plot-view');
+            if (plotView && plotView.classList.contains('active')) {
+                renderScoresPlot();
+                if (match) {
+                    const finderEl = document.querySelector('.member-finder');
+                    const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                    if (finderEl) finderEl.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+                }
+            }
+        }
+
+        function bindMemberFinder() {
+            const inputEl = document.getElementById('pca-member-find');
+            const clearEl = document.getElementById('pca-member-clear');
+            if (inputEl) {
+                inputEl.addEventListener('change', () => setHighlightedMember(inputEl.value));
+                inputEl.addEventListener('input', () => {
+                    if (!inputEl.value) { setHighlightedMember(''); return; }
+                    const exact = analysisState && analysisState.memberScores.some(member => member.name === inputEl.value);
+                    if (exact) setHighlightedMember(inputEl.value);
+                });
+                inputEl.addEventListener('keydown', evt => {
+                    if (evt.key === 'Enter') { evt.preventDefault(); setHighlightedMember(inputEl.value); }
+                });
+            }
+            if (clearEl) {
+                clearEl.addEventListener('click', () => {
+                    if (inputEl) inputEl.value = '';
+                    setHighlightedMember('');
+                    if (inputEl) inputEl.focus();
+                });
+            }
         }
 
         /****************************************************
@@ -2000,6 +2114,7 @@
             try {
                 populateSessionControls();
                 bindEvents();
+                bindMemberFinder();
                 await ensureAllSessionsLoaded();
                 setStatus('Session data loaded. Ready to run PCA.');
                 runAnalysis();
