@@ -23,7 +23,10 @@
     <meta name="twitter:image" content="https://millxing.github.io/TM/TMMlogo.png">
     <meta name="twitter:image:alt" content="Brookline Town Meeting Analyzer logo">
     <link rel="icon" type="image/jpeg" href="https://raw.githubusercontent.com/millxing/TM/main/entangledParticlesLogo3.jpg">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Varela+Round&display=swap">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap">
+    <meta name="theme-color" content="#111F35">
 
     <!-- XLSX library for reading Excel files directly in the browser -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"
@@ -2382,6 +2385,1905 @@
                 height: 480px;
             }
         }
+
+        /* =====================================================================
+           DESIGN SYSTEM v2 (presentation layer)
+           Overrides earlier rules; no DOM IDs or behaviors depend on it.
+           ===================================================================== */
+        :root {
+            --font-sans: 'Public Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            --ink: #111F35;
+            --ink-2: #3a4658;
+            --ink-muted: #5a6575;
+            --bg: #f4f2f3;
+            --surface: #ffffff;
+            --surface-2: #faf8f9;
+            --surface-3: #f3f0f2;
+            --border: #e6e1e4;
+            --border-strong: #cdc5cb;
+            --accent: #C2214E;
+            --accent-strong: #8A244B;
+            --accent-soft: #fbeef2;
+            --focus-ring: #C2214E;
+            --yes: #146c4f;
+            --yes-bg: #e2f2ea;
+            --yes-bar: #2a9a70;
+            --no: #a83a1a;
+            --no-bg: #fbe7df;
+            --no-bar: #d8623a;
+            --abstain: #7d5300;
+            --abstain-bg: #fcf0d4;
+            --abstain-bar: #d9a21b;
+            --novote: #556070;
+            --novote-bg: #eef0f3;
+            --novote-bar: #a9b2be;
+            --radius-sm: 6px;
+            --radius: 10px;
+            --radius-lg: 14px;
+            --shadow-sm: 0 1px 2px rgba(17, 31, 53, 0.06);
+            --shadow: 0 1px 2px rgba(17, 31, 53, 0.05), 0 6px 20px rgba(17, 31, 53, 0.06);
+            --fs-xs: 12px;
+            --fs-sm: 13px;
+            --fs-base: 14.5px;
+            --fs-md: 16px;
+            --fs-lg: 20px;
+            --fs-xl: 24px;
+            --tm-bg: var(--bg);
+            --tm-line: var(--border);
+            --tm-focus: rgba(194, 33, 78, 0.35);
+        }
+
+        html { -webkit-text-size-adjust: 100%; }
+
+        body {
+            font-family: var(--font-sans);
+            font-size: var(--fs-base);
+            line-height: 1.45;
+            color: var(--ink);
+            background-color: var(--bg);
+            -webkit-font-smoothing: antialiased;
+            font-feature-settings: "tnum" 0;
+        }
+
+        button, select, input, textarea { font-family: inherit; }
+
+        .visually-hidden {
+            position: absolute !important;
+            width: 1px; height: 1px;
+            padding: 0; margin: -1px;
+            overflow: hidden; clip: rect(0, 0, 0, 0);
+            white-space: nowrap; border: 0;
+        }
+
+        /* ---------- Focus & motion ---------- */
+        :where(a, button, select, input, summary, [role="button"], [tabindex]):focus-visible {
+            outline: 2px solid var(--focus-ring);
+            outline-offset: 2px;
+            border-radius: var(--radius-sm);
+        }
+
+        select:focus, .cluster-search-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--tm-focus);
+        }
+
+        select:focus-visible {
+            outline: 2px solid var(--focus-ring);
+            outline-offset: 1px;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                transition-duration: 0.01ms !important;
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                scroll-behavior: auto !important;
+            }
+        }
+
+        /* ---------- Header ---------- */
+        .page-header-card {
+            background: rgba(255, 255, 255, 0.94);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            backdrop-filter: saturate(1.4) blur(12px);
+            -webkit-backdrop-filter: saturate(1.4) blur(12px);
+            padding: 14px 20px 0;
+        }
+
+        .page-header-main { align-items: center; gap: 16px; }
+
+        .page-header-copy {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-mark {
+            flex: 0 0 auto;
+            display: grid;
+            place-items: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: var(--ink);
+            color: #fff;
+        }
+
+        .page-header-titles { min-width: 0; }
+
+        h1 {
+            font-size: var(--fs-xl);
+            font-weight: 700;
+            letter-spacing: -0.015em;
+            line-height: 1.15;
+            color: var(--ink);
+        }
+
+        .page-subtitle {
+            margin-top: 2px;
+            font-size: var(--fs-sm);
+            color: var(--ink-muted);
+        }
+
+        .disclaimer-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            min-height: 36px;
+            padding: 7px 14px;
+            border: 1px solid var(--border-strong);
+            border-radius: 999px;
+            background: var(--surface);
+            color: var(--accent-strong);
+            font-size: var(--fs-sm);
+            font-weight: 600;
+            box-shadow: none;
+            transition: background-color 0.15s ease, border-color 0.15s ease;
+        }
+
+        .disclaimer-button:hover {
+            background: var(--accent-soft);
+            border-color: rgba(194, 33, 78, 0.45);
+        }
+
+        .disclaimer-icon { flex: 0 0 auto; }
+
+        .disclaimer-overlay {
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: 0 16px 40px rgba(17, 31, 53, 0.18);
+            color: var(--ink-2);
+            font-size: var(--fs-base);
+            line-height: 1.55;
+        }
+
+        .disclaimer-heading {
+            font-weight: 700;
+            color: var(--ink);
+            font-size: var(--fs-md);
+        }
+
+        .disclaimer-hover-wrap.is-open .disclaimer-overlay {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        /* ---------- Module navigation ---------- */
+        .page-header-nav {
+            margin-top: 12px;
+            padding-top: 0;
+            border-top: 1px solid var(--border);
+        }
+
+        .tabs,
+        #module-menu {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 4px;
+            margin: 0;
+            padding: 8px 0;
+            border-bottom: 0;
+        }
+
+        .tab-group-label {
+            padding: 0 6px 0 4px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--ink-muted);
+        }
+
+        .tab-divider {
+            width: 1px;
+            height: 22px;
+            margin: 0 8px;
+            background: var(--border);
+        }
+
+        .tab {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            min-height: 36px;
+            padding: 7px 12px;
+            border: 1px solid transparent;
+            border-radius: 8px;
+            background: transparent;
+            color: var(--ink-2);
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 1.2;
+            transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+        }
+
+        .tab:hover {
+            color: var(--ink);
+            background-color: var(--surface-3);
+            border-color: transparent;
+        }
+
+        .tab.active,
+        .tab.active:hover {
+            color: #fff;
+            background-color: var(--ink);
+            border-color: var(--ink);
+            font-weight: 600;
+        }
+
+        .tab-external-icon { opacity: 0.7; }
+
+        /* ---------- Main card ---------- */
+        .container {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            padding: 22px 26px 26px;
+        }
+
+        .module-intro {
+            flex: 0 0 auto;
+            margin-bottom: 18px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .module-intro h2 {
+            font-size: var(--fs-lg);
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            color: var(--ink);
+        }
+
+        .module-intro p {
+            margin-top: 3px;
+            font-size: var(--fs-sm);
+            color: var(--ink-muted);
+            max-width: 80ch;
+        }
+
+        .loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 14px;
+            padding: 64px 20px;
+            color: var(--ink-muted);
+            font-size: var(--fs-base);
+        }
+
+        .loading::before {
+            content: '';
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 3px solid var(--surface-3);
+            border-top-color: var(--accent);
+            animation: tm-spin 0.8s linear infinite;
+        }
+
+        @keyframes tm-spin { to { transform: rotate(360deg); } }
+
+        /* ---------- Controls ---------- */
+        .controls { margin-bottom: 18px; }
+        #module-context-controls { margin-bottom: 12px !important; }
+
+        .control-group { gap: 12px 20px; }
+
+        label,
+        .outlier-sort-toggle-label {
+            font-size: var(--fs-sm);
+            font-weight: 600;
+            color: var(--ink-2);
+        }
+
+        .aligned-select-controls { --aligned-label-width: 170px; }
+        .aligned-select-label { white-space: nowrap; }
+
+        .checkbox-group label { font-weight: 500; color: var(--ink-2); cursor: pointer; }
+
+        input[type="checkbox"] { accent-color: var(--accent); width: 17px; height: 17px; }
+
+        select,
+        .cluster-search-input {
+            min-height: 40px;
+            padding: 8px 38px 8px 12px;
+            border: 1px solid var(--border-strong);
+            border-radius: 8px;
+            background-color: var(--surface);
+            color: var(--ink);
+            font-size: var(--fs-base);
+            box-shadow: var(--shadow-sm);
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        select {
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235a6575' stroke-width='1.8' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 13px center;
+            background-size: 12px 8px;
+        }
+
+        .cluster-search-input { padding-right: 12px; }
+
+        select:hover, .cluster-search-input:hover { border-color: #a99ea6; }
+
+        /* ---------- Buttons (one system) ---------- */
+        .module-ai-summary-button,
+        .tmm-history-export-btn,
+        .tmm-history-action-btn,
+        .vote-history-session .meeting-ai-summary-button,
+        .article-open-vote-button,
+        .cluster-action-btn,
+        .outlier-sort-toggle {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            min-height: 36px;
+            padding: 6px 14px;
+            border: 1px solid var(--border-strong);
+            border-radius: 8px;
+            background: var(--surface);
+            color: var(--ink);
+            font-size: var(--fs-sm);
+            font-weight: 600;
+            line-height: 1.2;
+            cursor: pointer;
+            box-shadow: var(--shadow-sm);
+            transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+        }
+
+        .module-ai-summary-button:hover,
+        .tmm-history-export-btn:hover,
+        .tmm-history-action-btn:hover,
+        .vote-history-session .meeting-ai-summary-button:hover,
+        .article-open-vote-button:hover,
+        .outlier-sort-toggle:hover {
+            background: var(--surface-3);
+            border-color: #a99ea6;
+            color: var(--ink);
+        }
+
+        .module-ai-summary-button:active,
+        .tmm-history-export-btn:active,
+        .tmm-history-action-btn:active,
+        .article-open-vote-button:active,
+        .outlier-sort-toggle:active,
+        .cluster-action-btn:active { transform: translateY(1px); }
+
+        .cluster-action-btn {
+            background: var(--ink);
+            border-color: var(--ink);
+            color: #fff;
+        }
+
+        .cluster-action-btn:hover { background: #24344f; border-color: #24344f; }
+
+        .module-ai-summary-button::before,
+        .vote-history-session .meeting-ai-summary-button::before {
+            content: '';
+            width: 14px;
+            height: 14px;
+            background: currentColor;
+            -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z'/%3E%3C/svg%3E") center / contain no-repeat;
+            mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z'/%3E%3C/svg%3E") center / contain no-repeat;
+            color: var(--accent);
+        }
+
+        .tmm-history-export-btn::before {
+            content: '';
+            width: 14px;
+            height: 14px;
+            background: var(--yes);
+            -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3v12'/%3E%3Cpath d='m7 10 5 5 5-5'/%3E%3Cpath d='M5 21h14'/%3E%3C/svg%3E") center / contain no-repeat;
+            mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3v12'/%3E%3Cpath d='m7 10 5 5 5-5'/%3E%3Cpath d='M5 21h14'/%3E%3C/svg%3E") center / contain no-repeat;
+        }
+
+        /* Segmented control for outlier sorting */
+        .outlier-sort-toggle-group {
+            gap: 0;
+            padding: 3px;
+            border: 1px solid var(--border-strong);
+            border-radius: 10px;
+            background: var(--surface-3);
+        }
+
+        .outlier-sort-toggle {
+            min-height: 32px;
+            border-color: transparent;
+            background: transparent;
+            box-shadow: none;
+            color: var(--ink-2);
+            font-weight: 500;
+        }
+
+        .outlier-sort-toggle:hover { background: rgba(255, 255, 255, 0.7); border-color: transparent; }
+
+        .outlier-sort-toggle.active,
+        .outlier-sort-toggle.active:hover {
+            background: var(--surface);
+            color: var(--ink);
+            border-color: var(--border);
+            font-weight: 600;
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* Navigation chips (vote titles / member names that jump to another view) */
+        .nav-bubble-btn {
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: var(--surface-2);
+            color: var(--accent-strong);
+            padding: 4px 9px;
+            font-size: 12.5px;
+            font-weight: 600;
+            line-height: 1.35;
+            transition: background-color 0.15s ease, border-color 0.15s ease;
+        }
+
+        .nav-bubble-btn:hover {
+            background: var(--accent-soft);
+            border-color: rgba(194, 33, 78, 0.4);
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+
+        .member-network-nav-bubble { font-size: 13px; }
+
+        /* ---------- Status / info strips ---------- */
+        .vote-history-message,
+        .cluster-status {
+            padding: 10px 14px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: var(--surface-2);
+            color: var(--ink-2);
+            font-size: var(--fs-sm);
+            line-height: 1.45;
+        }
+
+        .cluster-status { margin-bottom: 14px; }
+        .cluster-status.error { background: var(--no-bg); color: var(--no); border-color: rgba(168, 58, 26, 0.3); }
+
+        #contentious-votes-results > .vote-history-message,
+        #tmm-history-results > .vote-history-message,
+        .outlier-votes-summary { margin-bottom: 12px; }
+
+        /* ---------- Outcome badges & vote pills ---------- */
+        .outcome-badge,
+        .vote-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 2px 9px;
+            border-radius: 999px;
+            font-size: 11.5px;
+            font-weight: 700;
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
+            line-height: 1.5;
+            white-space: nowrap;
+            background: var(--novote-bg);
+            color: var(--novote);
+        }
+
+        .outcome-badge::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        .outcome-badge.outcome-pass { background: var(--yes-bg); color: var(--yes); }
+        .outcome-badge.outcome-fail { background: var(--no-bg); color: var(--no); }
+        .outcome-badge.outcome-neutral { background: var(--surface-3); color: var(--ink-2); }
+        .outcome-badge.outcome-neutral::before { display: none; }
+
+        .vote-pill-yes { background: var(--yes-bg); color: var(--yes); }
+        .vote-pill-no { background: var(--no-bg); color: var(--no); }
+        .vote-pill-abstain { background: var(--abstain-bg); color: var(--abstain); }
+
+        /* ---------- Vote banner (View by Vote / View by Member) ---------- */
+        .article-description {
+            margin-bottom: 16px;
+            padding: 16px 18px;
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--accent);
+            border-radius: var(--radius);
+            background: var(--surface-2);
+            font-size: var(--fs-base);
+            line-height: 1.5;
+        }
+
+        .vote-banner-eyebrow {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px 8px;
+            font-size: var(--fs-xs);
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            color: var(--ink-muted);
+        }
+
+        .article-summary-separator { color: var(--border-strong); }
+
+        .vote-banner-head {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 6px 12px;
+            margin-top: 4px;
+        }
+
+        .vote-banner-title {
+            font-size: 18px;
+            font-weight: 700;
+            line-height: 1.3;
+            letter-spacing: -0.01em;
+            color: var(--ink);
+        }
+
+        .vote-banner-description {
+            margin-top: 6px;
+            max-width: 110ch;
+            color: var(--ink-2);
+        }
+
+        .article-links { margin: 8px 0 0; }
+        .article-links li { font-size: var(--fs-sm); }
+        .article-links li:not(:last-child)::after { color: var(--border-strong); }
+        .article-links a { color: var(--accent-strong); font-weight: 600; text-underline-offset: 2px; }
+        .article-links a:hover { color: var(--accent); }
+
+        .counted-vote-outcome { margin: 8px 0 0; font-size: var(--fs-sm); color: var(--ink); }
+
+        .vote-split {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px 16px;
+            margin-top: 12px;
+        }
+
+        .vote-split-bar {
+            display: flex;
+            flex: 1 1 260px;
+            max-width: 560px;
+            height: 10px;
+            overflow: hidden;
+            border-radius: 999px;
+            background: var(--surface-3);
+            gap: 2px;
+        }
+
+        .vote-split-seg { flex-basis: 0; min-width: 3px; }
+        .seg-yes { background: var(--yes-bar); }
+        .seg-no { background: var(--no-bar); }
+        .seg-abstain { background: var(--abstain-bar); }
+        .seg-novote { background: var(--novote-bar); }
+
+        .vote-split-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px 14px;
+            font-size: var(--fs-xs);
+            font-weight: 600;
+            color: var(--ink-2);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .vote-split-key {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            min-height: 28px;
+            padding: 2px 8px;
+            margin: 0 -2px;
+            border: 0;
+            border-radius: 6px;
+            background: transparent;
+            color: inherit;
+            font: inherit;
+            cursor: pointer;
+        }
+
+        .vote-split-key:hover { background: var(--surface-3); }
+
+        .vote-column { scroll-margin-top: calc(var(--page-header-height) + 12px); }
+        .vote-column.is-flashed { animation: tm-flash 1.2s ease; }
+        @keyframes tm-flash { 0%, 40% { box-shadow: 0 0 0 3px var(--col-bar); } 100% { box-shadow: 0 0 0 0 transparent; } }
+
+        .module-help {
+            margin-top: 6px;
+            padding-left: 10px;
+            border-left: 2px solid var(--border-strong);
+            font-size: var(--fs-xs);
+            color: var(--ink-muted);
+        }
+        .vote-split-key::before { content: ''; width: 9px; height: 9px; border-radius: 3px; }
+        .key-yes::before { background: var(--yes-bar); }
+        .key-no::before { background: var(--no-bar); }
+        .key-abstain::before { background: var(--abstain-bar); }
+        .key-novote::before { background: var(--novote-bar); }
+
+        .member-summary-banner { grid-column: 1 / -1; margin-bottom: 0; }
+
+        /* ---------- Vote columns ---------- */
+        .results { gap: 14px; }
+
+        @media (min-width: 901px) {
+            .results { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+            body.by-member-lock #member-results.results { grid-template-rows: auto minmax(0, 1fr); }
+        }
+
+        .vote-column {
+            --col-color: var(--novote);
+            --col-bar: var(--novote-bar);
+            --col-bg: var(--novote-bg);
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            padding: 0;
+            border: 1px solid var(--border);
+            border-top: 3px solid var(--col-bar);
+            border-radius: var(--radius);
+            background: var(--surface);
+            overflow: hidden;
+        }
+
+        .vote-column.yes { --col-color: var(--yes); --col-bar: var(--yes-bar); --col-bg: var(--yes-bg); }
+        .vote-column.no { --col-color: var(--no); --col-bar: var(--no-bar); --col-bg: var(--no-bg); }
+        .vote-column.abstain { --col-color: var(--abstain); --col-bar: var(--abstain-bar); --col-bg: var(--abstain-bg); }
+
+        .vote-column h3,
+        .vote-column.yes h3,
+        .vote-column.no h3,
+        .vote-column.abstain h3,
+        .vote-column.novote h3 {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 8px;
+            margin: 0;
+            padding: 11px 14px;
+            border-radius: 0;
+            border-bottom: 1px solid var(--border);
+            background: var(--col-bg);
+            color: var(--col-color);
+            text-align: left;
+            font-size: var(--fs-md);
+            font-weight: 700;
+        }
+
+        .vote-column-stats { display: inline-flex; align-items: baseline; gap: 8px; font-variant-numeric: tabular-nums; }
+        .vote-column-count { font-size: 20px; font-weight: 700; color: var(--ink); }
+        .vote-column-pct { font-size: var(--fs-sm); font-weight: 600; color: var(--ink-muted); }
+
+        .member-list,
+        .article-list {
+            padding: 6px;
+            /* Scroll shadows hint that the list continues */
+            background:
+                linear-gradient(var(--surface) 30%, rgba(255, 255, 255, 0)) top / 100% 28px no-repeat local,
+                linear-gradient(rgba(255, 255, 255, 0), var(--surface) 70%) bottom / 100% 28px no-repeat local,
+                radial-gradient(farthest-side at 50% 0, rgba(17, 31, 53, 0.14), rgba(17, 31, 53, 0)) top / 100% 10px no-repeat scroll,
+                radial-gradient(farthest-side at 50% 100%, rgba(17, 31, 53, 0.14), rgba(17, 31, 53, 0)) bottom / 100% 10px no-repeat scroll;
+            scrollbar-width: thin;
+            scrollbar-color: var(--border-strong) transparent;
+        }
+
+        .member-item,
+        .article-item {
+            margin: 0;
+            padding: 6px 8px;
+            border: 0;
+            border-radius: var(--radius-sm);
+            background: transparent;
+            font-size: var(--fs-base);
+            line-height: 1.35;
+            transition: background-color 0.12s ease;
+        }
+
+        .member-item + .member-item { margin-top: 1px; }
+
+        .member-item:hover,
+        .article-item:hover {
+            background: var(--surface-3);
+            transform: none;
+        }
+
+        .precinct-label {
+            display: inline-block;
+            min-width: 3.1em;
+            color: var(--ink-muted);
+            font-weight: 600;
+            font-size: var(--fs-sm);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .vote-column-empty {
+            padding: 18px 10px;
+            text-align: center;
+            font-size: var(--fs-sm);
+            font-style: italic;
+            color: var(--ink-muted);
+        }
+
+        .vote-column.is-empty h3 .vote-column-count { color: var(--ink-muted); }
+
+        /* By-member article entries */
+        .article-item-with-desc { margin-bottom: 6px; }
+
+        .article-detail {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--surface);
+        }
+
+        .article-title {
+            border: 0;
+            background: transparent;
+            padding: 8px 10px;
+            font-size: var(--fs-sm);
+            font-weight: 600;
+            color: var(--ink);
+        }
+
+        .article-title-toggle::after {
+            content: '';
+            flex: 0 0 auto;
+            width: 8px;
+            height: 8px;
+            margin-left: 10px;
+            border-right: 2px solid var(--ink-muted);
+            border-bottom: 2px solid var(--ink-muted);
+            transform: rotate(45deg) translateY(-2px);
+            transition: transform 0.15s ease;
+        }
+
+        .article-detail[open] .article-title-toggle::after {
+            content: '';
+            transform: rotate(-135deg) translateY(-1px);
+        }
+
+        .article-title-toggle:hover { background: var(--surface-2); }
+
+        .article-detail-body { padding: 2px 10px 10px; }
+
+        .article-open-vote-button { margin: 4px 0 6px; min-height: 30px; padding: 4px 10px; font-size: var(--fs-xs); }
+
+        .article-vote-result { margin: 4px 0 6px; font-size: var(--fs-sm); color: var(--ink-2); display: flex; align-items: center; gap: 6px; }
+
+        .article-desc {
+            margin: 6px 0 0;
+            padding: 8px 10px;
+            border-left: 3px solid var(--border-strong);
+            border-radius: 0 6px 6px 0;
+            background: var(--surface-2);
+            font-style: normal;
+            font-size: var(--fs-sm);
+            color: var(--ink-2);
+        }
+
+        /* ---------- Data tables (one system) ---------- */
+        .contentious-votes-table th, .contentious-votes-table td,
+        .outlier-votes-table th, .outlier-votes-table td,
+        .tmm-history-table th, .tmm-history-table td,
+        .member-network-table th, .member-network-table td,
+        .vote-history-table th, .vote-history-table td {
+            border: 0;
+            border-bottom: 1px solid var(--border);
+            padding: 9px 12px;
+            font-size: var(--fs-sm);
+            line-height: 1.4;
+            color: var(--ink);
+            background-color: transparent;
+        }
+
+        .contentious-votes-table th,
+        .outlier-votes-table th,
+        .tmm-history-table th,
+        .member-network-table th,
+        .vote-history-table th,
+        .precinct-votes-table th {
+            background-color: var(--surface-2);
+            color: var(--ink-muted);
+            font-size: 11.5px;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            vertical-align: bottom;
+            border-bottom: 1px solid var(--border-strong);
+        }
+
+        .contentious-votes-table th { z-index: 2; }
+
+        .contentious-votes-table tbody tr:hover td,
+        .tmm-history-table tbody tr:hover td,
+        .member-network-table tbody tr:hover td,
+        .vote-history-table tbody tr:hover td,
+        .outlier-votes-table tbody tr:hover td,
+        .outlier-votes-table tbody tr.selected td {
+            background-color: #fbf6f8;
+        }
+
+        .outlier-votes-table tbody tr:hover,
+        .outlier-votes-table tbody tr.selected { background-color: transparent; }
+
+        .contentious-votes-table-wrap,
+        .outlier-votes-table-wrap,
+        .tmm-history-table-wrap,
+        .member-network-table-wrap {
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: var(--surface);
+        }
+
+        .member-network-table-header,
+        .tmm-history-table-header,
+        .outlier-votes-table-header { background: var(--surface-2); border-bottom: 0; }
+
+        .member-network-table td,
+        .member-network-table th { text-align: left; }
+        .member-network-table .rank-col,
+        .member-network-table .shared-col,
+        .member-network-table .sim-col { text-align: right; font-variant-numeric: tabular-nums; }
+        .member-network-table .precinct-col { text-align: left; }
+        .member-network-table td.rank-col { color: var(--ink-muted); }
+
+        .member-network-sort-btn,
+        .tmm-history-sort-btn {
+            font-weight: 700;
+            text-transform: inherit;
+            letter-spacing: inherit;
+            color: inherit;
+        }
+
+        .member-network-sort-btn:hover,
+        .tmm-history-sort-btn:hover { color: var(--accent); }
+
+        .outlier-votes-table .session-col,
+        .outlier-votes-table .vote-title-col,
+        .outlier-votes-table .vote-title-col .vote-title-nav-bubble { text-align: left; }
+        .outlier-votes-table .session-col { width: 230px; min-width: 230px; color: var(--ink-2); }
+        .outlier-votes-table .vote-col { text-align: left; }
+        .outlier-votes-table .peer-split-col { width: 170px; min-width: 170px; text-align: left; white-space: nowrap; color: var(--ink-2); }
+        .outlier-votes-table { min-width: 1100px; }
+
+        .vote-history-table .vote-title-col,
+        .precinct-votes-table .vote-title-col,
+        .vote-history-table .vote-title-col .vote-title-nav-bubble,
+        .precinct-votes-table .vote-title-col .vote-title-nav-bubble { text-align: left; margin-left: 0; }
+
+        .vote-history-table th:nth-child(5), .vote-history-table td:nth-child(5),
+        .vote-history-table th:nth-child(6), .vote-history-table td:nth-child(6),
+        .vote-history-table th:nth-child(7), .vote-history-table td:nth-child(7),
+        .vote-history-table th:nth-child(8), .vote-history-table td:nth-child(8) {
+            text-align: right;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .vote-history-table td.link-col a { color: var(--accent-strong); font-weight: 600; }
+
+        .contentious-votes-table .result-col { width: 120px; }
+        .contentious-votes-table th:nth-child(7),
+        .contentious-votes-table td:nth-child(7) { width: 96px; min-width: 96px; }
+        .contentious-votes-table th:nth-child(8),
+        .contentious-votes-table td:nth-child(8) { width: 76px; min-width: 76px; }
+        .contentious-votes-table td.margin-col { font-weight: 700; }
+        .contentious-votes-table td:first-child { color: var(--ink-2); }
+
+        /* Inline data bars (percent cells) */
+        td.has-bar {
+            padding-bottom: 14px !important;
+            background-image:
+                linear-gradient(90deg, var(--bar-color, #b9aab3) var(--bar), transparent var(--bar)),
+                linear-gradient(90deg, var(--surface-3), var(--surface-3));
+            background-size: calc(100% - 24px) 4px, calc(100% - 24px) 4px;
+            background-position: left 12px bottom 6px, left 12px bottom 6px;
+            background-repeat: no-repeat;
+        }
+
+        .member-network-table td.sim-col { --bar-color: var(--accent); }
+        .outlier-votes-table td.score-col { --bar-color: var(--no-bar); }
+        .tmm-history-table td.has-bar[data-label*="Majority"] { --bar-color: var(--yes-bar); }
+        .tmm-history-table td.has-bar[data-label*="Minority"] { --bar-color: var(--no-bar); }
+        .tmm-history-table td.has-bar[data-label*="Abstain"] { --bar-color: var(--abstain-bar); }
+        .tmm-history-table td.has-bar[data-label*="Absent"] { --bar-color: var(--novote-bar); }
+
+        /* Precinct heatmap matrix */
+        .precinct-votes-table th,
+        .precinct-votes-table td { border-color: var(--border); font-size: var(--fs-sm); }
+        .precinct-votes-table td.heat-cell { text-align: center; color: var(--ink); font-weight: 500; }
+        .precinct-votes-table th:nth-child(n+4) { text-align: center; }
+
+        /* ---------- Session accordions (Vote History, Precinct Votes) ---------- */
+        .vote-history-list,
+        .precinct-votes-list { gap: 8px; }
+
+        .vote-history-session {
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: var(--surface);
+        }
+
+        .vote-history-session summary {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-height: 48px;
+            padding: 10px 16px;
+            background: var(--surface);
+            color: var(--ink);
+            font-weight: 600;
+            transition: background-color 0.12s ease;
+        }
+
+        .vote-history-session summary::before {
+            content: '';
+            flex: 0 0 auto;
+            width: 7px;
+            height: 7px;
+            border-right: 2px solid var(--ink-muted);
+            border-bottom: 2px solid var(--ink-muted);
+            transform: rotate(-45deg);
+            transition: transform 0.15s ease;
+        }
+
+        .vote-history-session[open] summary::before { transform: rotate(45deg); }
+        .vote-history-session summary:hover { background: var(--surface-2); }
+        .vote-history-session[open] summary { border-bottom: 1px solid var(--border); background: var(--surface-2); }
+
+        .session-summary-label { flex: 1 1 auto; font-size: 15px; }
+
+        .session-summary-count {
+            flex: 0 0 auto;
+            padding: 2px 10px;
+            border-radius: 999px;
+            background: var(--surface-3);
+            color: var(--ink-2);
+            font-size: var(--fs-xs);
+            font-weight: 600;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .vote-history-session .meeting-ai-summary-actions { background: var(--surface); border-bottom: 1px solid var(--border); padding: 10px 16px; }
+
+        /* ---------- Member networks panel ---------- */
+        .cluster-panels { grid-template-columns: minmax(0, 1fr); margin-top: 0; }
+        .cluster-panel { min-width: 0; padding: 0; border: 0; background: transparent; }
+        .cluster-panel h3 { font-size: var(--fs-md); font-weight: 700; margin-bottom: 10px; }
+        .cluster-panel-body { color: var(--ink-2); }
+        .cluster-message { color: var(--ink-muted); }
+
+        /* ---------- Footer ---------- */
+        .page-footer {
+            padding: 8px 18px;
+            border: 1px solid var(--border);
+            border-radius: 12px 12px 0 0;
+            border-bottom: 0;
+            background: rgba(255, 255, 255, 0.94);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 -2px 12px rgba(17, 31, 53, 0.05);
+        }
+
+        .page-footer-text {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 2px 20px;
+            font-size: var(--fs-xs);
+            color: var(--ink-muted);
+        }
+
+        .page-footer-credit { font-weight: 500; }
+        .page-footer-text a { color: var(--ink-2); text-underline-offset: 2px; }
+        .page-footer-text a:hover { color: var(--accent); }
+        .footer-sep { margin: 0 8px; color: var(--border-strong); }
+
+        /* Footer sits in normal flow on scrolling (non-locked) views so it never covers content */
+        body:not(.by-vote-lock):not(.by-member-lock):not(.contentious-votes-lock):not(.member-networks-lock):not(.outlier-votes-lock):not(.tmm-history-lock) {
+            padding-bottom: 24px;
+        }
+
+        body:not(.by-vote-lock):not(.by-member-lock):not(.contentious-votes-lock):not(.member-networks-lock):not(.outlier-votes-lock):not(.tmm-history-lock) .page-footer {
+            position: static;
+            transform: none;
+            width: auto;
+            margin-top: 24px;
+            padding: 14px 0 0;
+            border: 0;
+            border-top: 1px solid var(--border);
+            border-radius: 0;
+            background: transparent;
+            box-shadow: none;
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
+        }
+
+        /* ---------- Tooltip ---------- */
+        .app-tooltip { font-size: var(--fs-sm); text-align: left; border-radius: 8px; padding: 8px 11px; }
+
+        /* =====================================================================
+           Responsive
+           ===================================================================== */
+        @media (max-width: 1180px) {
+            .tab-group-label { display: none; }
+            .tab-divider { margin: 0 4px; }
+        }
+
+        body.phone-layout { padding-left: 10px; padding-right: 10px; overflow-x: hidden; }
+        body.phone-layout .page { max-width: 100%; }
+
+        body.phone-layout .page-header-shell { width: calc(100vw - 16px); }
+        body.phone-layout .page-header-card { padding: 10px 12px 10px; border-radius: 12px; }
+        body.phone-layout .page-header-main { flex-direction: row; align-items: center; gap: 10px; }
+        body.phone-layout .page-header-copy { gap: 10px; flex: 1 1 auto; min-width: 0; }
+        body.phone-layout .brand-mark { width: 32px; height: 32px; border-radius: 8px; }
+        body.phone-layout .brand-mark svg { width: 18px; height: 18px; }
+        body.phone-layout h1 { font-size: 16px; line-height: 1.2; }
+        body.phone-layout .page-subtitle { display: none; }
+        body.phone-layout .disclaimer-hover-wrap { align-self: center; margin-left: auto; }
+        body.phone-layout .disclaimer-button { min-height: 40px; min-width: 40px; padding: 0; justify-content: center; font-size: 0; gap: 0; }
+        body.phone-layout .disclaimer-button span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); }
+        body.phone-layout .disclaimer-icon { width: 18px; height: 18px; }
+        body.phone-layout .disclaimer-overlay { right: -2px; width: calc(100vw - 28px); max-height: 70vh; overflow-y: auto; }
+        body.phone-layout .page-header-nav { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+
+        body.phone-layout .mobile-tab-menu {
+            min-height: 44px;
+            padding: 10px 40px 10px 12px;
+            font-family: var(--font-sans);
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--ink);
+            background-color: var(--surface);
+            border: 1px solid var(--border-strong);
+            border-radius: 10px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23111F35' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+        }
+
+        body.phone-layout .container { padding: 16px 14px 18px; border-radius: 12px; }
+        body.phone-layout .module-intro { margin-bottom: 14px; padding-bottom: 12px; }
+        body.phone-layout .module-intro h2 { font-size: 18px; }
+
+        body.phone-layout select { min-width: 0; width: 100%; max-width: 100%; }
+        body.phone-layout .control-group,
+        body.phone-layout .outlier-votes-controls .control-row,
+        body.phone-layout .tmm-history-controls,
+        body.phone-layout .contentious-votes-controls { gap: 10px 14px; }
+        body.phone-layout .control-group > label { flex-basis: 100%; }
+        body.phone-layout .outlier-votes-controls .outlier-member-group,
+        body.phone-layout .outlier-votes-controls .outlier-member-select { width: 100%; min-width: 0; }
+        body.phone-layout .checkbox-group { min-height: 32px; }
+        body.phone-layout .tmm-history-action-btn { margin-left: 0; }
+        body.phone-layout .outlier-sort-toggle-group { width: 100%; flex-wrap: nowrap; }
+        body.phone-layout .outlier-sort-toggle { flex: 1 1 0; padding: 6px 6px; font-size: 12.5px; min-height: 36px; }
+
+        body.phone-layout .article-description { padding: 14px; }
+        body.phone-layout .vote-banner-title { font-size: 16.5px; }
+        body.phone-layout .vote-split-bar { max-width: none; flex-basis: 100%; }
+
+        body.phone-layout .member-list,
+        body.phone-layout .article-list { max-height: 52vh; }
+        body.phone-layout.by-vote-lock #vote-results .member-list,
+        body.phone-layout.by-member-lock #member-results .article-list { max-height: 52vh; }
+        body.phone-layout .vote-column.is-empty .member-list,
+        body.phone-layout .vote-column.is-empty .article-list { max-height: none; }
+        body.phone-layout .member-item { padding: 9px 8px; }
+
+        /* Phone: data tables become stacked cards */
+        body.phone-layout .contentious-votes-table,
+        body.phone-layout .outlier-votes-table,
+        body.phone-layout .tmm-history-table,
+        body.phone-layout .member-network-table,
+        body.phone-layout .vote-history-table {
+            display: block;
+            width: 100%;
+            min-width: 0 !important;
+            table-layout: auto;
+        }
+
+        body.phone-layout .contentious-votes-table thead,
+        body.phone-layout .vote-history-table thead,
+        body.phone-layout .outlier-votes-table-header,
+        body.phone-layout .tmm-history-table-header,
+        body.phone-layout .member-network-table-header,
+        body.phone-layout .contentious-votes-table colgroup,
+        body.phone-layout .tmm-history-table colgroup,
+        body.phone-layout .member-network-table colgroup,
+        body.phone-layout .outlier-votes-table colgroup { display: none; }
+
+        body.phone-layout .contentious-votes-table tbody,
+        body.phone-layout .outlier-votes-table tbody,
+        body.phone-layout .tmm-history-table tbody,
+        body.phone-layout .member-network-table tbody,
+        body.phone-layout .vote-history-table tbody { display: block; }
+
+        body.phone-layout .contentious-votes-table tr,
+        body.phone-layout .outlier-votes-table tr,
+        body.phone-layout .tmm-history-table tr,
+        body.phone-layout .member-network-table tr,
+        body.phone-layout .vote-history-table tr {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            gap: 6px 12px;
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        body.phone-layout .contentious-votes-table td,
+        body.phone-layout .outlier-votes-table td,
+        body.phone-layout .tmm-history-table td,
+        body.phone-layout .member-network-table td,
+        body.phone-layout .vote-history-table td {
+            display: block;
+            width: auto !important;
+            min-width: 0 !important;
+            max-width: none !important;
+            padding: 0 !important;
+            border: 0 !important;
+            text-align: left !important;
+            font-size: 14px;
+            white-space: normal;
+            background-color: transparent;
+        }
+
+        body.phone-layout td[data-label]::before {
+            content: attr(data-label);
+            display: block;
+            margin-bottom: 1px;
+            font-size: 10.5px;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--ink-muted);
+        }
+
+        /* Full-width card fields */
+        body.phone-layout .contentious-votes-table td:nth-child(-n+3),
+        body.phone-layout .vote-history-table td:nth-child(3),
+        body.phone-layout .vote-history-table td:nth-child(4),
+        body.phone-layout .outlier-votes-table td.session-col,
+        body.phone-layout .outlier-votes-table td.vote-title-col,
+        body.phone-layout .tmm-history-table td:nth-child(-n+1),
+        body.phone-layout .tmm-history-table td:nth-child(3),
+        body.phone-layout .member-network-table td.member-col { grid-column: 1 / -1; }
+
+        body.phone-layout .contentious-votes-table td:first-child::before,
+        body.phone-layout .outlier-votes-table td.session-col::before,
+        body.phone-layout .tmm-history-table td:first-child::before,
+        body.phone-layout .member-network-table td.member-col::before { display: none; }
+
+        body.phone-layout .contentious-votes-table td:first-child,
+        body.phone-layout .outlier-votes-table td.session-col { font-size: 12px; font-weight: 600; color: var(--ink-muted); }
+        body.phone-layout .tmm-history-table td:first-child { font-size: 15.5px; font-weight: 700; }
+
+        body.phone-layout .contentious-votes-table td.num-col,
+        body.phone-layout .vote-history-table td:nth-child(n+5):nth-child(-n+8) { grid-column: span 1; }
+        body.phone-layout .contentious-votes-table tr,
+        body.phone-layout .vote-history-table tr { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+        body.phone-layout .contentious-votes-table td:nth-child(-n+3),
+        body.phone-layout .contentious-votes-table td.margin-col,
+        body.phone-layout .contentious-votes-table td.result-col { grid-column: 1 / -1; }
+        body.phone-layout .contentious-votes-table td.margin-col,
+        body.phone-layout .contentious-votes-table td.result-col { grid-column: span 2; }
+        body.phone-layout .vote-history-table td:nth-child(1),
+        body.phone-layout .vote-history-table td:nth-child(2),
+        body.phone-layout .vote-history-table td:nth-child(9) { grid-column: span 2; }
+        body.phone-layout .vote-history-table td:nth-child(n+10) { grid-column: span 2; }
+        body.phone-layout .vote-history-table td:nth-child(n+10):empty { display: none; }
+
+        body.phone-layout .member-network-table tr { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+        body.phone-layout .member-network-table td.member-col { grid-column: 1 / -1; order: -1; }
+        body.phone-layout .member-network-table td.rank-col,
+        body.phone-layout .member-network-table td.precinct-col,
+        body.phone-layout .member-network-table td.shared-col { grid-column: span 1; }
+
+        body.phone-layout td.has-bar { background-position: left 0 bottom 2px, left 0 bottom 2px; background-size: 100% 4px, 100% 4px; padding-bottom: 10px !important; }
+
+        body.phone-layout .contentious-votes-table-wrap,
+        body.phone-layout .outlier-votes-table-scroller,
+        body.phone-layout .tmm-history-table-scroller,
+        body.phone-layout .member-network-table-scroller,
+        body.phone-layout .vote-history-table-wrap { overflow: visible; max-height: none; }
+
+        body.phone-layout .vote-history-table-wrap { max-height: none; }
+
+        body.phone-layout .vote-title-nav-bubble { display: inline-block; width: auto; }
+
+        /* Precinct heatmap keeps horizontal scroll; only the vote column stays pinned */
+        body.phone-layout .precinct-votes-table th:nth-child(2),
+        body.phone-layout .precinct-votes-table td:nth-child(2),
+        body.phone-layout .precinct-votes-table th:nth-child(3),
+        body.phone-layout .precinct-votes-table td:nth-child(3) { position: static; }
+        body.phone-layout .precinct-votes-table { --precinct-col-1-width: 132px; --precinct-col-2-width: 220px; --precinct-col-3-width: 110px; --precinct-col-width: 46px; }
+        body.phone-layout .precinct-votes-table-wrap { max-height: 70vh; box-shadow: inset -12px 0 10px -10px rgba(17, 31, 53, 0.18); }
+
+        body.phone-layout .page-footer { border-radius: 0; background: transparent; box-shadow: none; backdrop-filter: none; }
+        body.phone-layout .page-footer-text { flex-direction: column; gap: 4px; }
+
+        @media (max-width: 640px) {
+            .aligned-select-label { text-align: left; }
+        }
+
+
+        /* =====================================================================
+           DESIGN SYSTEM v2: refinements (round 3)
+           ===================================================================== */
+        :root {
+            --metric: #5d6f8c;
+            --fs-2xs: 11px;
+        }
+
+        /* Single semantic tables with sticky header rows */
+        .tmm-history-table thead th,
+        .outlier-votes-table thead th,
+        .member-network-table thead th {
+            position: sticky;
+            top: 0;
+            z-index: 3;
+            background-color: var(--surface-2);
+            box-shadow: inset 0 -1px 0 var(--border-strong);
+        }
+
+        .outlier-votes-table thead th[class] { vertical-align: bottom; }
+        .module-intro .module-help { max-width: none; }
+
+        body.member-networks-lock .cluster-panel-body {
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        body.member-networks-lock .member-network-table-wrap {
+            flex: 1 1 auto;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        body.member-networks-lock .member-network-table-scroller {
+            flex: 1 1 auto;
+            min-height: 0;
+            max-height: none;
+        }
+
+        .tmm-history-table-wrap,
+        .outlier-votes-table-wrap,
+        .member-network-table-wrap { overflow: hidden; }
+
+        /* Data-bar colors: neutral metric, semantic colors only for vote meaning */
+        .member-network-table td.sim-col,
+        .outlier-votes-table td.score-col { --bar-color: var(--metric); }
+
+        /* Banner rule reflects the outcome, not the brand accent */
+        .article-description { border-left-color: var(--ink); }
+        .article-description.is-pass { border-left-color: var(--yes-bar); }
+        .article-description.is-fail { border-left-color: var(--no-bar); }
+        .article-description.is-neutral { border-left-color: var(--novote-bar); }
+
+        /* Tighter intro + banner so locked views show more rows */
+        .module-intro { margin-bottom: 14px; padding-bottom: 12px; }
+        .module-intro p, .module-help { text-wrap: pretty; }
+        .module-help { font-size: var(--fs-sm); max-width: 100ch; }
+        body.by-vote-lock .article-description,
+        body.by-member-lock .article-description { padding: 12px 16px; margin-bottom: 12px; }
+        body.by-vote-lock .vote-split,
+        body.by-member-lock .vote-split { margin-top: 8px; }
+        .member-item { padding: 5px 8px; }
+
+        @media (min-width: 641px) and (max-height: 960px) {
+            .page-subtitle { display: none; }
+            .page-header-card { padding-top: 10px; }
+            .page-header-nav { margin-top: 8px; }
+            .brand-mark { width: 34px; height: 34px; }
+            .module-intro { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 12px; }
+            .module-intro h2 { font-size: 18px; }
+            .module-intro p { margin-top: 0; }
+            .module-intro .module-help { flex-basis: 100%; margin-top: 4px; }
+        }
+
+        /* Member names in vote columns are real buttons */
+        button.member-item {
+            display: block;
+            width: 100%;
+            text-align: left;
+            color: var(--ink);
+            font-family: inherit;
+            cursor: pointer;
+        }
+
+        /* Link-style navigation chips (vote titles / member names) */
+        .nav-bubble-btn,
+        .vote-title-nav-bubble,
+        .vote-history-table .vote-title-col .vote-title-nav-bubble,
+        .precinct-votes-table .vote-title-col .vote-title-nav-bubble,
+        .outlier-votes-table .vote-title-col .vote-title-nav-bubble {
+            display: inline;
+            width: auto;
+            max-width: 100%;
+            margin: 0;
+            padding: 0;
+            border: 0;
+            border-radius: 2px;
+            background: transparent;
+            color: var(--accent-strong);
+            font-size: var(--fs-sm);
+            font-weight: 600;
+            line-height: 1.4;
+            text-align: left;
+            text-decoration: underline;
+            text-decoration-color: rgba(138, 36, 75, 0.35);
+            text-decoration-thickness: 1px;
+            text-underline-offset: 3px;
+            box-shadow: none;
+        }
+
+        .nav-bubble-btn::after {
+            content: ' \2192';
+            font-weight: 500;
+            opacity: 0;
+            transition: opacity 0.12s ease;
+        }
+
+        .nav-bubble-btn:hover {
+            background: transparent;
+            color: var(--accent);
+            text-decoration-color: currentColor;
+        }
+
+        .nav-bubble-btn:hover::after,
+        .nav-bubble-btn:focus-visible::after { opacity: 1; }
+
+        .member-network-nav-bubble { font-size: var(--fs-base); }
+
+        /* Loading progress */
+        .vote-history-message.is-loading {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px 14px;
+            padding: 18px;
+        }
+
+        .vote-history-message.is-loading::before {
+            content: '';
+            flex: 0 0 auto;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            border: 2.5px solid var(--surface-3);
+            border-top-color: var(--accent);
+            animation: tm-spin 0.8s linear infinite;
+        }
+
+        .loading-progress {
+            flex: 1 1 200px;
+            max-width: 320px;
+            height: 6px;
+            border-radius: 999px;
+            background: var(--surface-3);
+            overflow: hidden;
+        }
+
+        .loading-progress-fill {
+            display: block;
+            height: 100%;
+            border-radius: inherit;
+            background: var(--ink);
+            transition: width 0.2s ease;
+        }
+
+        /* Member History filter */
+        .table-filter {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            flex: 0 1 300px;
+        }
+
+        .table-filter-icon {
+            position: absolute;
+            left: 11px;
+            color: var(--ink-muted);
+            pointer-events: none;
+        }
+
+        .table-filter-input {
+            width: 100%;
+            min-height: 38px;
+            padding: 7px 12px 7px 34px;
+            border: 1px solid var(--border-strong);
+            border-radius: 8px;
+            background: var(--surface);
+            color: var(--ink);
+            font-size: var(--fs-base);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .table-filter-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--tm-focus);
+        }
+
+        .tmm-history-controls { gap: 10px 18px; }
+        .tmm-history-export-btn { margin-left: auto; }
+        .tmm-history-action-btn { margin-left: 0; }
+
+        /* Disclaimer labels */
+        .disclaimer-label-short { display: none; }
+
+        /* Footer links don't break mid-name */
+        .page-footer-text a { white-space: nowrap; }
+
+        /* Show-all toggle is phone-only */
+        .show-all-toggle { display: none; }
+
+        /* Typography floor */
+        .tab-group-label { font-size: var(--fs-2xs); }
+        .outcome-badge, .vote-pill { font-size: var(--fs-2xs); }
+        .contentious-votes-table th,
+        .outlier-votes-table th,
+        .tmm-history-table th,
+        .member-network-table th,
+        .vote-history-table th,
+        .precinct-votes-table th { font-size: var(--fs-2xs); }
+
+        /* ---------------- Phone ---------------- */
+        /* Scrollable tab strip replaces the dropdown so every view is visible */
+        body.phone-layout .mobile-tab-menu { display: none; }
+
+        body.phone-layout #module-menu {
+            display: flex;
+            flex-wrap: nowrap;
+            gap: 4px;
+            margin: 0 -12px;
+            padding: 2px 12px;
+            overflow-x: auto;
+            overscroll-behavior-x: contain;
+            scroll-snap-type: x proximity;
+            scrollbar-width: none;
+            -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 14px, #000 calc(100% - 22px), transparent 100%);
+            mask-image: linear-gradient(90deg, transparent 0, #000 14px, #000 calc(100% - 22px), transparent 100%);
+        }
+
+        body.phone-layout #module-menu::-webkit-scrollbar { display: none; }
+        body.phone-layout #module-menu .tab { flex: 0 0 auto; scroll-snap-align: center; min-height: 40px; white-space: nowrap; }
+        body.phone-layout #module-menu .tab-group-label { display: none; }
+        body.phone-layout #module-menu .tab-divider { flex: 0 0 auto; margin: 0 2px; }
+        body.phone-layout .page-header-nav { margin-top: 8px; padding-top: 6px; }
+
+        body.phone-layout .disclaimer-button {
+            min-width: 0;
+            padding: 0 12px 0 10px;
+            gap: 6px;
+            font-size: var(--fs-sm);
+        }
+
+        body.phone-layout .disclaimer-label-long { display: none; }
+        body.phone-layout .disclaimer-label-short { display: inline; }
+        body.phone-layout .disclaimer-button span.disclaimer-label-short {
+            position: static;
+            width: auto;
+            height: auto;
+            overflow: visible;
+            clip: auto;
+        }
+
+        /* Lists show a preview + "Show all" instead of a nested scroll area */
+        body.phone-layout .member-list,
+        body.phone-layout .article-list,
+        body.phone-layout.by-vote-lock #vote-results .member-list,
+        body.phone-layout.by-member-lock #member-results .article-list {
+            max-height: none;
+            overflow: visible;
+            background: none;
+        }
+
+        body.phone-layout .member-list:not(.is-expanded) > .member-item:nth-child(n+13),
+        body.phone-layout .article-list:not(.is-expanded) > .article-item-with-desc:nth-child(n+13) { display: none; }
+
+        body.phone-layout .show-all-toggle {
+            display: block;
+            width: calc(100% - 12px);
+            margin: 0 6px 8px;
+            min-height: 40px;
+            border: 1px dashed var(--border-strong);
+            border-radius: 8px;
+            background: var(--surface-2);
+            color: var(--ink);
+            font-size: var(--fs-sm);
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        body.phone-layout .show-all-toggle:hover { background: var(--surface-3); }
+
+        /* Denser cards */
+        body.phone-layout td[data-label]::before {
+            font-size: var(--fs-2xs);
+            letter-spacing: 0.04em;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        body.phone-layout .contentious-votes-table tr,
+        body.phone-layout .vote-history-table tr,
+        body.phone-layout .tmm-history-table tr,
+        body.phone-layout .member-network-table tr { gap: 8px 10px; }
+
+        body.phone-layout .tmm-history-table tr { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+        body.phone-layout .tmm-history-table td:nth-child(1) { grid-column: span 3; }
+        body.phone-layout .tmm-history-table td:nth-child(2) { grid-column: span 1; }
+        body.phone-layout .tmm-history-table td:nth-child(3) { grid-column: span 3; }
+        body.phone-layout .tmm-history-table td:nth-child(4) { grid-column: span 1; }
+        body.phone-layout .tmm-history-table td:nth-child(n+5) { grid-column: span 1; }
+        body.phone-layout .tmm-history-table td[hidden],
+        body.phone-layout .tmm-history-table tr[hidden] { display: none; }
+        body.phone-layout .tmm-history-table td:first-child::before { display: none; }
+
+        body.phone-layout .outlier-votes-table tr { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+        body.phone-layout .outlier-votes-table td.session-col,
+        body.phone-layout .outlier-votes-table td.vote-title-col { grid-column: 1 / -1; }
+        body.phone-layout .outlier-votes-table td.vote-col { grid-column: span 1; }
+        body.phone-layout .outlier-votes-table td.peer-split-col { grid-column: span 2; }
+        body.phone-layout .outlier-votes-table td.score-col { grid-column: span 1; }
+        body.phone-layout .outlier-votes-table td:nth-child(6) { grid-column: 2 / span 2; }
+
+
+        body.phone-layout .table-filter { flex: 1 1 100%; }
+        body.phone-layout .tmm-history-export-btn { margin-left: 0; }
+
+        tr[hidden] { display: none !important; }
+
+        /* Phone: sortable header rows become a wrap of "sort by" chips */
+        body.phone-layout .tmm-history-table thead,
+        body.phone-layout .member-network-table thead {
+            display: block;
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border);
+            background: var(--surface-2);
+        }
+
+        body.phone-layout .tmm-history-table thead::before,
+        body.phone-layout .member-network-table thead::before {
+            content: 'Sort by';
+            display: block;
+            margin-bottom: 6px;
+            font-size: var(--fs-2xs);
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--ink-muted);
+        }
+
+        body.phone-layout .tmm-history-table thead tr,
+        body.phone-layout .member-network-table thead tr {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            padding: 0;
+            border: 0;
+        }
+
+        body.phone-layout .tmm-history-table thead th,
+        body.phone-layout .member-network-table thead th {
+            position: static;
+            display: block;
+            width: auto !important;
+            padding: 0 !important;
+            border: 0 !important;
+            background: transparent;
+            box-shadow: none;
+        }
+
+        body.phone-layout .tmm-history-sort-btn,
+        body.phone-layout .member-network-sort-btn {
+            min-height: 32px;
+            padding: 4px 10px;
+            border: 1px solid var(--border-strong);
+            border-radius: 999px;
+            background: var(--surface);
+            font-size: var(--fs-xs);
+            text-transform: none;
+            letter-spacing: 0;
+            white-space: nowrap;
+        }
+
+        body.phone-layout th[aria-sort="ascending"] .tmm-history-sort-btn,
+        body.phone-layout th[aria-sort="descending"] .tmm-history-sort-btn,
+        body.phone-layout th[aria-sort="ascending"] .member-network-sort-btn,
+        body.phone-layout th[aria-sort="descending"] .member-network-sort-btn {
+            background: var(--ink);
+            border-color: var(--ink);
+            color: #fff;
+        }
+
+        body.phone-layout .outlier-votes-table thead { display: none; }
+
+
+        /* ---- Round 3 polish ---- */
+        .tab-list { display: contents; }
+
+        .tmm-history-table th[aria-sort="none"] .tmm-history-sort-btn::after,
+        .member-network-table th[aria-sort="none"] .member-network-sort-btn::after {
+            content: ' \2195';
+            opacity: 0.45;
+            font-weight: 500;
+        }
+
+        td.is-clamped .desc-text {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        td.is-clamped.is-expanded .desc-text { display: block; -webkit-line-clamp: unset; }
+
+        .desc-toggle {
+            margin-top: 2px;
+            padding: 2px 0;
+            border: 0;
+            background: transparent;
+            color: var(--accent-strong);
+            font: inherit;
+            font-size: var(--fs-xs);
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+
+        body.phone-layout td[data-label]::before {
+            font-size: var(--fs-xs);
+            font-weight: 600;
+            letter-spacing: 0;
+            text-transform: none;
+        }
+
+        body.phone-layout .checkbox-group { min-height: 44px; }
+        body.phone-layout .outlier-sort-toggle { min-height: 40px; }
+        body.phone-layout .tmm-history-sort-btn,
+        body.phone-layout .member-network-sort-btn { min-height: 36px; }
+
+        body.phone-layout .outlier-votes-table tr { grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.4fr) minmax(0, 1fr); }
+        body.phone-layout .outlier-votes-table td.vote-col { grid-column: 1; grid-row: span 2; }
+        body.phone-layout .outlier-votes-table td:nth-child(4) { grid-column: 2; }
+        body.phone-layout .outlier-votes-table td:nth-child(5) { grid-column: 3; }
+        body.phone-layout .outlier-votes-table td:nth-child(6) { grid-column: 2; }
+        body.phone-layout .outlier-votes-table td:nth-child(7) { grid-column: 3; }
+
+        /* ---- Post-round-3 fixes ---- */
+        body.phone-layout .precinct-votes-table td[data-label]::before { content: none; display: none; }
+        body.phone-layout .vote-history-table td.is-empty-link { display: none; }
+        body.phone-layout .precinct-votes-table { --precinct-col-1-width: 128px; --precinct-col-3-width: 96px; }
+        body.phone-layout .precinct-votes-table th:nth-child(2),
+        body.phone-layout .precinct-votes-table td:nth-child(2) { display: none; }
+
+        /* =====================================================================
+           Round 4 fixes
+           ===================================================================== */
+        :root { --fs-xs: 12.5px; --fs-2xs: 11.5px; }
+
+        /* Panel intro: subtitle and method note read as two distinct levels */
+        .module-intro p#module-description { font-size: 14px; color: var(--ink-2); }
+        .module-help { font-size: var(--fs-sm); }
+
+        /* Banner eyebrow: separator travels with the following part */
+        .vote-banner-eyebrow { display: flex; flex-wrap: wrap; column-gap: 0; }
+        .vote-banner-eyebrow .eyebrow-part { white-space: normal; }
+        .vote-banner-eyebrow .article-summary-separator { margin: 0 6px; }
+
+        /* Vote History: one page scroll on desktop, compact Night, single Sources cell */
+        .vote-history-table-wrap { max-height: none; overflow: visible; overscroll-behavior: auto; }
+        .vote-history-table { min-width: 0; }
+        /* Header row sticks just below the fixed page header while the page scrolls */
+        .vote-history-table th { top: calc(var(--page-header-height, 0px) - 1px); }
+        .vote-history-table th:nth-child(1),
+        .vote-history-table td:nth-child(1) { width: 72px; min-width: 72px; max-width: 72px; white-space: nowrap; }
+        .vote-history-table th:nth-child(2),
+        .vote-history-table td:nth-child(2) { width: 104px; min-width: 104px; max-width: 104px; }
+        .vote-history-table td.night-col { font-weight: 600; color: var(--ink-2); }
+        .vote-history-table td.date-col { color: var(--ink-2); }
+        .vote-history-table th:nth-child(10),
+        .vote-history-table td.sources-col { width: 96px; min-width: 96px; text-align: left; white-space: normal; }
+        .vote-history-table td.sources-col a { display: block; padding: 1px 0; white-space: nowrap; }
+        .vote-history-table td.sources-col .sources-none { color: var(--ink-muted); font-size: var(--fs-xs); }
+        body.phone-layout .vote-history-table td.sources-col { display: flex; flex-wrap: wrap; gap: 4px 14px; align-items: baseline; }
+        body.phone-layout .vote-history-table td.sources-col::before { flex-basis: 100%; }
+        body.phone-layout .vote-history-table td.sources-col a { display: inline-flex; align-items: center; min-height: 32px; }
+
+        /* Precinct Votes: no nested vertical scroll box; horizontal scroll only */
+        .precinct-votes-table-wrap { max-height: none; overflow-x: auto; overflow-y: hidden; overscroll-behavior: auto; }
+        body.phone-layout .precinct-votes-table-wrap { max-height: none; }
+        .precinct-votes-table { --precinct-col-1-width: 124px; --precinct-col-2-width: 186px; }
+        .precinct-votes-table .vote-title-nav-bubble { text-wrap: balance; }
+        body.phone-layout .precinct-votes-table { --precinct-col-1-width: 120px; --precinct-col-3-width: 92px; }
+
+        /* Heat map: legend, outlined divergent cells */
+        .heat-legend {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 6px 16px;
+            margin: 10px 0 8px;
+            font-size: var(--fs-xs);
+            color: var(--ink-2);
+        }
+        .heat-legend-title { font-weight: 700; color: var(--ink); }
+        .heat-legend-scale { display: inline-flex; flex-wrap: wrap; gap: 4px 10px; }
+        .heat-legend-key { display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+        .heat-legend-diverge { white-space: normal; }
+        .heat-legend-swatch { width: 14px; height: 14px; flex: 0 0 auto; border-radius: 3px; border: 1px solid rgba(17, 31, 53, 0.12); }
+        .heat-legend-swatch.is-ring { background: #fff; box-shadow: inset 0 0 0 2px var(--ink); border-color: transparent; }
+        .heat-legend-hint { display: none; }
+        body.phone-layout .heat-legend { gap: 6px 12px; }
+        body.phone-layout .heat-legend-hint {
+            display: inline-flex;
+            align-items: center;
+            padding: 3px 8px;
+            border-radius: 999px;
+            background: var(--surface-2);
+            color: var(--ink-2);
+            font-weight: 600;
+        }
+        .precinct-votes-table td.heat-cell { color: var(--ink); }
+        .precinct-votes-table td.heat-diverge {
+            box-shadow: inset 0 0 0 2px var(--ink);
+            font-weight: 800;
+        }
+
+        /* Phone nav: edge fade + an "All views" menu button beside the strip */
+        body.phone-layout .page-header-nav { position: relative; }
+        body.phone-layout #module-menu { margin-right: 44px; }
+        body.phone-layout #module-menu .tab-group-label {
+            display: inline-flex;
+            flex: 0 0 auto;
+            align-items: center;
+            padding: 0 2px 0 4px;
+            font-size: 10.5px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--ink-muted);
+        }
+        body.phone-layout .mobile-tab-menu {
+            display: block;
+            position: absolute;
+            right: 0;
+            top: 8px;
+            width: 40px;
+            min-width: 0;
+            height: 40px;
+            margin: 0;
+            padding: 0;
+            border: 1px solid var(--border-strong);
+            border-radius: 10px;
+            color: transparent;
+            font-size: 16px;
+            -webkit-appearance: none;
+            appearance: none;
+            cursor: pointer;
+            background: var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23111F35' stroke-width='2.2' stroke-linecap='round'%3E%3Cpath d='M4 7h16M4 12h16M4 17h16'/%3E%3C/svg%3E") center / 20px 20px no-repeat;
+        }
+        body.phone-layout .mobile-tab-menu option,
+        body.phone-layout .mobile-tab-menu optgroup { color: var(--ink); }
+
+        /* Footer: one slim bar everywhere (fixed only on locked views) */
+        body.by-vote-lock .page-footer,
+        body.by-member-lock .page-footer,
+        body.contentious-votes-lock .page-footer,
+        body.member-networks-lock .page-footer,
+        body.outlier-votes-lock .page-footer,
+        body.tmm-history-lock .page-footer {
+            left: 0;
+            right: 0;
+            transform: none;
+            width: auto;
+            max-width: none;
+            padding: 8px 16px;
+            border: 0;
+            border-top: 1px solid var(--border);
+            border-radius: 0;
+            background: rgba(255, 255, 255, 0.96);
+            box-shadow: none;
+        }
+        body.phone-layout .page-footer-text { padding: 0 4px; font-size: var(--fs-xs); max-width: 100%; }
+        .page-footer-credit { display: flex; flex-wrap: wrap; justify-content: center; align-items: baseline; column-gap: 0; }
+        body.phone-layout .page-footer { max-width: 100vw; box-sizing: border-box; }
+
+        /* Phone by-vote legend: tidy 2x2 grid instead of an orphaned last key */
+        body.phone-layout .vote-split-legend { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2px 12px; }
+        body.phone-layout .vote-split-key { min-height: 32px; }
+
+        /* Sort glyph never dropped on long headers */
+        .tmm-history-sort-btn,
+        .member-network-sort-btn { white-space: normal; }
+        .tmm-history-table th[aria-sort="none"] .tmm-history-sort-btn::after,
+        .member-network-table th[aria-sort="none"] .member-network-sort-btn::after { white-space: nowrap; opacity: 0.6; }
+
+        /* Phone precinct: result moves under the title so heat cells start on-screen */
+        .precinct-inline-result { display: none; }
+        body.phone-layout .precinct-inline-result { display: inline-flex; margin-top: 4px; }
+        body.phone-layout .precinct-votes-table th:nth-child(3),
+        body.phone-layout .precinct-votes-table td:nth-child(3) { display: none; }
+        body.phone-layout .precinct-votes-table { --precinct-col-1-width: 132px; }
+
+        .precinct-votes-table td.heat-cell { color: var(--ink-2); }
+
+        /* Phone banner eyebrow: stack parts, no dangling separator */
+        body.phone-layout .vote-banner-eyebrow { flex-direction: column; }
+        body.phone-layout .vote-banner-eyebrow .article-summary-separator { display: none; }
+
+        /* Footer: keep the space after "Created by" */
+        .page-footer-credit { column-gap: 0.3em; }
+        .page-footer-credit .footer-sep { margin: 0 4px; }
+
+        /* Vote History desktop: give titles room so they wrap less */
+        .vote-history-table td.vote-title-col,
+        .vote-history-table th:nth-child(3) { width: 190px; min-width: 190px; }
+
+        /* Phone Vote History cards: compact "Night 1 · May 26, 2026" header line, no redundant labels */
+        body.phone-layout .vote-history-table td.sources-col.is-empty-link { display: none; }
+        body.phone-layout .vote-history-table td.night-col::before,
+        body.phone-layout .vote-history-table td.date-col::before,
+        body.phone-layout .vote-history-table td.vote-title-col::before { content: none; display: none; }
+        body.phone-layout .vote-history-table td.night-col,
+        body.phone-layout .vote-history-table td.date-col { grid-column: span 2; font-size: var(--fs-xs); color: var(--ink-muted); white-space: nowrap; }
+        body.phone-layout .vote-history-table td.night-col { font-weight: 700; }
+        body.phone-layout .vote-history-table td.date-col { text-align: right; }
+
+        /* Precinct session body: legend and table share the AI-summary row's 16px inset */
+        .vote-history-session > .heat-legend { padding: 0 16px; }
+        .vote-history-session > .precinct-votes-scroll-top,
+        .vote-history-session > .precinct-votes-table-wrap { margin: 0 16px; }
+        .vote-history-session > .precinct-votes-table-wrap { margin-bottom: 16px; }
+        body.phone-layout .vote-history-session > .heat-legend { padding: 0 10px; }
+        body.phone-layout .vote-history-session > .precinct-votes-scroll-top,
+        body.phone-layout .vote-history-session > .precinct-votes-table-wrap { margin: 0 0 10px; }
+
+        /* Header bands reach the table edge (no reserved scrollbar gutter beside sticky headers) */
+        .member-network-table-scroller,
+        .tmm-history-table-scroller,
+        .outlier-votes-table-scroller { scrollbar-gutter: auto; }
+
+        /* Bigger touch targets for description toggles */
+        .desc-toggle { min-height: 32px; padding: 4px 2px; }
     </style>
 </head>
 
@@ -2391,13 +4293,22 @@
             <div class="page-header-card">
                 <div class="page-header-main">
                     <div class="page-header-copy">
-                        <h1>Brookline Town Meeting Vote Analyzer</h1>
+                        <div class="brand-mark" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V10l7-5 7 5v11"/><path d="M9 21v-6h6v6"/></svg>
+                        </div>
+                        <div class="page-header-titles">
+                            <h1>Brookline Town Meeting Vote Analyzer</h1>
+                            <p class="page-subtitle">How Town Meeting Members voted, 2021&ndash;present</p>
+                        </div>
                     </div>
                     <div class="disclaimer-hover-wrap">
-                        <button type="button" class="disclaimer-button" aria-describedby="important-disclaimer">
-                            IMPORTANT DISCLAIMER: Please read.
+                        <button type="button" class="disclaimer-button" aria-describedby="important-disclaimer" aria-expanded="false" aria-controls="important-disclaimer">
+                            <svg class="disclaimer-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                            <span class="disclaimer-label-long">Read before you interpret votes</span>
+                            <span class="disclaimer-label-short" aria-hidden="true">About</span>
                         </button>
                         <div class="disclaimer-overlay" id="important-disclaimer" role="note">
+                            <p class="disclaimer-heading">Important disclaimer</p>
                             <p>This project is intended to promote transparency by making Town Meeting voting records more accessible to the public. However, individual votes do not always tell the full story.</p>
                             <p>Town Meeting decisions are often shaped by discussion, amendments, procedural motions, and trade-offs that occur in real time. A representative may fully support the overall goal of a warrant article, yet vote against a particular motion because of specific language, funding details, timing, or other provisions attached to it.</p>
                             <p>If a vote by your precinct representative raises questions or concerns, consider reaching out to them directly. They can provide the context behind their decision and explain how they evaluated the issue. Transparency is most meaningful when paired with open communication.</p>
@@ -2407,27 +4318,40 @@
                 <div class="page-header-nav" id="page-header-nav">
                     <!-- Module selector buttons -->
                     <div class="tabs" id="module-menu">
-                        <button class="tab active" data-tab="by-vote" onclick="switchTab(event, 'by-vote')" data-tooltip="Select a Town Meeting session and a vote to see how members voted">View by Vote</button>
-                        <button class="tab" data-tab="by-member" onclick="switchTab(event, 'by-member')" data-tooltip="Select a Town Meeting session and a member to see how they voted in that session">View by Member</button>
-                        <button class="tab" data-tab="vote-history" onclick="switchTab(event, 'vote-history')" data-tooltip="See vote outcomes in each Town Meeting session and links to more information about each vote">Vote History</button>
-                        <button class="tab" data-tab="precinct-votes" onclick="switchTab(event, 'precinct-votes')" data-tooltip="View how precincts voted in aggregate on each vote">Precinct Votes</button>
-                        <button class="tab" data-tab="contentious-votes" onclick="switchTab(event, 'contentious-votes')" data-tooltip="See what the closest votes at Town Meeting were (since 2021)">Closest Votes</button>
-                        <button class="tab" data-tab="member-networks" onclick="switchTab(event, 'member-networks')" data-tooltip="Select a Town Meeting member to see which members they tend to vote with">TMM Networks</button>
-                        <button class="tab" data-tab="outlier-votes" onclick="switchTab(event, 'outlier-votes')" data-tooltip="View a selected member's votes with precinct and Town Meeting splits across all loaded sessions">TMM Outlier Votes</button>
-                        <button class="tab" data-tab="tmm-history" onclick="switchTab(event, 'tmm-history')" data-tooltip="View all the members at Town Meeting (since 2021) and statistics on their votes">TMM History</button>
-                        <button class="tab" type="button" onclick="openPcaInNewTab()" data-tooltip="View a principal component analysis of Town Meeting votes (opens in a new window)">PCA</button>
+                      <div class="tab-list" role="tablist" aria-label="Analyzer views">
+                        <span class="tab-group-label" aria-hidden="true">Votes</span>
+                        <button class="tab active" type="button" role="tab" id="tab-by-vote" aria-controls="by-vote" aria-selected="true" data-tab="by-vote" onclick="switchTab(event, 'by-vote')" data-tooltip="Select a Town Meeting session and a vote to see how members voted">View by Vote</button>
+                        <button class="tab" type="button" role="tab" id="tab-vote-history" aria-controls="vote-history" aria-selected="false" data-tab="vote-history" onclick="switchTab(event, 'vote-history')" data-tooltip="See vote outcomes in each Town Meeting session and links to more information about each vote">Vote History</button>
+                        <button class="tab" type="button" role="tab" id="tab-precinct-votes" aria-controls="precinct-votes" aria-selected="false" data-tab="precinct-votes" onclick="switchTab(event, 'precinct-votes')" data-tooltip="View how precincts voted in aggregate on each vote">Precinct Votes</button>
+                        <button class="tab" type="button" role="tab" id="tab-contentious-votes" aria-controls="contentious-votes" aria-selected="false" data-tab="contentious-votes" onclick="switchTab(event, 'contentious-votes')" data-tooltip="See what the closest votes at Town Meeting were (since 2021)">Closest Votes</button>
+                        <span class="tab-divider" aria-hidden="true"></span>
+                        <span class="tab-group-label" aria-hidden="true">Members</span>
+                        <button class="tab" type="button" role="tab" id="tab-by-member" aria-controls="by-member" aria-selected="false" data-tab="by-member" onclick="switchTab(event, 'by-member')" data-tooltip="Select a Town Meeting session and a member to see how they voted in that session">View by Member</button>
+                        <button class="tab" type="button" role="tab" id="tab-member-networks" aria-controls="member-networks" aria-selected="false" data-tab="member-networks" onclick="switchTab(event, 'member-networks')" data-tooltip="Select a Town Meeting member to see which members they tend to vote with">Member Networks</button>
+                        <button class="tab" type="button" role="tab" id="tab-outlier-votes" aria-controls="outlier-votes" aria-selected="false" data-tab="outlier-votes" onclick="switchTab(event, 'outlier-votes')" data-tooltip="View a selected member's votes with precinct and Town Meeting splits across all loaded sessions">Outlier Votes</button>
+                        <button class="tab" type="button" role="tab" id="tab-tmm-history" aria-controls="tmm-history" aria-selected="false" data-tab="tmm-history" onclick="switchTab(event, 'tmm-history')" data-tooltip="View all the members at Town Meeting (since 2021) and statistics on their votes">Member History</button>
+                      </div>
+                        <span class="tab-divider" aria-hidden="true"></span>
+                        <button class="tab tab-external" type="button" onclick="openPcaInNewTab()" data-tooltip="View a principal component analysis of Town Meeting votes (opens in a new window)" aria-label="Voting map (PCA), opens in a new tab">Voting Map (PCA)<svg class="tab-external-icon" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg></button>
                     </div>
                     <!-- Mobile-only dropdown menu (hidden on desktop/iPad) -->
+                    <label for="mobile-tab-menu" class="visually-hidden">All views</label>
                     <select id="mobile-tab-menu" class="mobile-tab-menu" onchange="handleMobileTabSelect(this)">
-                        <option value="by-vote">View by Vote</option>
-                        <option value="by-member">View by Member</option>
-                        <option value="vote-history">Vote History</option>
-                        <option value="precinct-votes">Precinct Votes</option>
-                        <option value="contentious-votes">Closest Votes</option>
-                        <option value="member-networks">TMM Networks</option>
-                        <option value="outlier-votes">TMM Outlier Votes</option>
-                        <option value="tmm-history">TMM History</option>
-                        <option value="pca">PCA (opens new tab)</option>
+                        <optgroup label="Votes">
+                            <option value="by-vote">View by Vote</option>
+                            <option value="vote-history">Vote History</option>
+                            <option value="precinct-votes">Precinct Votes</option>
+                            <option value="contentious-votes">Closest Votes</option>
+                        </optgroup>
+                        <optgroup label="Members">
+                            <option value="by-member">View by Member</option>
+                            <option value="member-networks">Member Networks</option>
+                            <option value="outlier-votes">Outlier Votes</option>
+                            <option value="tmm-history">Member History</option>
+                        </optgroup>
+                        <optgroup label="Analysis">
+                            <option value="pca">Voting Map (PCA) &#8599;</option>
+                        </optgroup>
                     </select>
                     <div id="module-instruction" class="module-instruction"></div>
                 </div>
@@ -2436,12 +4360,16 @@
 
         <div class="container">
         <!-- Shown initially while spreadsheet data is being fetched and parsed -->
-        <div class="loading" id="loading">
-            Loading voting data...
-        </div>
+        <div class="loading" id="loading" role="status" aria-live="polite">Loading voting data...</div>
 
         <!-- All main content is hidden until data is successfully loaded -->
         <div id="main-content" style="display: none;">
+
+            <div class="module-intro" id="module-intro">
+                <h2 id="module-title">View by Vote</h2>
+                <p id="module-description"></p>
+                <p id="module-help" class="module-help" hidden></p>
+            </div>
 
             <!-- Context controls shown for modules that operate on a single session -->
             <div id="module-context-controls" class="controls" style="margin-bottom: 20px;">
@@ -2476,7 +4404,7 @@
             </div>
 
             <!-- TAB: View by Vote -->
-            <div id="by-vote" class="tab-content active">
+            <div role="tabpanel" aria-labelledby="tab-by-vote" id="by-vote" class="tab-content active">
                 <div id="by-vote-controls" class="controls">
                     <div class="control-group aligned-select-controls">
                         <label for="vote-select" class="aligned-select-label">Select Vote:</label>
@@ -2494,7 +4422,7 @@
             </div>
 
             <!-- TAB: View by Member -->
-            <div id="by-member" class="tab-content">
+            <div role="tabpanel" aria-labelledby="tab-by-member" id="by-member" class="tab-content">
                 <div id="by-member-controls" class="controls">
                     <div class="control-group aligned-select-controls">
                         <label for="member-select" class="aligned-select-label">Select Member:</label>
@@ -2512,7 +4440,7 @@
             </div>
 
             <!-- TAB: Member Networks -->
-            <div id="member-networks" class="tab-content">
+            <div role="tabpanel" aria-labelledby="tab-member-networks" id="member-networks" class="tab-content">
                 <div class="controls">
                     <div class="control-group">
                         <label for="member-network-select">Select Member:</label>
@@ -2544,7 +4472,7 @@
                     </div>
                 </div>
 
-                <div id="member-network-status" class="cluster-status">
+                <div id="member-network-status" class="cluster-status" role="status" aria-live="polite">
                     Select a member to view nearest voting neighbors.
                 </div>
 
@@ -2559,7 +4487,7 @@
             </div>
 
             <!-- TAB: Outlier Votes -->
-            <div id="outlier-votes" class="tab-content">
+            <div role="tabpanel" aria-labelledby="tab-outlier-votes" id="outlier-votes" class="tab-content">
                 <div class="controls outlier-votes-controls">
                     <div class="control-row">
                         <div class="control-group outlier-member-group">
@@ -2592,21 +4520,21 @@
                         </div>
                     </div>
                 </div>
-                <div id="outlier-votes-results" class="vote-history-message">Open this module to load all sessions.</div>
+                <div id="outlier-votes-results" class="vote-history-message" aria-live="polite">Open this module to load all sessions.</div>
             </div>
 
             <!-- TAB: Vote History -->
-            <div id="vote-history" class="tab-content">
+            <div role="tabpanel" aria-labelledby="tab-vote-history" id="vote-history" class="tab-content">
                 <div id="vote-history-results" class="vote-history-message">Open this module to load all sessions.</div>
             </div>
 
             <!-- TAB: Precinct Votes -->
-            <div id="precinct-votes" class="tab-content">
+            <div role="tabpanel" aria-labelledby="tab-precinct-votes" id="precinct-votes" class="tab-content">
                 <div id="precinct-votes-results" class="vote-history-message">Open this module to load all sessions.</div>
             </div>
 
             <!-- TAB: Contentious Votes -->
-            <div id="contentious-votes" class="tab-content">
+            <div role="tabpanel" aria-labelledby="tab-contentious-votes" id="contentious-votes" class="tab-content">
                 <div class="controls contentious-votes-controls">
                     <div class="checkbox-group">
                         <input
@@ -2621,8 +4549,13 @@
             </div>
 
             <!-- TAB: TMM History -->
-            <div id="tmm-history" class="tab-content">
+            <div role="tabpanel" aria-labelledby="tab-tmm-history" id="tmm-history" class="tab-content">
                 <div class="controls tmm-history-controls">
+                    <div class="table-filter">
+                        <label for="tmm-history-filter" class="visually-hidden">Filter members by name or precinct</label>
+                        <svg class="table-filter-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+                        <input type="search" id="tmm-history-filter" class="table-filter-input" placeholder="Filter by name or precinct (e.g. P5)" autocomplete="off" oninput="applyTmmHistoryFilter()">
+                    </div>
                     <div class="checkbox-group">
                         <input
                             type="checkbox"
@@ -2726,8 +4659,8 @@
 
         <footer class="page-footer">
             <div class="page-footer-text">
-                <p>If you find any bugs or errors, please report them to: robschoen dot robschoen at gmail dot com</p>
-                <p class="page-footer-credit">created by <a href="mailto:robschoen.robschoen@gmail.com">Rob Schoen TMM P1</a> // <a href="https://entangledparticles.xyz/" target="_blank" rel="noopener noreferrer">Entangled Particles</a> // <a href="https://www.longwoodmall.org" target="_blank" rel="noopener noreferrer">www.longwoodmall.org</a></p>
+                <p class="page-footer-credit">Created by <a href="mailto:robschoen.robschoen@gmail.com">Rob Schoen, TMM P1</a><span class="footer-sep" aria-hidden="true">&middot;</span><a href="https://entangledparticles.xyz/" target="_blank" rel="noopener noreferrer">Entangled Particles</a><span class="footer-sep" aria-hidden="true">&middot;</span><a href="https://www.longwoodmall.org" target="_blank" rel="noopener noreferrer">longwoodmall.org</a></p>
+                <p class="page-footer-report">Found a bug or error? <a href="mailto:robschoen.robschoen@gmail.com?subject=Town%20Meeting%20Vote%20Analyzer%20issue">Report it</a></p>
             </div>
         </footer>
         </div>
@@ -2942,6 +4875,18 @@
 
         function updatePhoneLayout() {
             document.body.classList.toggle('phone-layout', PHONE_LAYOUT_QUERY.matches);
+            syncSessionOptionLabels(PHONE_LAYOUT_QUERY.matches);
+        }
+
+        // Phones: drop the "(38 votes)" suffix so the selected session name isn't truncated.
+        function syncSessionOptionLabels(isPhone) {
+            const select = document.getElementById('spreadsheet-select');
+            if (!select) return;
+            Array.from(select.options).forEach(option => {
+                if (!option.dataset.fullLabel) option.dataset.fullLabel = option.textContent;
+                const fullLabel = option.dataset.fullLabel;
+                option.textContent = isPhone ? fullLabel.replace(/\s*\(\d+\s+votes?\)\s*$/i, '') : fullLabel;
+            });
         }
 
         function syncPinnedLayoutOffsets() {
@@ -3320,6 +5265,26 @@
 
             if (sortedPrecincts.length === 0) return '—';
             return sortedPrecincts.map(precinct => formatPrecinctLabel(precinct)).join(', ');
+        }
+
+        // Display-only: collapse consecutive years into ranges (2021, 2022, 2023 -> 2021–2023).
+        function formatYearRangeList(yearSet) {
+            const years = Array.from(yearSet || []).map(Number).filter(Number.isFinite).sort((a, b) => a - b);
+            if (years.length === 0) return formatYearList(yearSet);
+            const parts = [];
+            let start = years[0];
+            let prev = years[0];
+            for (let i = 1; i <= years.length; i++) {
+                const year = years[i];
+                if (year === prev + 1) {
+                    prev = year;
+                    continue;
+                }
+                parts.push(start === prev ? String(start) : `${start}–${prev}`);
+                start = year;
+                prev = year;
+            }
+            return parts.join(', ');
         }
 
         function formatYearList(yearSet) {
@@ -4098,7 +6063,7 @@
                 { text: 'Votes in the Majority', className: 'num-col', key: 'majorityVotes' },
                 { text: 'Votes in the Minority', className: 'num-col', key: 'minorityVotes' },
                 { text: 'Abstentions', className: 'num-col', key: 'abstentions' },
-                { text: 'Not Present', className: 'num-col', key: 'notPresent' }
+                { text: 'Not Recorded', className: 'num-col', key: 'notPresent' }
             ];
         }
 
@@ -4211,14 +6176,17 @@
 
             const tableWrapEl = document.createElement('div');
             tableWrapEl.className = 'tmm-history-table-wrap';
-            const tableHeaderEl = document.createElement('div');
-            tableHeaderEl.className = 'tmm-history-table-header';
             const tableScrollerEl = document.createElement('div');
             tableScrollerEl.className = 'tmm-history-table-scroller';
 
-            const headerTableEl = document.createElement('table');
-            headerTableEl.className = 'tmm-history-table';
-            headerTableEl.appendChild(createTmmHistoryColGroup());
+            // Single semantic table; the header row stays visible via position: sticky.
+            const tableEl = document.createElement('table');
+            tableEl.className = 'tmm-history-table';
+            tableEl.appendChild(createTmmHistoryColGroup());
+            const captionEl = document.createElement('caption');
+            captionEl.className = 'visually-hidden';
+            captionEl.textContent = 'Town Meeting member voting history. Column headers are sortable.';
+            tableEl.appendChild(captionEl);
             const theadEl = document.createElement('thead');
             const headRowEl = document.createElement('tr');
             headers.forEach(header => {
@@ -4229,22 +6197,22 @@
                 button.className = 'tmm-history-sort-btn';
                 const isActiveSort = header.key === sortKey;
                 const sortArrow = isActiveSort
-                    ? (direction === 1 ? ' ↑' : ' ↓')
+                    ? (direction === 1 ? ' ▲' : ' ▼')
                     : '';
                 button.textContent = `${header.text}${sortArrow}`;
+                th.setAttribute('aria-sort', isActiveSort ? (direction === 1 ? 'ascending' : 'descending') : 'none');
+                button.dataset.sortKey = header.key;
                 button.addEventListener('click', () => {
                     setTmmHistorySort(header.key);
+                    const nextButton = document.querySelector(`#tmm-history-results .tmm-history-sort-btn[data-sort-key="${header.key}"]`);
+                    if (nextButton) nextButton.focus({ preventScroll: true });
                 });
                 th.appendChild(button);
                 headRowEl.appendChild(th);
             });
             theadEl.appendChild(headRowEl);
-            headerTableEl.appendChild(theadEl);
-            tableHeaderEl.appendChild(headerTableEl);
+            tableEl.appendChild(theadEl);
 
-            const tableEl = document.createElement('table');
-            tableEl.className = 'tmm-history-table';
-            tableEl.appendChild(createTmmHistoryColGroup());
             const tbodyEl = document.createElement('tbody');
             rows.forEach(row => {
                 const rowEl = document.createElement('tr');
@@ -4261,7 +6229,7 @@
 
                 addCell(row.name || '—');
                 addCell(formatPrecinctHistoryList(row.precincts));
-                addCell(formatYearList(row.years));
+                addCell(formatYearRangeList(row.years));
                 addCell(String(row.totalEligible), 'num-col');
                 addCell(
                     showPercentages
@@ -4292,16 +6260,33 @@
             });
 
             tableEl.appendChild(tbodyEl);
-            const syncHeaderScroll = () => {
-                tableHeaderEl.scrollLeft = tableScrollerEl.scrollLeft;
-                tableHeaderEl.style.paddingRight = `${tableScrollerEl.offsetWidth - tableScrollerEl.clientWidth}px`;
-            };
-            tableScrollerEl.addEventListener('scroll', syncHeaderScroll);
             tableScrollerEl.appendChild(tableEl);
-            tableWrapEl.appendChild(tableHeaderEl);
             tableWrapEl.appendChild(tableScrollerEl);
             container.appendChild(tableWrapEl);
-            syncHeaderScroll();
+            applyTmmHistoryFilter();
+        }
+
+        function applyTmmHistoryFilter() {
+            const inputEl = document.getElementById('tmm-history-filter');
+            const container = document.getElementById('tmm-history-results');
+            if (!inputEl || !container) return;
+            const query = inputEl.value.trim().toLowerCase();
+            let visibleCount = 0;
+            let totalCount = 0;
+            container.querySelectorAll('.tmm-history-table tbody tr').forEach(rowEl => {
+                totalCount += 1;
+                const nameText = rowEl.cells[0] ? rowEl.cells[0].textContent.toLowerCase() : '';
+                const precinctText = rowEl.cells[1] ? rowEl.cells[1].textContent.toLowerCase() : '';
+                const isMatch = !query || nameText.includes(query) || precinctText.split(/[ ,]+/).includes(query);
+                rowEl.hidden = !isMatch;
+                if (isMatch) visibleCount += 1;
+            });
+            const summaryEl = container.querySelector(':scope > .vote-history-message');
+            if (summaryEl && totalCount > 0) {
+                summaryEl.textContent = query
+                    ? `Showing ${visibleCount} of ${totalCount} Town Meeting members matching "${inputEl.value.trim()}".`
+                    : `Showing ${totalCount} Town Meeting members across ${voteHistorySessionsCache.length} sessions.`;
+            }
         }
 
         function renderVoteHistory() {
@@ -4331,19 +6316,23 @@
                 'Yes',
                 'No',
                 'Abstain',
-                'No Vote Recorded',
+                'Not Recorded',
                 'Vote Result',
-                'Link 1',
-                'Link 2',
-                'Link 3',
-                'Link 4'
+                'Sources'
             ];
 
-            orderedSessions.forEach(session => {
+            orderedSessions.forEach((session, sessionIndex) => {
                 const detailsEl = document.createElement('details');
                 detailsEl.className = 'vote-history-session';
+                if (sessionIndex === 0) detailsEl.open = true;
                 const summaryEl = document.createElement('summary');
-                summaryEl.textContent = `${session.label} (${session.votes.length} votes)`;
+                const summaryLabelEl = document.createElement('span');
+                summaryLabelEl.className = 'session-summary-label';
+                summaryLabelEl.textContent = session.label;
+                const summaryCountEl = document.createElement('span');
+                summaryCountEl.className = 'session-summary-count';
+                summaryCountEl.textContent = `${session.votes.length} votes`;
+                summaryEl.append(summaryLabelEl, summaryCountEl);
                 detailsEl.appendChild(summaryEl);
 
                 const aiSummaryFile = getAISummaryFileForSession(session.id);
@@ -4392,7 +6381,11 @@
                         rowEl.appendChild(td);
                     };
 
-                    addTextCell(formatNightForHistoryCell(nightDate.night || '—'), 'night-col');
+                    // Session header already names the meeting, so show just "Night N" (full text kept in title).
+                    const fullNight = String(nightDate.night || '').trim();
+                    const shortNight = (fullNight.match(/\bNight\s*\d+\b/i) || [''])[0];
+                    addTextCell(shortNight || formatNightForHistoryCell(fullNight || '—'), 'night-col');
+                    if (shortNight && fullNight !== shortNight) rowEl.lastChild.title = fullNight;
                     addTextCell(formatDateForHistoryCell(nightDate.date || '—'), 'date-col');
                     const titleCell = document.createElement('td');
                     titleCell.className = 'vote-title-col';
@@ -4416,22 +6409,28 @@
                     addTextCell(String(counts.NoVote), 'num-col');
                     addTextCell(vote.result || '—');
 
-                    for (let i = 0; i < 4; i++) {
-                        const td = document.createElement('td');
-                        td.className = 'link-col';
-                        const url = String(links[i] || '').trim();
-                        if (/^https?:\/\//i.test(url)) {
-                            const linkEl = document.createElement('a');
-                            linkEl.href = url;
-                            linkEl.target = '_blank';
-                            linkEl.rel = 'noopener noreferrer';
-                            linkEl.textContent = `Link ${i + 1}`;
-                            td.appendChild(linkEl);
-                        } else {
-                            td.textContent = '—';
-                        }
-                        rowEl.appendChild(td);
+                    // One "Sources" cell listing only the real links (originally up to 4 link columns).
+                    const sourcesTd = document.createElement('td');
+                    sourcesTd.className = 'link-col sources-col';
+                    links.slice(0, 4).forEach((rawUrl, i) => {
+                        const url = String(rawUrl || '').trim();
+                        if (!/^https?:\/\//i.test(url)) return;
+                        const linkEl = document.createElement('a');
+                        linkEl.href = url;
+                        linkEl.target = '_blank';
+                        linkEl.rel = 'noopener noreferrer';
+                        linkEl.textContent = `Source ${i + 1}`;
+                        linkEl.setAttribute('aria-label', `Source ${i + 1} for ${voteTitle || 'this vote'} (opens in new tab)`);
+                        sourcesTd.appendChild(linkEl);
+                    });
+                    if (!sourcesTd.childElementCount) {
+                        sourcesTd.classList.add('is-empty-link');
+                        const noneEl = document.createElement('span');
+                        noneEl.className = 'sources-none';
+                        noneEl.textContent = 'None';
+                        sourcesTd.appendChild(noneEl);
                     }
+                    rowEl.appendChild(sourcesTd);
 
                     tbodyEl.appendChild(rowEl);
                 });
@@ -4448,6 +6447,30 @@
          * Returns the cached session array, loading from network only if needed.
          * Avoids duplicate fetches by checking all pending load promises.
          */
+        // Spinner + determinate progress bar for cross-session loads ("Loading X (n of N)...").
+        function setModuleLoadingMessage(container, message) {
+            if (!container) return;
+            const text = String(message || '');
+            const match = text.match(/\((\d+) of (\d+)\)/);
+            container.className = 'vote-history-message is-loading';
+            container.setAttribute('role', 'status');
+            const textEl = document.createElement('span');
+            textEl.className = 'loading-text';
+            textEl.textContent = text.replace('TMM History', 'Member History');
+            container.replaceChildren(textEl);
+            if (match) {
+                const done = Number(match[1]);
+                const total = Math.max(1, Number(match[2]));
+                const trackEl = document.createElement('span');
+                trackEl.className = 'loading-progress';
+                const fillEl = document.createElement('span');
+                fillEl.className = 'loading-progress-fill';
+                fillEl.style.width = `${Math.round((done / total) * 100)}%`;
+                trackEl.appendChild(fillEl);
+                container.appendChild(trackEl);
+            }
+        }
+
         async function ensureAllSessionsLoaded(moduleName, onProgress) {
             // Return from either cache.
             if (voteHistorySessionsCache) return voteHistorySessionsCache;
@@ -4504,7 +6527,7 @@
             if (voteHistorySessionsCache) { renderVoteHistory(); return; }
 
             container.className = 'vote-history-message';
-            voteHistoryLoadPromise = ensureAllSessionsLoaded('Vote History', msg => { container.textContent = msg; })
+            voteHistoryLoadPromise = ensureAllSessionsLoaded('Vote History', msg => { setModuleLoadingMessage(container, msg); })
                 .then(() => renderVoteHistory())
                 .catch(err => handleModuleError(err, container, 'Vote History'))
                 .finally(() => { voteHistoryLoadPromise = null; });
@@ -4538,11 +6561,18 @@
                 ...STANDARD_PRECINCTS.map(precinct => `P${precinct}`)
             ];
 
-            orderedSessions.forEach(session => {
+            orderedSessions.forEach((session, sessionIndex) => {
                 const detailsEl = document.createElement('details');
                 detailsEl.className = 'vote-history-session';
+                if (sessionIndex === 0) detailsEl.open = true;
                 const summaryEl = document.createElement('summary');
-                summaryEl.textContent = `${session.label} (${session.votes.length} votes)`;
+                const summaryLabelEl = document.createElement('span');
+                summaryLabelEl.className = 'session-summary-label';
+                summaryLabelEl.textContent = session.label;
+                const summaryCountEl = document.createElement('span');
+                summaryCountEl.className = 'session-summary-count';
+                summaryCountEl.textContent = `${session.votes.length} votes`;
+                summaryEl.append(summaryLabelEl, summaryCountEl);
                 detailsEl.appendChild(summaryEl);
 
                 const aiSummaryFile = getAISummaryFileForSession(session.id);
@@ -4560,6 +6590,8 @@
                     actionsEl.appendChild(aiSummaryButtonEl);
                     detailsEl.appendChild(actionsEl);
                 }
+
+                detailsEl.appendChild(buildPrecinctHeatLegend());
 
                 const topScrollEl = document.createElement('div');
                 topScrollEl.className = 'precinct-votes-scroll-top';
@@ -4663,7 +6695,7 @@
             if (voteHistorySessionsCache) { renderPrecinctVotes(); return; }
 
             container.className = 'vote-history-message';
-            precinctVotesLoadPromise = ensureAllSessionsLoaded('Precinct Votes', msg => { container.textContent = msg; })
+            precinctVotesLoadPromise = ensureAllSessionsLoaded('Precinct Votes', msg => { setModuleLoadingMessage(container, msg); })
                 .then(() => renderPrecinctVotes())
                 .catch(err => handleModuleError(err, container, 'Precinct Votes'))
                 .finally(() => { precinctVotesLoadPromise = null; });
@@ -4756,8 +6788,9 @@
                 { text: 'Yes', className: 'num-col' },
                 { text: 'No', className: 'num-col' },
                 { text: 'Abstain', className: 'num-col' },
-                { text: 'No Vote Recorded', className: 'num-col' },
-                { text: 'Vote Result', className: '' }
+                { text: 'Not Recorded', className: 'num-col' },
+                { text: 'Margin', className: 'num-col margin-col' },
+                { text: 'Vote Result', className: 'result-col' }
             ];
 
             const theadEl = document.createElement('thead');
@@ -4802,7 +6835,8 @@
                 addTextCell(String(entry.no), 'num-col');
                 addTextCell(String(entry.abstain), 'num-col');
                 addTextCell(String(entry.noVote), 'num-col');
-                addTextCell(entry.result);
+                addTextCell(String(Math.abs((Number(entry.yes) || 0) - (Number(entry.no) || 0))), 'num-col margin-col');
+                addTextCell(entry.result, 'result-col');
 
                 tbodyEl.appendChild(rowEl);
             });
@@ -4819,7 +6853,7 @@
             if (voteHistorySessionsCache) { renderContentiousVotes(); return; }
 
             container.className = 'vote-history-message';
-            contentiousVotesLoadPromise = ensureAllSessionsLoaded('Closest Votes', msg => { container.textContent = msg; })
+            contentiousVotesLoadPromise = ensureAllSessionsLoaded('Closest Votes', msg => { setModuleLoadingMessage(container, msg); })
                 .then(() => renderContentiousVotes())
                 .catch(err => handleModuleError(err, container, 'Closest Votes'))
                 .finally(() => { contentiousVotesLoadPromise = null; });
@@ -4833,7 +6867,7 @@
             if (voteHistorySessionsCache) { renderTmmHistory(); return; }
 
             container.className = 'vote-history-message';
-            tmmHistoryLoadPromise = ensureAllSessionsLoaded('TMM History', msg => { container.textContent = msg; })
+            tmmHistoryLoadPromise = ensureAllSessionsLoaded('TMM History', msg => { setModuleLoadingMessage(container, msg); })
                 .then(() => renderTmmHistory())
                 .catch(err => handleModuleError(err, container, 'TMM History'))
                 .finally(() => { tmmHistoryLoadPromise = null; });
@@ -5302,7 +7336,17 @@
             if (getActiveModuleId() === 'member-networks') {
                 ensureMemberNetworkDataLoaded();
             }
+
+            if (!initialHashTabApplied) {
+                initialHashTabApplied = true;
+                const hashTabId = getTabIdFromHash();
+                if (hashTabId && hashTabId !== getActiveModuleId()) {
+                    switchTab(null, hashTabId);
+                }
+            }
         }
+
+        let initialHashTabApplied = false;
 
         function populateMemberDropdown() {
             const memberSelect = document.getElementById('member-select');
@@ -5472,6 +7516,130 @@
         }
 
         /****************************************************
+         * SHARED PRESENTATION HELPERS (vote colors, outcome badges, split bars)
+         ****************************************************/
+
+        function classifyVoteOutcome(text) {
+            const value = String(text || '').trim().toLowerCase();
+            if (!value || value === '—' || value === '-' || value === 'not listed') return '';
+            if (/^(fail|defeat|reject|lost|not\s+(approved|adopted|passed|carried))/.test(value)) return 'fail';
+            if (/^(approv|pass|adopt|carr|favorabl|accept|referr)/.test(value)) return 'pass';
+            return 'neutral';
+        }
+
+        function createOutcomeBadge(text) {
+            const badgeEl = document.createElement('span');
+            const outcome = classifyVoteOutcome(text);
+            badgeEl.className = `outcome-badge${outcome ? ` outcome-${outcome}` : ''}`;
+            badgeEl.textContent = String(text || '').trim();
+            return badgeEl;
+        }
+
+        function buildVoteColumnHeader(label, count, percentText = '') {
+            const headerEl = document.createElement('h3');
+            headerEl.className = 'vote-column-header';
+            const labelEl = document.createElement('span');
+            labelEl.className = 'vote-column-label';
+            labelEl.textContent = label;
+            const statsEl = document.createElement('span');
+            statsEl.className = 'vote-column-stats';
+            const countEl = document.createElement('span');
+            countEl.className = 'vote-column-count';
+            countEl.textContent = String(count);
+            statsEl.appendChild(countEl);
+            if (percentText) {
+                const pctEl = document.createElement('span');
+                pctEl.className = 'vote-column-pct';
+                pctEl.textContent = percentText;
+                statsEl.appendChild(pctEl);
+            }
+            headerEl.append(labelEl, statsEl);
+            return headerEl;
+        }
+
+        // Phone-only (CSS-gated) "Show all" control so long lists don't need a nested scroll area.
+        const PHONE_LIST_PREVIEW_COUNT = 12;
+        function appendShowAllToggle(columnEl, listEl, itemCount, noun) {
+            if (itemCount <= PHONE_LIST_PREVIEW_COUNT) return;
+            columnEl.classList.add('has-more');
+            const toggleEl = document.createElement('button');
+            toggleEl.type = 'button';
+            toggleEl.className = 'show-all-toggle';
+            if (!listEl.id) listEl.id = `vote-list-${Math.random().toString(36).slice(2, 9)}`;
+            toggleEl.setAttribute('aria-controls', listEl.id);
+            toggleEl.setAttribute('aria-expanded', 'false');
+            const setLabel = expanded => {
+                toggleEl.textContent = expanded ? 'Show fewer' : `Show all ${itemCount} ${noun}`;
+                toggleEl.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+            };
+            setLabel(false);
+            toggleEl.addEventListener('click', () => {
+                const expanded = !listEl.classList.contains('is-expanded');
+                listEl.classList.toggle('is-expanded', expanded);
+                setLabel(expanded);
+                if (!expanded) {
+                    columnEl.scrollIntoView({ block: 'nearest' });
+                } else {
+                    const firstHidden = listEl.children[PHONE_LIST_PREVIEW_COUNT];
+                    const focusTarget = firstHidden && (firstHidden.matches('button, a') ? firstHidden : firstHidden.querySelector('button, a'));
+                    if (focusTarget) focusTarget.focus({ preventScroll: true });
+                }
+            });
+            columnEl.appendChild(toggleEl);
+        }
+
+        function appendEmptyColumnState(listEl, message) {
+            const emptyEl = document.createElement('div');
+            emptyEl.className = 'vote-column-empty';
+            emptyEl.textContent = message;
+            listEl.appendChild(emptyEl);
+        }
+
+        function buildVoteSplitBar(counts, ariaPrefix = 'Vote split') {
+            const segments = [
+                { key: 'yes', label: 'Yes', value: Number(counts.YES) || 0 },
+                { key: 'no', label: 'No', value: Number(counts.NO) || 0 },
+                { key: 'abstain', label: 'Abstain', value: Number(counts.ABSTAIN) || 0 },
+                { key: 'novote', label: 'Not recorded', value: Number(counts.NoVote) || 0 }
+            ];
+            const total = segments.reduce((sum, seg) => sum + seg.value, 0);
+            const wrapEl = document.createElement('div');
+            wrapEl.className = 'vote-split';
+            const barEl = document.createElement('div');
+            barEl.className = 'vote-split-bar';
+            barEl.setAttribute('role', 'img');
+            barEl.setAttribute('aria-label', `${ariaPrefix}: ${segments.map(seg => `${seg.label} ${seg.value}`).join(', ')}`);
+            const legendEl = document.createElement('div');
+            legendEl.className = 'vote-split-legend';
+            segments.forEach(seg => {
+                if (total > 0 && seg.value > 0) {
+                    const segEl = document.createElement('span');
+                    segEl.className = `vote-split-seg seg-${seg.key}`;
+                    segEl.style.flexGrow = String(seg.value);
+                    segEl.title = `${seg.label}: ${seg.value}`;
+                    barEl.appendChild(segEl);
+                }
+                const keyEl = document.createElement('button');
+                keyEl.type = 'button';
+                keyEl.className = `vote-split-key key-${seg.key}`;
+                keyEl.textContent = `${seg.label} ${seg.value}`;
+                keyEl.setAttribute('aria-label', `${seg.label}: ${seg.value}. Jump to the ${seg.label} list`);
+                keyEl.addEventListener('click', () => {
+                    const scopeEl = wrapEl.closest('.vote-results-container, #member-results') || document;
+                    const columnEl = scopeEl.querySelector(`.vote-column.${seg.key}`);
+                    if (!columnEl) return;
+                    columnEl.scrollIntoView({ behavior: getScrollBehavior(), block: 'start' });
+                    columnEl.classList.remove('is-flashed');
+                    void columnEl.offsetWidth;
+                    columnEl.classList.add('is-flashed');
+                });
+                legendEl.appendChild(keyEl);
+            });
+            wrapEl.append(barEl, legendEl);
+            return wrapEl;
+        }
+
+        /****************************************************
          * VIEW BY VOTE
          ****************************************************/
 
@@ -5549,33 +7717,40 @@
             if (selectedVoteDetails || description || links.length > 0) {
                 const descriptionEl = document.createElement('div');
                 descriptionEl.className = 'article-description';
-                const summaryEl = document.createElement('div');
-                summaryEl.className = 'article-summary-line';
+                const bannerOutcome = classifyVoteOutcome(voteResult);
+                if (bannerOutcome) descriptionEl.classList.add(`is-${bannerOutcome}`);
 
-                const summaryValues = [
-                    { text: selectedVote || 'Vote title unavailable', className: 'article-summary-primary' },
-                    { text: `Session: ${sessionLabel || 'Not listed'}` },
-                    { text: `Night/Date: ${night || 'Not listed'}` },
-                    { text: `Vote: ${voteResult || 'Not listed'}` }
-                ];
-
-                summaryValues.forEach((part, index) => {
-                    const valueEl = document.createElement('span');
-                    valueEl.textContent = part.text;
-                    if (part.className) valueEl.className = part.className;
-                    summaryEl.appendChild(valueEl);
-
-                    if (index < summaryValues.length - 1) {
+                const eyebrowEl = document.createElement('div');
+                eyebrowEl.className = 'vote-banner-eyebrow';
+                [sessionLabel, night].filter(Boolean).forEach((text, index) => {
+                    const partEl = document.createElement('span');
+                    partEl.className = 'eyebrow-part';
+                    if (index > 0) {
                         const sepEl = document.createElement('span');
                         sepEl.className = 'article-summary-separator';
-                        sepEl.textContent = '•';
-                        summaryEl.appendChild(sepEl);
+                        sepEl.setAttribute('aria-hidden', 'true');
+                        sepEl.textContent = '·';
+                        partEl.appendChild(sepEl);
                     }
+                    partEl.appendChild(document.createTextNode(text));
+                    eyebrowEl.appendChild(partEl);
                 });
-                descriptionEl.appendChild(summaryEl);
+                descriptionEl.appendChild(eyebrowEl);
+
+                const headRowEl = document.createElement('div');
+                headRowEl.className = 'vote-banner-head';
+                const titleEl = document.createElement('h3');
+                titleEl.className = 'vote-banner-title';
+                titleEl.textContent = selectedVote || 'Vote title unavailable';
+                headRowEl.appendChild(titleEl);
+                if (voteResult) {
+                    headRowEl.appendChild(createOutcomeBadge(voteResult));
+                }
+                descriptionEl.appendChild(headRowEl);
 
                 if (description) {
-                    const descriptionBodyEl = document.createElement('div');
+                    const descriptionBodyEl = document.createElement('p');
+                    descriptionBodyEl.className = 'vote-banner-description';
                     descriptionBodyEl.textContent = description;
                     descriptionEl.appendChild(descriptionBodyEl);
                 }
@@ -5591,36 +7766,31 @@
                     countedLineEl.textContent = countedVoteOverride.detailLine;
                     descriptionEl.appendChild(countedLineEl);
                 }
+                descriptionEl.appendChild(buildVoteSplitBar(displayCounts, 'Vote split'));
                 resultsDiv.appendChild(descriptionEl);
             }
 
             const resultsGridEl = document.createElement('div');
             resultsGridEl.className = 'results';
 
-            function appendMemberColumn(columnClass, title, memberList) {
+            function appendMemberColumn(columnClass, label, count, percentText, memberList, emptyMessage) {
                 const columnEl = document.createElement('div');
                 columnEl.className = `vote-column ${columnClass}`;
+                if (memberList.length === 0) columnEl.classList.add('is-empty');
 
-                const headerEl = document.createElement('h3');
-                headerEl.textContent = title;
-                columnEl.appendChild(headerEl);
+                columnEl.appendChild(buildVoteColumnHeader(label, count, percentText));
 
                 const listEl = document.createElement('div');
                 listEl.className = 'member-list';
+                if (memberList.length === 0) appendEmptyColumnState(listEl, emptyMessage);
 
                 memberList.forEach(member => {
-                    const itemEl = document.createElement('div');
+                    const itemEl = document.createElement('button');
+                    itemEl.type = 'button';
                     itemEl.className = 'member-item member-nav-target';
-                    itemEl.setAttribute('role', 'button');
-                    itemEl.tabIndex = 0;
                     itemEl.title = 'Open this member in View by Member';
                     itemEl.addEventListener('click', event => {
                         if (event.button !== 0) return;
-                        openMemberFromVoteView(member.key);
-                    });
-                    itemEl.addEventListener('keydown', event => {
-                        if (event.key !== 'Enter' && event.key !== ' ') return;
-                        event.preventDefault();
                         openMemberFromVoteView(member.key);
                     });
 
@@ -5634,13 +7804,14 @@
                 });
 
                 columnEl.appendChild(listEl);
+                appendShowAllToggle(columnEl, listEl, memberList.length, 'members');
                 resultsGridEl.appendChild(columnEl);
             }
 
-            appendMemberColumn('yes', `Yes (${displayCounts.YES}, ${percentages.YES}%)`, voteGroups.YES);
-            appendMemberColumn('no', `No (${displayCounts.NO}, ${percentages.NO}%)`, voteGroups.NO);
-            appendMemberColumn('abstain', `Abstain (${displayCounts.ABSTAIN})`, voteGroups.ABSTAIN);
-            appendMemberColumn('novote', `Vote Not Recorded (${displayCounts.NoVote})`, voteGroups.NoVote);
+            appendMemberColumn('yes', 'Yes', displayCounts.YES, `${percentages.YES}%`, voteGroups.YES, 'No members voted Yes.');
+            appendMemberColumn('no', 'No', displayCounts.NO, `${percentages.NO}%`, voteGroups.NO, 'No members voted No.');
+            appendMemberColumn('abstain', 'Abstain', displayCounts.ABSTAIN, '', voteGroups.ABSTAIN, 'No members abstained.');
+            appendMemberColumn('novote', 'Not Recorded', displayCounts.NoVote, '', voteGroups.NoVote, 'Every member\'s vote was recorded.');
 
             resultsDiv.appendChild(resultsGridEl);
         }
@@ -5707,16 +7878,47 @@
 
             resultsDiv.replaceChildren();
 
-            function appendArticleColumn(columnClass, title, voteList) {
+            const selectedMemberInfo = members.find(member => member.key === selectedMember);
+            const memberBannerEl = document.createElement('div');
+            memberBannerEl.className = 'article-description member-summary-banner';
+            const memberEyebrowEl = document.createElement('div');
+            memberEyebrowEl.className = 'vote-banner-eyebrow';
+            memberEyebrowEl.textContent = getCurrentSpreadsheetMeta().label || '';
+            const memberHeadEl = document.createElement('div');
+            memberHeadEl.className = 'vote-banner-head';
+            const memberTitleEl = document.createElement('h3');
+            memberTitleEl.className = 'vote-banner-title';
+            memberTitleEl.textContent = selectedMemberInfo ? selectedMemberInfo.name : selectedMember;
+            memberHeadEl.appendChild(memberTitleEl);
+            if (selectedMemberInfo) {
+                const precinctChipEl = document.createElement('span');
+                precinctChipEl.className = 'outcome-badge outcome-neutral';
+                precinctChipEl.textContent = String(selectedMemberInfo.precinct).toUpperCase() === 'AL'
+                    ? 'At-Large'
+                    : `Precinct ${selectedMemberInfo.precinct}`;
+                memberHeadEl.appendChild(precinctChipEl);
+            }
+            const memberMetaEl = document.createElement('p');
+            memberMetaEl.className = 'vote-banner-description';
+            memberMetaEl.textContent = `${total} votes this session. Expand any vote below for its description and links.`;
+            memberBannerEl.append(memberEyebrowEl, memberHeadEl, memberMetaEl, buildVoteSplitBar({
+                YES: voteGroups.YES.length,
+                NO: voteGroups.NO.length,
+                ABSTAIN: voteGroups.ABSTAIN.length,
+                NoVote: voteGroups.NoVote.length
+            }, 'This member\'s votes'));
+            resultsDiv.appendChild(memberBannerEl);
+
+            function appendArticleColumn(columnClass, label, count, percentText, voteList, emptyMessage) {
                 const columnEl = document.createElement('div');
                 columnEl.className = `vote-column ${columnClass}`;
+                if (voteList.length === 0) columnEl.classList.add('is-empty');
 
-                const headerEl = document.createElement('h3');
-                headerEl.textContent = title;
-                columnEl.appendChild(headerEl);
+                columnEl.appendChild(buildVoteColumnHeader(label, count, percentText));
 
                 const listEl = document.createElement('div');
                 listEl.className = 'article-list';
+                if (voteList.length === 0) appendEmptyColumnState(listEl, emptyMessage);
 
                 voteList.forEach(vote => {
                     const wrapperEl = document.createElement('div');
@@ -5749,7 +7951,7 @@
                     if (vote.result) {
                         const resultEl = document.createElement('div');
                         resultEl.className = 'article-vote-result';
-                        resultEl.textContent = `Vote: ${vote.result}`;
+                        resultEl.append('Outcome: ', createOutcomeBadge(vote.result));
                         detailBodyEl.appendChild(resultEl);
                     }
 
@@ -5772,13 +7974,14 @@
                 });
 
                 columnEl.appendChild(listEl);
+                appendShowAllToggle(columnEl, listEl, voteList.length, 'votes');
                 resultsDiv.appendChild(columnEl);
             }
 
-            appendArticleColumn('yes', `Yes (${voteGroups.YES.length}, ${percentages.YES}%)`, voteGroups.YES);
-            appendArticleColumn('no', `No (${voteGroups.NO.length}, ${percentages.NO}%)`, voteGroups.NO);
-            appendArticleColumn('abstain', `Abstain (${voteGroups.ABSTAIN.length}, ${percentages.ABSTAIN}%)`, voteGroups.ABSTAIN);
-            appendArticleColumn('novote', `Vote Not Recorded (${voteGroups.NoVote.length}, ${percentages.NoVote}%)`, voteGroups.NoVote);
+            appendArticleColumn('yes', 'Yes', voteGroups.YES.length, `${percentages.YES}%`, voteGroups.YES, 'No Yes votes this session.');
+            appendArticleColumn('no', 'No', voteGroups.NO.length, `${percentages.NO}%`, voteGroups.NO, 'No No votes this session.');
+            appendArticleColumn('abstain', 'Abstain', voteGroups.ABSTAIN.length, `${percentages.ABSTAIN}%`, voteGroups.ABSTAIN, 'No abstentions this session.');
+            appendArticleColumn('novote', 'Not Recorded', voteGroups.NoVote.length, `${percentages.NoVote}%`, voteGroups.NoVote, 'Every vote was recorded.');
         }
 
         /****************************************************
@@ -6168,8 +8371,6 @@
             const sortDirection = memberNetworkSortState.direction;
             const wrapper = document.createElement('div');
             wrapper.className = 'member-network-table-wrap';
-            const headerWrap = document.createElement('div');
-            headerWrap.className = 'member-network-table-header';
             const scroller = document.createElement('div');
             scroller.className = 'member-network-table-scroller';
 
@@ -6192,9 +8393,14 @@
                 return colGroup;
             };
 
-            const headerTable = document.createElement('table');
-            headerTable.className = 'member-network-table';
-            headerTable.appendChild(createColGroup());
+            // Single semantic table; the header row stays visible via position: sticky.
+            const table = document.createElement('table');
+            table.className = 'member-network-table';
+            table.appendChild(createColGroup());
+            const caption = document.createElement('caption');
+            caption.className = 'visually-hidden';
+            caption.textContent = 'Members who vote most similarly to the selected member. Column headers are sortable.';
+            table.appendChild(caption);
 
             const thead = document.createElement('thead');
             const headRow = document.createElement('tr');
@@ -6207,17 +8413,18 @@
                 button.className = 'member-network-sort-btn';
                 const indicator = sortKey === def.key ? (sortDirection === 'asc' ? ' ▲' : ' ▼') : '';
                 button.textContent = `${def.label}${indicator}`;
-                button.addEventListener('click', () => setMemberNetworkSort(def.key));
+                th.setAttribute('aria-sort', sortKey === def.key ? (sortDirection === 'asc' ? 'ascending' : 'descending') : 'none');
+                button.dataset.sortKey = def.key;
+                button.addEventListener('click', () => {
+                    setMemberNetworkSort(def.key);
+                    const nextButton = document.querySelector(`#member-network-neighbors .member-network-sort-btn[data-sort-key="${def.key}"]`);
+                    if (nextButton) nextButton.focus({ preventScroll: true });
+                });
                 th.appendChild(button);
                 headRow.appendChild(th);
             });
             thead.appendChild(headRow);
-            headerTable.appendChild(thead);
-            headerWrap.appendChild(headerTable);
-
-            const table = document.createElement('table');
-            table.className = 'member-network-table';
-            table.appendChild(createColGroup());
+            table.appendChild(thead);
 
             const tbody = document.createElement('tbody');
             sortedRows.forEach(entry => {
@@ -6259,16 +8466,9 @@
             });
 
             table.appendChild(tbody);
-            const syncHeaderScroll = () => {
-                headerWrap.scrollLeft = scroller.scrollLeft;
-                headerWrap.style.paddingRight = `${scroller.offsetWidth - scroller.clientWidth}px`;
-            };
-            scroller.addEventListener('scroll', syncHeaderScroll);
             scroller.appendChild(table);
-            wrapper.appendChild(headerWrap);
             wrapper.appendChild(scroller);
             memberNetworkNeighborsEl.replaceChildren(wrapper);
-            syncHeaderScroll();
         }
 
         async function updateMemberNetworkResults() {
@@ -6512,7 +8712,8 @@
         }
 
         function formatOutlierSplit(yesCount, noCount, abstainCount) {
-            return `${Number(yesCount) || 0} YES\n${Number(noCount) || 0} NO\n${Number(abstainCount) || 0} ABSTAIN`;
+            // Non-breaking spaces keep "N Yes" tokens together; lines only break between tokens.
+            return `${Number(yesCount) || 0}\u00a0Yes · ${Number(noCount) || 0}\u00a0No · ${Number(abstainCount) || 0}\u00a0Abs`;
         }
 
         function computeAgreementOutlierScore(memberVote, yesCount, noCount) {
@@ -6877,8 +9078,6 @@
 
             const tableWrapEl = document.createElement('div');
             tableWrapEl.className = 'outlier-votes-table-wrap';
-            const tableHeaderEl = document.createElement('div');
-            tableHeaderEl.className = 'outlier-votes-table-header';
             const tableScrollerEl = document.createElement('div');
             tableScrollerEl.className = 'outlier-votes-table-scroller';
 
@@ -6892,8 +9091,13 @@
                 { text: 'Session Outlier', className: 'score-col' }
             ];
 
-            const headerTableEl = document.createElement('table');
-            headerTableEl.className = 'outlier-votes-table';
+            // Single semantic table; the header row stays visible via position: sticky.
+            const tableEl = document.createElement('table');
+            tableEl.className = 'outlier-votes-table';
+            const captionEl = document.createElement('caption');
+            captionEl.className = 'visually-hidden';
+            captionEl.textContent = `Votes by ${profile.name} compared with their precinct and all of Town Meeting.`;
+            tableEl.appendChild(captionEl);
             const headerTheadEl = document.createElement('thead');
             const headRowEl = document.createElement('tr');
             headers.forEach(header => {
@@ -6903,11 +9107,7 @@
                 headRowEl.appendChild(th);
             });
             headerTheadEl.appendChild(headRowEl);
-            headerTableEl.appendChild(headerTheadEl);
-            tableHeaderEl.appendChild(headerTableEl);
-
-            const tableEl = document.createElement('table');
-            tableEl.className = 'outlier-votes-table';
+            tableEl.appendChild(headerTheadEl);
 
             const tbodyEl = document.createElement('tbody');
             displayedEntries.forEach(entry => {
@@ -6970,16 +9170,9 @@
             });
 
             tableEl.appendChild(tbodyEl);
-            const syncHeaderScroll = () => {
-                tableHeaderEl.scrollLeft = tableScrollerEl.scrollLeft;
-                tableHeaderEl.style.paddingRight = `${tableScrollerEl.offsetWidth - tableScrollerEl.clientWidth}px`;
-            };
-            tableScrollerEl.addEventListener('scroll', syncHeaderScroll);
             tableScrollerEl.appendChild(tableEl);
-            tableWrapEl.appendChild(tableHeaderEl);
             tableWrapEl.appendChild(tableScrollerEl);
             container.appendChild(tableWrapEl);
-            syncHeaderScroll();
         }
 
         function renderOutlierVotes() {
@@ -7812,7 +10005,7 @@
                 appendColumn('yes', 'Yes', voteGroups.YES);
                 appendColumn('no', 'No', voteGroups.NO);
                 appendColumn('abstain', 'Abstain', voteGroups.ABSTAIN);
-                appendColumn('novote', 'Vote Not Recorded', voteGroups.NoVote);
+                appendColumn('novote', 'Not Recorded', voteGroups.NoVote);
                 clusterMemberDetailEl.appendChild(resultsGrid);
             }
 
@@ -8171,25 +10364,128 @@
         }
 
         function updateModuleInstruction(activeModuleId = getActiveModuleId()) {
-            if (!moduleInstructionEl) return;
+            if (moduleInstructionEl) {
+                moduleInstructionEl.textContent = '';
+                moduleInstructionEl.style.display = 'none';
+            }
 
-            moduleInstructionEl.textContent = '';
-            moduleInstructionEl.style.display = 'none';
+            const tabButton = document.querySelector(`#module-menu .tab[data-tab="${activeModuleId}"]`);
+            const titleEl = document.getElementById('module-title');
+            const descriptionEl = document.getElementById('module-description');
+            if (titleEl) titleEl.textContent = tabButton ? tabButton.textContent.trim() : '';
+            if (descriptionEl) descriptionEl.textContent = tabButton ? (tabButton.dataset.tooltip || '') : '';
+            const helpEl = document.getElementById('module-help');
+            if (helpEl) {
+                const helpText = MODULE_HELP_TEXT[activeModuleId] || '';
+                helpEl.textContent = helpText;
+                helpEl.hidden = !helpText;
+            }
+        }
+
+        const MODULE_HELP_TEXT = {
+            'by-vote': 'Yes and No percentages are calculated from Yes + No votes only. Select a name to see that member\'s votes.',
+            'by-member': 'Percentages are calculated from all votes in the selected session.',
+            'vote-history': 'Expand a meeting to see every vote, its outcome, and links to source documents.',
+            'precinct-votes': 'Each cell shows the share of a precinct\'s members who voted Yes (of Yes + No). Green leans Yes; orange leans No.',
+            'contentious-votes': 'Margin is the difference between Yes and No votes. Select a vote title to open it.',
+            'member-networks': 'Similarity is how often two members voted the same way on votes they both cast (100% = always agreed). Bars span 50% to 100%.',
+            'outlier-votes': 'Outlier % is the share of the member\'s precinct, or of all of Town Meeting, that voted the opposite way.',
+            'tmm-history': 'Majority and minority show how often a member voted with or against most members voting on each question. Select a column header to sort.'
+        };
+
+        const LINKABLE_TAB_IDS = new Set([
+            'by-vote', 'by-member', 'vote-history', 'precinct-votes',
+            'contentious-votes', 'member-networks', 'outlier-votes', 'tmm-history'
+        ]);
+
+        function getTabIdFromHash() {
+            const hashValue = decodeURIComponent(String(window.location.hash || '').replace(/^#/, ''));
+            return LINKABLE_TAB_IDS.has(hashValue) ? hashValue : '';
+        }
+
+        function syncTabToHash(tabName) {
+            if (!LINKABLE_TAB_IDS.has(tabName) || APP_MODE !== 'tmmvotes') return;
+            const nextHash = tabName === 'by-vote' ? '' : `#${tabName}`;
+            if (window.location.hash === nextHash) return;
+            const nextUrl = `${window.location.pathname}${window.location.search}${nextHash}`;
+            try {
+                window.history.replaceState(null, '', nextUrl);
+            } catch (err) {
+                // Ignore (e.g. sandboxed file:// contexts).
+            }
+        }
+
+        // Honor the OS "reduce motion" setting for script-driven scrolling too.
+        function getScrollBehavior() {
+            const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            return reduce ? 'auto' : 'smooth';
         }
 
         function setActiveTabButton(evt, tabName) {
             const tabs = Array.from(document.querySelectorAll('.tab'));
             tabs.forEach(tab => {
                 tab.classList.remove('active');
+                if (tab.dataset.tab) {
+                    tab.setAttribute('aria-selected', 'false');
+                    tab.tabIndex = -1;
+                }
             });
 
-            if (evt && evt.target && evt.target.classList && evt.target.classList.contains('tab')) {
-                evt.target.classList.add('active');
-                return;
-            }
-
             const tabButton = tabs.find(tab => tab.dataset.tab === tabName);
-            if (tabButton) tabButton.classList.add('active');
+            if (tabButton) {
+                tabButton.classList.add('active');
+                tabButton.setAttribute('aria-selected', 'true');
+                tabButton.tabIndex = 0;
+                const menuEl = document.getElementById('module-menu');
+                if (menuEl && menuEl.scrollWidth > menuEl.clientWidth) {
+                    const targetLeft = tabButton.offsetLeft - (menuEl.clientWidth - tabButton.offsetWidth) / 2;
+                    menuEl.scrollTo({ left: Math.max(0, targetLeft), behavior: getScrollBehavior() });
+                }
+            }
+        }
+
+        // Arrow-key navigation across the module tablist (WAI-ARIA tabs pattern, manual activation).
+        function initializeTabKeyboardNavigation() {
+            const menuEl = document.getElementById('module-menu');
+            if (!menuEl) return;
+            menuEl.addEventListener('keydown', evt => {
+                const keys = ['ArrowLeft', 'ArrowRight', 'Home', 'End'];
+                if (!keys.includes(evt.key)) return;
+                const tabs = Array.from(menuEl.querySelectorAll('[role="tab"]')).filter(tab => tab.offsetParent !== null);
+                const currentIndex = tabs.indexOf(document.activeElement);
+                if (currentIndex < 0) return;
+                evt.preventDefault();
+                let nextIndex = currentIndex;
+                if (evt.key === 'ArrowLeft') nextIndex = (currentIndex - 1 + tabs.length) % tabs.length;
+                if (evt.key === 'ArrowRight') nextIndex = (currentIndex + 1) % tabs.length;
+                if (evt.key === 'Home') nextIndex = 0;
+                if (evt.key === 'End') nextIndex = tabs.length - 1;
+                tabs[nextIndex].focus();
+            });
+        }
+
+        // Click/tap toggle for the disclaimer so it works on touch devices and by keyboard.
+        function initializeDisclaimerToggle() {
+            const wrapEl = document.querySelector('.disclaimer-hover-wrap');
+            const buttonEl = wrapEl ? wrapEl.querySelector('.disclaimer-button') : null;
+            if (!wrapEl || !buttonEl) return;
+            const setOpen = isOpen => {
+                wrapEl.classList.toggle('is-open', isOpen);
+                buttonEl.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+            };
+            buttonEl.addEventListener('click', evt => {
+                evt.stopPropagation();
+                setOpen(!wrapEl.classList.contains('is-open'));
+            });
+            document.addEventListener('click', evt => {
+                if (!wrapEl.contains(evt.target)) setOpen(false);
+            });
+            document.addEventListener('keydown', evt => {
+                if (evt.key === 'Escape' && wrapEl.classList.contains('is-open')) {
+                    setOpen(false);
+                    buttonEl.focus();
+                }
+            });
         }
 
         function switchTab(evt, tabName) {
@@ -8199,6 +10495,7 @@
 
             setActiveTabButton(evt, tabName);
             syncMobileTabMenu(tabName);
+            syncTabToHash(tabName);
 
             document.querySelectorAll('.tab-content').forEach(content => {
                 content.classList.remove('active');
@@ -8319,12 +10616,245 @@
         }
 
         /****************************************************
+         * RENDERED CONTENT ENHANCER
+         * Adds presentation-only affordances (header scopes, mobile card labels,
+         * outcome badges, inline data bars, precinct heatmap) after modules render.
+         ****************************************************/
+
+        const ENHANCED_TABLE_WRAP_SELECTOR = '.outlier-votes-table-wrap, .tmm-history-table-wrap, .member-network-table-wrap';
+
+        function cleanTableHeaderLabel(text) {
+            return String(text || '').replace(/[▲▼↑↓⇅]/g, '').replace(/\s+/g, ' ').trim();
+        }
+
+        // Compact labels for phone card layouts (desktop headers keep their full text).
+        const COMPACT_CARD_LABELS = {
+            'votes in the majority': 'Majority',
+            'votes in the minority': 'Minority',
+            'total votes eligible': 'Eligible',
+            'abstentions': 'Abstained',
+            'not present': 'Not rec.',
+            'years active': 'Years',
+            'not recorded': 'Not rec.',
+            'no vote recorded': 'Not rec.',
+            'precinct outlier': 'Precinct outlier %',
+            'session outlier': 'Town outlier %',
+            'precinct split': 'Precinct split',
+            'session split': 'Town split',
+            'shared sessions': 'Shared',
+            'vote description': 'Description'
+        };
+
+        function getEnhancedTableHeaderLabels(tableEl) {
+            const wrapEl = tableEl.closest(ENHANCED_TABLE_WRAP_SELECTOR);
+            const theadEl = wrapEl ? wrapEl.querySelector('thead') : tableEl.querySelector('thead');
+            const headRowEl = theadEl ? theadEl.querySelector('tr') : null;
+            if (!headRowEl) return [];
+            return Array.from(headRowEl.children).map(th => {
+                const label = cleanTableHeaderLabel(th.textContent);
+                return COMPACT_CARD_LABELS[label.toLowerCase()] || label;
+            });
+        }
+
+        function mixRgb(from, to, amount) {
+            const t = Math.max(0, Math.min(1, amount));
+            return `rgb(${from.map((channel, index) => Math.round(channel + (to[index] - channel) * t)).join(', ')})`;
+        }
+
+        // Stepped diverging heat scale for "% voting Yes" (5 bins, tinted neutral midpoint).
+        const PRECINCT_HEAT_BINS = [
+            { max: 20, color: '#f0bba9', label: '0–19%' },
+            { max: 40, color: '#f9dfd5', label: '20–39%' },
+            { max: 60, color: '#efece4', label: '40–60%' },
+            { max: 80, color: '#e0f1e7', label: '61–80%' },
+            { max: Infinity, color: '#c6e5d4', label: '81–100%' }
+        ];
+
+        function getYesShareHeatColor(percent) {
+            const value = Number(percent);
+            if (value < 20) return PRECINCT_HEAT_BINS[0].color;
+            if (value < 40) return PRECINCT_HEAT_BINS[1].color;
+            if (value <= 60) return PRECINCT_HEAT_BINS[2].color;
+            if (value <= 80) return PRECINCT_HEAT_BINS[3].color;
+            return PRECINCT_HEAT_BINS[4].color;
+        }
+
+        function buildPrecinctHeatLegend() {
+            const legendEl = document.createElement('div');
+            legendEl.className = 'heat-legend';
+            const titleEl = document.createElement('span');
+            titleEl.className = 'heat-legend-title';
+            titleEl.textContent = 'Share voting Yes:';
+            legendEl.appendChild(titleEl);
+            const scaleEl = document.createElement('span');
+            scaleEl.className = 'heat-legend-scale';
+            PRECINCT_HEAT_BINS.forEach(bin => {
+                const keyEl = document.createElement('span');
+                keyEl.className = 'heat-legend-key';
+                const swatchEl = document.createElement('span');
+                swatchEl.className = 'heat-legend-swatch';
+                swatchEl.style.backgroundColor = bin.color;
+                swatchEl.setAttribute('aria-hidden', 'true');
+                keyEl.append(swatchEl, document.createTextNode(bin.label));
+                scaleEl.appendChild(keyEl);
+            });
+            legendEl.appendChild(scaleEl);
+            const divergeEl = document.createElement('span');
+            divergeEl.className = 'heat-legend-key heat-legend-diverge';
+            const ringEl = document.createElement('span');
+            ringEl.className = 'heat-legend-swatch is-ring';
+            ringEl.setAttribute('aria-hidden', 'true');
+            divergeEl.append(ringEl, document.createTextNode('Outlined: precinct split from the town-wide majority'));
+            legendEl.appendChild(divergeEl);
+            const hintEl = document.createElement('span');
+            hintEl.className = 'heat-legend-hint';
+            hintEl.textContent = 'Swipe sideways to see all 17 precincts →';
+            legendEl.appendChild(hintEl);
+            return legendEl;
+        }
+
+        function enhanceRenderedTables(rootEl) {
+            if (!rootEl) return;
+            rootEl.querySelectorAll('th:not([scope])').forEach(th => th.setAttribute('scope', 'col'));
+
+            const tables = new Set();
+            rootEl.querySelectorAll('tbody tr:not([data-enh])').forEach(rowEl => {
+                const tableEl = rowEl.closest('table');
+                if (tableEl) tables.add(tableEl);
+            });
+
+            tables.forEach(tableEl => {
+                // Re-assert table semantics: phone card mode restyles rows/cells with display:grid/block.
+                if (!tableEl.hasAttribute('role')) {
+                    tableEl.setAttribute('role', 'table');
+                    tableEl.querySelectorAll('thead tr').forEach(tr => tr.setAttribute('role', 'row'));
+                    tableEl.querySelectorAll('thead th').forEach(th => th.setAttribute('role', 'columnheader'));
+                }
+                const labels = getEnhancedTableHeaderLabels(tableEl);
+                const resultIndex = labels.findIndex(label => /result/i.test(label));
+                const isPrecinctTable = tableEl.classList.contains('precinct-votes-table');
+                const isTmmHistoryTable = tableEl.classList.contains('tmm-history-table');
+                const isNetworkTable = tableEl.classList.contains('member-network-table');
+                const isOutlierTable = tableEl.classList.contains('outlier-votes-table');
+                const isContentiousTable = tableEl.classList.contains('contentious-votes-table');
+
+                tableEl.querySelectorAll('tbody tr:not([data-enh])').forEach(rowEl => {
+                    rowEl.dataset.enh = '1';
+                    rowEl.setAttribute('role', 'row');
+                    let townYesPercent = null;
+                    if (isPrecinctTable && rowEl.children[3]) {
+                        const townMatch = rowEl.children[3].textContent.trim().match(/^(\d+(?:\.\d+)?)%$/);
+                        if (townMatch) townYesPercent = parseFloat(townMatch[1]);
+                    }
+                    Array.from(rowEl.children).forEach((cellEl, index) => {
+                        if (!cellEl.hasAttribute('role')) cellEl.setAttribute('role', cellEl.tagName === 'TH' ? 'rowheader' : 'cell');
+                        if (labels[index] && !cellEl.hasAttribute('data-label')) {
+                            cellEl.dataset.label = labels[index];
+                        }
+
+                        const text = cellEl.textContent.trim();
+                        if (isContentiousTable && cellEl.classList.contains('description-col') && text.length > 150 && !cellEl.querySelector('.desc-toggle')) {
+                            const bodyEl = document.createElement('span');
+                            bodyEl.className = 'desc-text';
+                            bodyEl.textContent = text;
+                            const toggleEl = document.createElement('button');
+                            toggleEl.type = 'button';
+                            toggleEl.className = 'desc-toggle';
+                            toggleEl.textContent = 'More';
+                            toggleEl.setAttribute('aria-expanded', 'false');
+                            toggleEl.addEventListener('click', () => {
+                                const expanded = cellEl.classList.toggle('is-expanded');
+                                toggleEl.textContent = expanded ? 'Less' : 'More';
+                                toggleEl.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+                            });
+                            cellEl.classList.add('is-clamped');
+                            cellEl.replaceChildren(bodyEl, toggleEl);
+                            return;
+                        }
+                        if (/^link \d/i.test(labels[index] || '') && (text === '—' || text === '')) {
+                            cellEl.classList.add('is-empty-link');
+                        }
+                        if (index === resultIndex && cellEl.children.length === 0 && text && text !== '—') {
+                            cellEl.textContent = '';
+                            cellEl.appendChild(createOutcomeBadge(text));
+                            if (isPrecinctTable && rowEl.children[0]) {
+                                // Phone view hides the Result column; repeat the badge under the title instead.
+                                const inlineBadge = createOutcomeBadge(text);
+                                inlineBadge.classList.add('precinct-inline-result');
+                                inlineBadge.setAttribute('aria-hidden', 'true');
+                                rowEl.children[0].appendChild(inlineBadge);
+                            }
+                            return;
+                        }
+
+                        if (isPrecinctTable && index >= 3) {
+                            const match = text.match(/^(\d+(?:\.\d+)?)%$/);
+                            if (match) {
+                                const percent = parseFloat(match[1]);
+                                cellEl.classList.add('heat-cell');
+                                cellEl.style.backgroundColor = getYesShareHeatColor(percent);
+                                // Ring precinct cells whose majority differs from the town-wide majority.
+                                if (index >= 4 && townYesPercent !== null && percent !== 50 && townYesPercent !== 50
+                                    && (percent > 50) !== (townYesPercent > 50)) {
+                                    cellEl.classList.add('heat-diverge');
+                                    cellEl.title = `This precinct's majority differs from the town-wide result (${townYesPercent}% Yes)`;
+                                }
+                            }
+                            return;
+                        }
+
+                        const wantsBar = (isTmmHistoryTable && cellEl.classList.contains('num-col'))
+                            || (isNetworkTable && cellEl.classList.contains('sim-col'))
+                            || (isOutlierTable && cellEl.classList.contains('score-col'));
+                        if (wantsBar) {
+                            const match = text.match(/^(\d+(?:\.\d+)?)%$/);
+                            if (match) {
+                                const value = Math.min(100, parseFloat(match[1]));
+                                // Similarity clusters near the top of the scale, so its bar spans 50-100%.
+                                const barValue = isNetworkTable ? Math.max(0, (value - 50) * 2) : value;
+                                cellEl.classList.add('has-bar');
+                                cellEl.style.setProperty('--bar', `${barValue}%`);
+                            }
+                            return;
+                        }
+
+                        if (isOutlierTable && cellEl.classList.contains('vote-col') && cellEl.children.length === 0 && text) {
+                            const pillEl = document.createElement('span');
+                            pillEl.className = `vote-pill vote-pill-${text.toLowerCase()}`;
+                            pillEl.textContent = text.charAt(0) + text.slice(1).toLowerCase();
+                            cellEl.textContent = '';
+                            cellEl.appendChild(pillEl);
+                        }
+                    });
+                });
+            });
+        }
+
+        function initializeRenderedContentEnhancer() {
+            if (!mainContentEl || typeof MutationObserver === 'undefined') return;
+            let scheduled = false;
+            const observer = new MutationObserver(() => {
+                if (scheduled) return;
+                scheduled = true;
+                window.requestAnimationFrame(() => {
+                    scheduled = false;
+                    enhanceRenderedTables(mainContentEl);
+                });
+            });
+            observer.observe(mainContentEl, { childList: true, subtree: true });
+        }
+
+        /****************************************************
          * INITIAL PAGE LOAD
          ****************************************************/
 
         window.addEventListener('DOMContentLoaded', () => {
             applyFeatureFlags();
             initializeGlobalTooltipHandlers();
+            initializeTabKeyboardNavigation();
+            initializeDisclaimerToggle();
+            initializeRenderedContentEnhancer();
+            setActiveTabButton(null, 'by-vote');
             updatePhoneLayout();
             syncPinnedLayoutOffsets();
 

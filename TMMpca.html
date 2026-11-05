@@ -3,9 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TM PCA Analyzer</title>
+    <title>Voting Map (PCA) · Brookline Town Meeting Vote Analyzer</title>
+    <meta name="description" content="Principal component analysis of Brookline Town Meeting votes: see how members cluster by voting pattern.">
     <link rel="icon" type="image/jpeg" href="https://raw.githubusercontent.com/millxing/TM/main/entangledParticlesLogo3.jpg">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Varela+Round&display=swap">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&display=swap">
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"
             integrity="sha384-vtjasyidUo0kW94K5MXDXntzOJpQgBKXmE7e2Ga4LG0skTTLeBi97eFAXsqewJjw"
             crossorigin="anonymous"></script>
@@ -336,14 +339,117 @@
         .variance-summary-row .variance-note {
             margin: 6px 0 10px 5ch;
         }
+
+        /* ===== Design system v2 (shared look with TMMvotes.html) ===== */
+        :root {
+            --font-sans: 'Public Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            --ink: #111F35; --ink-2: #3a4658; --ink-muted: #5a6575;
+            --bg: #f4f2f3; --surface: #fff; --surface-2: #faf8f9; --surface-3: #f3f0f2;
+            --border: #e6e1e4; --border-strong: #cdc5cb;
+            --accent: #C2214E; --accent-strong: #8A244B; --accent-soft: #fbeef2;
+            --tm-line: var(--border); --tm-focus: rgba(194, 33, 78, 0.35);
+            --shadow-sm: 0 1px 2px rgba(17, 31, 53, 0.06);
+            --shadow: 0 1px 2px rgba(17, 31, 53, 0.05), 0 6px 20px rgba(17, 31, 53, 0.06);
+        }
+        body { font-family: var(--font-sans); background: var(--bg); color: var(--ink); font-size: 14.5px; line-height: 1.45; -webkit-font-smoothing: antialiased; }
+        .page { max-width: 1400px; padding: 16px 20px 32px; }
+        :where(a, button, select, input, th[data-score-component], th[data-coeff-component]):focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+        @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; } }
+        .app-bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 20px; margin-bottom: 14px; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; box-shadow: var(--shadow); }
+        .app-bar-brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+        .brand-mark { flex: 0 0 auto; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 10px; background: var(--ink); color: #fff; }
+        .app-bar-eyebrow { margin: 0; font-size: 12px; font-weight: 600; color: var(--ink-muted); }
+        h1 { margin: 0; font-size: 22px; font-weight: 700; letter-spacing: -0.015em; line-height: 1.2; }
+        .back-link { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 6px 14px; border: 1px solid var(--border-strong); border-radius: 8px; color: var(--ink); font-size: 13px; font-weight: 600; text-decoration: none; white-space: nowrap; box-shadow: var(--shadow-sm); }
+        .back-link:hover { background: var(--surface-3); }
+        .subtitle { margin: 0 0 14px; max-width: 95ch; color: var(--ink-2); font-size: 14px; font-weight: 400; }
+        .card { border: 1px solid var(--border); border-radius: 14px; padding: 18px 20px; margin-bottom: 14px; box-shadow: var(--shadow); }
+        .card h3 { margin: 0 0 10px; font-size: 16px; font-weight: 700; }
+        .field label { color: var(--ink-2); font-size: 13px; font-weight: 600; }
+        .field input[type="number"], .field select, .field input[type="text"] {
+            min-height: 40px; padding: 8px 36px 8px 12px; border: 1px solid var(--border-strong); border-radius: 8px; font-size: 14.5px; box-shadow: var(--shadow-sm);
+        }
+        .field select { appearance: none; -webkit-appearance: none; background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235a6575' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 13px center / 12px 8px; }
+        .field input:focus, .field select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--tm-focus); }
+        .checks { gap: 8px 20px; margin-top: 14px; }
+        .checks label { color: var(--ink-2); font-size: 13.5px; font-weight: 500; cursor: pointer; }
+        input[type="checkbox"] { accent-color: var(--accent); width: 17px; height: 17px; }
+        .run-actions { margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border); }
+        button { min-height: 36px; padding: 6px 14px; border: 1px solid var(--border-strong); border-radius: 8px; background: #fff; color: var(--ink); font-size: 13px; font-weight: 600; box-shadow: var(--shadow-sm); transition: background-color .15s ease, border-color .15s ease; }
+        button:hover { background: var(--surface-3); }
+        button:active { transform: translateY(1px); }
+        button.primary { background: var(--ink); border-color: var(--ink); color: #fff; }
+        button.primary:hover { background: #24344f; border-color: #24344f; }
+        .download-link { color: var(--accent-strong); font-size: 13px; }
+        .view-actions { margin-top: 12px; gap: 8px; }
+        .view-label { color: var(--ink-2); font-size: 13px; font-weight: 600; }
+        .view-segmented { display: inline-flex; flex-wrap: wrap; gap: 0; padding: 3px; border: 1px solid var(--border-strong); border-radius: 10px; background: var(--surface-3); }
+        .view-actions .view-btn { min-height: 32px; border-color: transparent; background: transparent; box-shadow: none; font-weight: 500; color: var(--ink-2); }
+        .view-actions .view-btn:hover { background: rgba(255, 255, 255, 0.7); }
+        button.view-btn.active, button.view-btn.active:hover { background: var(--surface); border-color: var(--border); color: var(--ink); font-weight: 600; box-shadow: var(--shadow-sm); }
+        .status { margin-top: 14px; color: var(--ink-2); font-size: 13px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; }
+        .status.error { color: #a83a1a; background: #fbe7df; border-color: rgba(168, 58, 26, 0.3); }
+        .note { color: var(--ink-muted); font-size: 13px; }
+        .table-wrap { border: 1px solid var(--border); border-radius: 10px; }
+        th, td { border-bottom: 1px solid var(--border); padding: 8px 10px; font-size: 13px; color: var(--ink); }
+        thead th { background: var(--surface-2); color: var(--ink-muted); font-size: 11.5px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; box-shadow: inset 0 -1px 0 var(--border-strong); vertical-align: bottom; }
+        tbody tr:hover td { background: #fbf6f8; }
+        #scores-table th[data-score-component]:hover, #coeff-table th[data-coeff-component]:hover { color: var(--accent); }
+        .plot-wrap { border: 0; border-radius: 0; }
+        .plot-caveat { margin-top: 4px; }
+        .site-footer { margin: 28px auto 0; padding: 14px 0 4px; border-top: 1px solid var(--border); display: flex; flex-wrap: wrap; justify-content: center; gap: 2px 20px; font-size: 13px; color: var(--ink-muted); text-align: center; }
+        .site-footer p { margin: 0; }
+        .site-footer a { color: var(--ink-2); text-underline-offset: 2px; white-space: nowrap; }
+        .site-footer a:hover { color: var(--accent); }
+        .site-footer .footer-sep { margin: 0 8px; color: var(--border-strong); }
+        @media (max-width: 640px) {
+            .site-footer { padding: 14px 16px 4px; flex-direction: column; gap: 6px; }
+            .site-footer p { display: flex; flex-wrap: wrap; justify-content: center; column-gap: 0.3em; }
+        }
+        .settings-summary { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; font-size: 15px; font-weight: 700; color: var(--ink); cursor: pointer; list-style: none; }
+        .settings-summary::-webkit-details-marker { display: none; }
+        .settings-summary::before { content: ''; width: 7px; height: 7px; border-right: 2px solid var(--ink-muted); border-bottom: 2px solid var(--ink-muted); transform: rotate(-45deg); transition: transform .15s ease; }
+        .settings-disclosure[open] .settings-summary::before { transform: rotate(45deg); }
+        .settings-disclosure:not([open]) .settings-summary { margin-bottom: 0; }
+        .run-actions { border-top-color: var(--border); }
+        @media (max-width: 640px) {
+            .page { padding: 8px 10px 24px; }
+            .plot-wrap { height: 400px; }
+            .checks label { min-height: 40px; }
+            .app-bar { padding: 10px 12px; flex-wrap: wrap; }
+            h1 { font-size: 18px; }
+            .brand-mark { width: 32px; height: 32px; border-radius: 8px; }
+            .back-link { width: 100%; justify-content: center; }
+            .card { padding: 14px; }
+            .view-segmented { display: flex; width: 100%; }
+            .view-actions .view-btn { flex: 1 1 0; padding: 6px 6px; font-size: 12.5px; }
+            .plot-wrap { height: 460px; }
+            .field select, .field input { font-size: 16px; }
+        }
     </style>
 </head>
 <body>
     <div class="page">
-        <h1>Brookline Town Meeting PCA</h1>
-        <p class="subtitle">Principal component analysis of Brookline Town Meeting votes</p>
+        <header class="app-bar">
+            <div class="app-bar-brand">
+                <div class="brand-mark" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V10l7-5 7 5v11"/><path d="M9 21v-6h6v6"/></svg>
+                </div>
+                <div>
+                    <p class="app-bar-eyebrow">Brookline Town Meeting Vote Analyzer</p>
+                    <h1>Voting Map (PCA)</h1>
+                </div>
+            </div>
+            <a class="back-link" href="TMMvotes.html">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
+                Back to Vote Analyzer
+            </a>
+        </header>
+        <p class="subtitle">Principal component analysis (PCA) condenses hundreds of votes into a few axes. Members who vote alike appear close together; the first axis (PC1) captures the biggest dividing line in Town Meeting voting.</p>
 
         <section class="card">
+            <details class="settings-disclosure" id="pca-settings" open>
+            <summary class="settings-summary">Analysis settings</summary>
             <div class="controls-grid">
                 <div class="field">
                     <label for="first-session">First Session</label>
@@ -375,18 +481,21 @@
                     Ignore motions to terminate debate
                 </label>
             </div>
+            </details>
             <div class="run-actions">
                 <button id="run-analysis" class="primary" type="button">Run PCA</button>
                 <button id="export-pca" type="button">Export to Excel</button>
                 <a id="download-pca-plot-link" class="download-link hidden" href="#" download>Download plot PNG</a>
             </div>
             <div class="view-actions">
-                <span class="view-label">View:</span>
+                <span class="view-label" id="view-label">View:</span>
+                <div class="view-segmented" role="group" aria-labelledby="view-label">
                 <button id="view-variance-btn" class="view-btn" type="button">Variance + Vote Coefficients</button>
                 <button id="view-scores-btn" class="view-btn" type="button">Member Scores</button>
-                <button id="view-plot-btn" class="view-btn active" type="button">PC1 vs PC2 Plot</button>
+                <button id="view-plot-btn" class="view-btn active" type="button" aria-pressed="true">PC1 vs PC2 Plot</button>
+                </div>
             </div>
-            <div id="status" class="status">Loading session data...</div>
+            <div id="status" class="status" role="status" aria-live="polite">Loading session data...</div>
         </section>
 
         <section id="variance-view" class="card">
@@ -451,12 +560,27 @@
         </section>
 
         <section id="plot-view" class="card active">
-            <p class="note">Scatter plot of member scores on the first two principal components.</p>
-            <div id="pc-plot-status" class="note"></div>
+            <p class="note">Each dot is a Town Meeting member, placed by their scores on the first two principal components. Nearby dots vote alike. Hover or tap a dot to see the member; for exact values, switch to the Member Scores view.</p>
+            <p class="note plot-caveat">These two axes capture only part of the variation in voting (see the percentages in the axis titles). They describe voting patterns, not political or ideological labels.</p>
+            <div id="pc-plot-status" class="note" aria-live="polite"></div>
             <div id="pc-plot" class="plot-wrap"></div>
         </section>
+
+        <footer class="site-footer">
+            <p>Created by <a href="mailto:robschoen.robschoen@gmail.com">Rob Schoen, TMM P1</a><span class="footer-sep" aria-hidden="true">&middot;</span><a href="https://entangledparticles.xyz/" target="_blank" rel="noopener noreferrer">Entangled Particles</a><span class="footer-sep" aria-hidden="true">&middot;</span><a href="https://www.longwoodmall.org" target="_blank" rel="noopener noreferrer">longwoodmall.org</a></p>
+            <p>Found a bug or error? <a href="mailto:robschoen.robschoen@gmail.com?subject=Town%20Meeting%20Vote%20Analyzer%20issue">Report it</a></p>
+        </footer>
     </div>
 
+    <script>
+        // Collapse the analysis settings by default on phones so the plot is reachable sooner.
+        (function () {
+            var settingsEl = document.getElementById('pca-settings');
+            if (settingsEl && window.matchMedia && window.matchMedia('(max-width: 640px)').matches) {
+                settingsEl.open = false;
+            }
+        })();
+    </script>
     <script src="tm-shared.js"></script>
     <script>
         /****************************************************
@@ -1225,6 +1349,9 @@
             varianceBtn.classList.toggle('active', isVariance);
             scoresBtn.classList.toggle('active', isScores);
             plotBtn.classList.toggle('active', isPlot);
+            varianceBtn.setAttribute('aria-pressed', String(isVariance));
+            scoresBtn.setAttribute('aria-pressed', String(isScores));
+            plotBtn.setAttribute('aria-pressed', String(isPlot));
 
             if (isPlot) renderScoresPlot();
         }
@@ -1251,7 +1378,7 @@
             const missingRule = settings.missingStrategy === 'column-mean'
                 ? 'missing votes: column mean'
                 : 'missing votes: neutral';
-            return `Parameters -> min sessions: ${settings.minSessions} | ${abstainRule} | ${terminateRule} | ${missingRule}`;
+            return `Settings: min sessions ${settings.minSessions} · ${abstainRule} · ${terminateRule} · ${missingRule}`;
         }
 
         function getSortedVoteCoefficientsRows() {
@@ -1407,26 +1534,29 @@
                         'PC1: %{x:.2f}<br>' +
                         'PC2: %{y:.2f}<extra></extra>',
                     marker: {
-                        size: 9,
-                        opacity: 0.85,
-                        color: '#1f77b4'
+                        size: window.matchMedia('(max-width: 640px)').matches ? 6 : 9,
+                        opacity: 0.8,
+                        color: '#8A244B',
+                        line: { width: 1, color: '#ffffff' }
                     }
                 }],
                 layout: {
                     margin: { l: 60, r: 20, t: 20, b: 55 },
                     plot_bgcolor: '#ffffff',
                     paper_bgcolor: '#ffffff',
+                    font: { family: "'Public Sans', -apple-system, 'Segoe UI', sans-serif", color: '#3a4658', size: 12 },
+                    hoverlabel: { bgcolor: '#111F35', bordercolor: '#111F35', font: { color: '#ffffff' } },
                     xaxis: {
-                        title: 'PC1',
-                        gridcolor: '#e9ecef',
+                        title: `PC1 · primary voting axis (${formatFloat(analysisState.variancePercents[0], 1)}% of variation)`,
+                        gridcolor: '#eeeaec',
                         zeroline: true,
-                        zerolinecolor: '#ced4da'
+                        zerolinecolor: '#b9aeb5'
                     },
                     yaxis: {
-                        title: 'PC2',
-                        gridcolor: '#e9ecef',
+                        title: `PC2 · secondary axis (${formatFloat(analysisState.variancePercents[1], 1)}% of variation)`,
+                        gridcolor: '#eeeaec',
                         zeroline: true,
-                        zerolinecolor: '#ced4da'
+                        zerolinecolor: '#b9aeb5'
                     }
                 }
             };
@@ -1579,8 +1709,10 @@
                 const label = `PC${componentIndex + 1}`;
                 if (componentIndex === coeffSortState.componentIndex) {
                     header.textContent = `${label} ▼`;
+                    header.setAttribute('aria-sort', 'descending');
                 } else {
                     header.textContent = label;
+                    header.setAttribute('aria-sort', 'none');
                 }
             });
         }
@@ -1622,8 +1754,10 @@
                 if (componentIndex === memberScoresSortState.componentIndex) {
                     const arrow = memberScoresSortState.direction === 'desc' ? ' ▼' : ' ▲';
                     header.textContent = `${label}${arrow}`;
+                    header.setAttribute('aria-sort', memberScoresSortState.direction === 'desc' ? 'descending' : 'ascending');
                 } else {
                     header.textContent = label;
+                    header.setAttribute('aria-sort', 'none');
                 }
             });
         }
@@ -1668,9 +1802,14 @@
 
             Plotly.react(plotEl, plotConfig.traces, plotConfig.layout, {
                 responsive: true,
-                displayModeBar: true,
-                displaylogo: false
+                displayModeBar: 'hover',
+                displaylogo: false,
+                modeBarButtonsToRemove: ['lasso2d', 'select2d', 'autoScale2d']
             });
+            plotEl.setAttribute('role', 'img');
+            plotEl.setAttribute('aria-label',
+                `Scatter plot of ${analysisState.memberScores.length} Town Meeting members by PC1 and PC2 scores. ` +
+                'The same data is available as a sortable table in the Member Scores view.');
 
             statusEl.textContent =
                 `Showing ${analysisState.memberScores.length} members from ${analysisState.selectedSessions.length} sessions.`;
@@ -1838,6 +1977,16 @@
             if (plotBtn) plotBtn.addEventListener('click', () => setActiveView('plot'));
             coeffSortHeaders.forEach(header => header.addEventListener('click', handleCoefficientsSortHeaderClick));
             scoreSortHeaders.forEach(header => header.addEventListener('click', handleScoresSortHeaderClick));
+            // Keyboard access for sortable column headers.
+            [...coeffSortHeaders, ...scoreSortHeaders].forEach(header => {
+                header.tabIndex = 0;
+                header.setAttribute('title', 'Sort by this component');
+                header.addEventListener('keydown', evt => {
+                    if (evt.key !== 'Enter' && evt.key !== ' ') return;
+                    evt.preventDefault();
+                    header.click();
+                });
+            });
 
             window.addEventListener('resize', () => {
                 const plotEl = document.getElementById('pc-plot');
