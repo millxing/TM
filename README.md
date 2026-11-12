@@ -1,6 +1,6 @@
 This repo has apps and data related to Brookline's Town Meeting.
 
-[![Watch the promo for the Brookline Town Meeting Explorer](TMpromo-poster.jpg)](https://brooklinetownmeeting.org/TMpromo.mp4)
+[![Watch the promo for the Brookline Town Meeting Vote Analyzer](TMpromo-poster.jpg)](https://brooklinetownmeeting.org/TMpromo.mp4)
 
 ▶ [Watch the 43-second promo](https://brooklinetownmeeting.org/TMpromo.mp4) · [Open the app](https://brooklinetownmeeting.org)
 
