@@ -4482,7 +4482,8 @@
                         which is fetched via the GitHub raw URL.
                     -->
                     <select id="spreadsheet-select">
-                        <option value="Votes/May%202026%20Votes.xlsx" selected>May 2026 Annual Town Meeting (38 votes)</option>
+                        <option value="Votes/November%202026%20Votes.xlsx" selected>November 2026 Special Town Meeting (11 votes so far)</option>
+                        <option value="Votes/May%202026%20Votes.xlsx">May 2026 Annual Town Meeting (38 votes)</option>
                         <option value="Votes/November%202025%20Votes.xlsx">November 2025 Special Town Meeting (19 votes)</option>
                         <option value="Votes/May%202025%20Votes.xlsx">May 2025 Annual Town Meeting (45 votes)</option>
                         <option value="Votes/November%202024%20Votes.xlsx">November 2024 Special Town Meeting (28 votes)</option>
@@ -4784,7 +4785,16 @@
     <script src="tm-shared.js"></script>
     <script>
 
-        const TMMVOTES_SESSION_FILES = [...SESSION_FILES];
+        // November 2026 is in progress: listed here only (not in tm-shared.js), so the
+        // PCA app and AI summary link skip it until the session is complete.
+        const TMMVOTES_SESSION_FILES = [
+            ...SESSION_FILES,
+            {
+                id: '2026-11',
+                label: 'November 2026 Special Town Meeting',
+                file: 'Votes/November%202026%20Votes.xlsx'
+            }
+        ];
         const AI_SUMMARY_SESSION_IDS = new Set([
             ...SESSION_FILES.map(session => session.id)
         ]);
@@ -5225,7 +5235,7 @@
 
         function getSelectedSpreadsheetURL() {
             const select = document.getElementById('spreadsheet-select');
-            const file = select ? select.value : 'Votes/May%202026%20Votes.xlsx';
+            const file = select ? select.value : 'Votes/November%202026%20Votes.xlsx';
             return getSpreadsheetRawURL(file);
         }
 
@@ -5298,7 +5308,7 @@
             const select = document.getElementById('spreadsheet-select');
             const selectedIndex = select ? select.selectedIndex : -1;
             const option = select && selectedIndex >= 0 ? select.options[selectedIndex] : null;
-            const file = option ? option.value : 'Votes/May%202026%20Votes.xlsx';
+            const file = option ? option.value : 'Votes/November%202026%20Votes.xlsx';
             const labelText = option ? option.textContent : 'Selected Session';
             const label = labelText ? labelText.split('(')[0].trim() : 'Selected Session';
             const knownSession = TMMVOTES_SESSION_FILES.find(session => session.file === file);
@@ -5812,12 +5822,15 @@
                 /^create a new article .*?\bto prohibit (.+)$/i,
                 /^create a new article .*?\bin order to require (.+)$/i,
                 /^create .*?\bestablishing (.+)$/i,
+                /^create a new section .*?\b(banning .+)$/i,
+                /^create a new section .*?\bregarding (.+)$/i,
                 /^name .*?\bto\s+["“]?([^,"”]+)["”]?(?:,|$)/i,
                 /^resolution regarding (.+)$/i,
                 /^resolution calling for (.+)$/i,
                 /^resolution calling to (.+)$/i,
                 /^resolution requesting (.+)$/i,
                 /^resolution to (.+)$/i,
+                /^resolution urging the select board to (.+)$/i,
                 /^21\.\s*resolution expressing support for (.+?)\s+22\.\s*resolution supporting (.+)$/i,
                 /^the underlying article sought (?:to\s+)?(?:a|an)?\s*(.+?)\./i,
                 /^article(?:s)?\s+[\d\sand]+\s+proposed (.+?)\./i,
@@ -5857,6 +5870,11 @@
                 .replace(/^an official annual Town-wide commemoration of September 11, 2011 and a memorial.*$/i, 'September 11 commemoration and memorial')
                 .replace(/^Massachusetts Medicare for All legislation$/i, 'Medicare for All and Proposition 2½ modernization')
                 .replace(/^Massachusetts Medicare for All legislation\s+modernization of Proposition 2½$/i, 'Medicare for All and Proposition 2½ modernization')
+                .replace(/^banning /i, 'ban on ')
+                .replace(/^Amend Section 2\.1\.11\b.*preventing legislative action by Town Meeting members.*$/i, 'Town Meeting member legislative protection')
+                .replace(/^Petition for a special act modifying the administrative requirements applicable to the Transportation Board.*$/i, 'Transportation Board and parking fines')
+                .replace(/^Authorization for the acquisition of .*easements on Kennard Road.*$/i, 'Kennard Road easements for Safe Routes')
+                .replace(/^Amend Section 7\.06 of the Zoning By-Law to set standards for the illumination of exterior lighting$/i, 'zoning standards for exterior lighting')
                 .replace(/^contact information for /i, 'contact info for ')
                 .replace(/^recordings of /i, 'recordings of ')
                 .replace(/^remove /i, 'remove ')
