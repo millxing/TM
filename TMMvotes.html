@@ -4482,7 +4482,7 @@
                         which is fetched via the GitHub raw URL.
                     -->
                     <select id="spreadsheet-select">
-                        <option value="Votes/November%202026%20Votes.xlsx" selected>November 2026 Special Town Meeting (11 votes so far)</option>
+                        <option value="Votes/November%202026%20Votes.xlsx" selected>November 2026 Special Town Meeting (24 votes)</option>
                         <option value="Votes/May%202026%20Votes.xlsx">May 2026 Annual Town Meeting (38 votes)</option>
                         <option value="Votes/November%202025%20Votes.xlsx">November 2025 Special Town Meeting (19 votes)</option>
                         <option value="Votes/May%202025%20Votes.xlsx">May 2025 Annual Town Meeting (45 votes)</option>
@@ -4785,16 +4785,7 @@
     <script src="tm-shared.js"></script>
     <script>
 
-        // November 2026 is in progress: listed here only (not in tm-shared.js), so the
-        // PCA app and AI summary link skip it until the session is complete.
-        const TMMVOTES_SESSION_FILES = [
-            ...SESSION_FILES,
-            {
-                id: '2026-11',
-                label: 'November 2026 Special Town Meeting',
-                file: 'Votes/November%202026%20Votes.xlsx'
-            }
-        ];
+        const TMMVOTES_SESSION_FILES = [...SESSION_FILES];
         const AI_SUMMARY_SESSION_IDS = new Set([
             ...SESSION_FILES.map(session => session.id)
         ]);
@@ -5878,6 +5869,10 @@
                 .replace(/^contact information for /i, 'contact info for ')
                 .replace(/^recordings of /i, 'recordings of ')
                 .replace(/^remove /i, 'remove ')
+                .replace(/^(?:a\s+)?new Pleasant Street Multifamily Overlay District$/i, 'Pleasant Street Multifamily Overlay District')
+                .replace(/^Authorize the Select Board to enter into a Memorandum of Agreement related to the development of 26 Pleasant Street$/i, '26 Pleasant Street development agreement')
+                .replace(/^Amend Section 4\.08 of the Zoning By-Law to allow Cash in Lieu of Units Inclusionary Zoning Payments.*$/i, 'inclusionary zoning cash in lieu payments')
+                .replace(/^(?:a\s+)?new Commonwealth of Massachusetts seal and flag$/i, 'new Massachusetts seal and flag')
                 .trim();
 
             subject = removeLeadingArticle(subject);
